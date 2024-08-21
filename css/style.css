@@ -515,6 +515,7 @@ body {
 }
 .content a {
   color: #c61;
+  text-decoration: none;
 }
 .content a:hover {
   background-image: linear-gradient(transparent, transparent 4px, #22272a 4px, #22272a);
