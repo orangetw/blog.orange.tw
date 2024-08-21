@@ -1566,14 +1566,6 @@ article .content .caption {
     opacity: 1;
   }
 }
-@keyframes tooltip-appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 #categories .category-list-title {
   color: #666;
 }
@@ -1730,4 +1722,36 @@ code {
 }
 #header-post #actions {
   direction: ltr !important;
+}
+@-moz-keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-o-keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
