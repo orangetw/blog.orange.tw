@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="DEBUG 心得是現在大多數的人對於SQL injection (Mysql)都是union加上information_schema取得資料，但是並不是那麼的簡單，SQL injection其實是一門非常深的學問，就出了這題XD 這個方法最早是在大陸的文章看到，後來有分析到國外的一套SQL自動化攻擊工具havij，裡面也有用到類似的方式。 一個登入介面，題目是  If you can login,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法">
+<meta property="og:url" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="DEBUG 心得是現在大多數的人對於SQL injection (Mysql)都是union加上information_schema取得資料，但是並不是那麼的簡單，SQL injection其實是一門非常深的學問，就出了這題XD 這個方法最早是在大陸的文章看到，後來有分析到國外的一套SQL自動化攻擊工具havij，裡面也有用到類似的方式。 一個登入介面，題目是  If you can login,">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/33b64799b36b3a52-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/02769224b3473ada-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/14993b5a740d538e-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/480ed4d60e1eefe5-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/8b2d7173f5e02dd5-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/73e2f421d19ba1bf-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/03157dc04a3e4907-08.png">
+<meta property="article:published_time" content="2011-07-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:13:22.975Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2011-07-23T16:00:00.000Z" class="dt-published" itemprop="datePublished">2011-07-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a href="https://blog.orange.tw//2011/07/hitcon2011wargame-web-4.html">DEBUG</a></p>
+<p>心得是現在大多數的人對於SQL injection (Mysql)都是union加上information_schema取得資料，但是並不是那麼的簡單，SQL injection其實是一門非常深的學問，就出了這題XD</p>
+<p>這個方法最早是在大陸的文章看到，後來有分析到國外的一套SQL自動化攻擊工具havij，裡面也有用到類似的方式。</p>
+<p>一個登入介面，題目是</p>
+<blockquote>
+<p>If you can login, You can get the key.</p>
+</blockquote>
+<p>登入畫面</p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png"></p>
+<p>可以明顯發現確認使用者的頁面存在SQL injection</p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/33b64799b36b3a52-02.png"></p>
+<p>也可以發現</p>
+<ul>
+<li>不能使用 <code>union</code>  –&gt; 因為只會顯示 True or False，不可能列出任何資訊</li>
+<li>不能使用 <code>Information_schema</code> –&gt; 假想環境是在mysql4上面運行，在Mysql4以前沒有這個資料庫，這題是我自己patch mysql主程式所以使用不了<code>information_schema</code>查table name以及column name</li>
+<li>不能使用blind injection or time base injection  –&gt; 因為無法取得column name不能取得資料</li>
+</ul>
+<p>但是，發現他是Error base的Injection。 可以利用Duplicate column name的方式來注入</p>
+<p>Example:</p>
+<p>在Mysql Commandline下輸入：</p>
+<blockquote>
+<p>Select * from (Select 1,1) as a</p>
+</blockquote>
+<p>會顯示</p>
+<blockquote>
+<p>ERROR 1060 (42S21): Duplicate column name ‘1’</p>
+</blockquote>
+<p>利用Error base的方式像SQL server一樣可以把想要的資料出現在錯誤訊息中。 但是要利用這個爆出非CONST以外的還需要配合<code>NAME_CONST</code>這個函數來達成</p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/02769224b3473ada-03.png"></p>
+<p>但是<code>NAME_CONST</code>在Mysql 5.1後被Update了不能使用非常量CONST以外的參數，但是還是有其他的方法的，有興趣可以自己去Google這裡就不詳談了 :P</p>
+<p>所以可以利用以下的方式爆出 Column name</p>
+<blockquote>
+<p>id&#x3D;test’ and (Select * from (Select * from users as a join users as b) as c) and ‘’&#x3D;’</p>
+</blockquote>
+<blockquote>
+<p>id&#x3D;test’ and (Select * from (Select * from users as a join users as b using(column name)) as c) and ‘’&#x3D;’</p>
+</blockquote>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/14993b5a740d538e-04.png"></p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/480ed4d60e1eefe5-05.png"></p>
+<p>可以得到Column name</p>
+<blockquote>
+<p>wpw_d7862549d4ed8f82</p>
+</blockquote>
+<p>繼續利用<code>NAME_CONST</code>爆出其中的資料</p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/8b2d7173f5e02dd5-06.png"></p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/73e2f421d19ba1bf-07.png"></p>
+<p>可以取得</p>
+<blockquote>
+<p>admin &#x2F; 0b79f46808458afb</p>
+</blockquote>
+<p>在登入頁面的地方也可以發現輸入單引號也會顯示SQL error，仔細觀察會發現是使用Mysql的<code>old_password</code>來對密碼進行加密。</p>
+<p><img src="/posts/2011-07-hitcon2011wargame-web-4/03157dc04a3e4907-08.png"></p>
+<p>在Mysql4以前password儲存的方式是透過old_password這個函數進行加密的，實際上這個加密方式存在弱點能被很快速的碰撞(Collision)出來，網路上可以找到現成的工具，約20~30分鐘可以撞出一組hash值與上面一樣的密碼</p>
+<p>我自己碰撞的結果是這組</p>
+<blockquote>
+<p>Select old_password(‘!H6~a&#96;”~H\DN&gt;’);</p>
+</blockquote>
+<p>出來的結果與上面的hash值是一樣的，所以使用 admin &#x2F; !H6~a`&quot;~H\DN&gt; 即可登入取得Key。</p>
+<p>:P 解題愉快XD 沒解出來至少有學到新東西吧 :P</p>
+<p>有機會再把出的另外一題Web以及Windows Binary解題過程寫出XD</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

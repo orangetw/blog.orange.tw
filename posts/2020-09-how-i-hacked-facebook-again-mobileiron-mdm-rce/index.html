@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Hi, it’s a long time since my last article. This new post is about my research this March, which talks about how I found vulnerabilities on a leading Mobile Device Management product and bypassed sev">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How I Hacked Facebook Again! Unauthenticated RCE on MobileIron MDM">
+<meta property="og:url" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Hi, it’s a long time since my last article. This new post is about my research this March, which talks about how I found vulnerabilities on a leading Mobile Device Management product and bypassed sev">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/4ff73b5b915fbaba-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/1570d931acc59d91-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/91bc5be83c2c1329-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/82227c67db9e076c-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/b3f1f2c97a1fc264-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/14fac262ffbb4707-08.png">
+<meta property="article:published_time" content="2020-09-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-19T16:56:36.500Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>How I Hacked Facebook Again! Unauthenticated RCE on MobileIron MDM | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        How I Hacked Facebook Again! Unauthenticated RCE on MobileIron MDM
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-09-11T16:00:00.000Z" class="dt-published" itemprop="datePublished">2020-09-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png" alt="preview"></p>
+<p>Hi, it’s a long time since my last article. This new post is about my research this March, which talks about how I found vulnerabilities on a leading Mobile Device Management product and bypassed several limitations to achieve unauthenticated RCE. All the vulnerabilities have been reported to the vendor and got fixed in June. After that, we kept monitoring large corporations to track the overall fixing progress and then found that Facebook didn’t keep up with the patch for more than 2 weeks, so we dropped a shell on Facebook and reported to their Bug Bounty program!</p>
+<p>This research is also presented at <a target="_blank" rel="noopener" href="http://hitcon.org/2020">HITCON 2020</a>. You can check the slides <a target="_blank" rel="noopener" href="https://hitcon.org/2020/slides/How%20I%20Hacked%20Facebook%20Again!.pdf">HERE</a></p>
+<p>As a Red Teamer, we are always looking for new paths to infiltrate the corporate network from outside. Just like <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-19/briefings/schedule/#infiltrating-corporate-intranet-like-nsa---pre-auth-rce-on-leading-ssl-vpns-15545">our research in Black Hat USA last year</a>, we demonstrated how leading SSL VPNs could be hacked and become your Virtual “Public” Network! SSL VPN is trusted to be secure and considered the only way to your private network. But, what if your trusted appliances are insecure? </p>
+<p>Based on this scenario, we would like to explore new attack surfaces on enterprise security, and we get interested in MDM, so this is the article for that!</p>
+<h1 id="What-is-MDM"><a href="#What-is-MDM" class="headerlink" title="What is MDM?"></a>What is MDM?</h1><p>Mobile Device Management, also known as MDM, is an asset assessment system that makes the employees’ <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bring_your_own_device">BYOD</a> more manageable for enterprises. It was proposed in 2012 in response to the increasing number of tablets and mobile devices. MDM can guarantee that the devices are running under the corporate policy and in a trusted environment. Enterprise could manage assets, install certificates, deploy applications and even lock&#x2F;wipe devices remotely to prevent data leakage as well. </p>
+<p>UEM (Unified Endpoint Management) is a newer term relevant to MDM which has a broader definition for managed devices. Following we use MDM to represent similar products!</p>
+<h1 id="Our-target"><a href="#Our-target" class="headerlink" title="Our target"></a>Our target</h1><p>MDM, as a centralized system, can manage and control all employees’ devices. It is undoubtedly an ideal asset assessment system for a growing company. Besides, MDM must be reachable publicly to synchronize devices all over the world. A centralized and public-exposing appliance, what could be more appealing to hackers?</p>
+<p>Therefore, we have seen hackers and APT groups abusing MDM these years! Such as phishing victims to make MDM a C&amp;C server of their mobile devices, or even compromising the corporate exposed MDM server to push malicious Trojans to all devices. You can read the report <a target="_blank" rel="noopener" href="https://blogs.cisco.com/security/talos/malicious-mdm-lets-hide-this-app">Malicious MDM: Let’s Hide This App</a> by Cisco Talos team and <a target="_blank" rel="noopener" href="https://research.checkpoint.com/2020/mobile-as-attack-vector-using-mdm/">First seen in the wild - Malware uses Corporate MDM as attack vector</a> by CheckPoint CPR team for more details! </p>
+<p>From previous cases, we know that MDM is a solid target for hackers, and we would like to do research on it. There are several MDM solutions, even famous companies such as Microsoft, IBM and Apple have their own MDM solution. Which one should we start with? </p>
+<p>We have listed known MDM solutions and scanned corresponding patterns all over the Internet. We found that the most prevalent MDMs are VMware AirWatch and MobileIron!</p>
+<p>So, why did we choose MobileIron as our target? According to their official website, more than 20,000 enterprises chose MobileIron as their MDM solution, and most of our customers are using that as well. We also know Facebook has exposed the MobileIron server <a target="_blank" rel="noopener" href="https://devco.re/blog/2016/04/21/how-I-hacked-facebook-and-found-someones-backdoor-script-eng-ver/">since 2016</a>. We have analyzed Fortune Global 500 as well, and found more than 15% using and exposing their MobileIron server to the public! Due to above reasons, it became our main target! </p>
+<h1 id="Where-to-Start"><a href="#Where-to-Start" class="headerlink" title="Where to Start"></a>Where to Start</h1><p>From <a target="_blank" rel="noopener" href="https://www.cvedetails.com/vulnerability-list/vendor_id-13968/Mobileiron.html">past vulnerabilities</a>, we learned there aren’t too many researchers diving into MobileIron. Perhaps the attack vector is still unknown. But we suspect the main reason is that the firmware is too hard to obtain. When researching an appliance, turning a pure BlackBox testing into GrayBox, or WhiteBox testing is vital. We spent lots of time searching for all kinds of information on the Internet, and ended up with an RPM package. This RPM file is supposed to be the developer’s testing package. The file is just sitting on a listable WebRoot and indexed by Google Search. </p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/4ff73b5b915fbaba-02.png"></p>
+<p>Anyway, we got a file to research. The released date of the file is in early 2018. It seems a little bit old but still better than nothing!</p>
+<p><em>P.S. We have informed MobileIron and the sensitive files has been removed now.</em></p>
+<h1 id="Finding-Vulnerabilities"><a href="#Finding-Vulnerabilities" class="headerlink" title="Finding Vulnerabilities"></a>Finding Vulnerabilities</h1><p>After a painful time solving the dependency hell, we set the testing package up finally. The component is based on Java and exposed three ports:</p>
+<ul>
+<li>443 - the user enrollment interface</li>
+<li>8443 - the appliance management interface</li>
+<li>9997 - the MobileIron device synchronization protocol (MI Protocol)</li>
+</ul>
+<p>All opened ports are TLS-encrypted. Apache is in the front of the web part and proxies all connections to backend, a Tomcat with Spring MVC inside.</p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/1570d931acc59d91-03.png"></p>
+<p>Due to the Spring MVC, it’s hard to find traditional vulnerabilities like SQL Injection or XSS from a single view. Therefore, examining the logic and architecture is our goal this time!</p>
+<p>Talking about the vulnerability, the root cause is straightforward. Tomcat exposed a Web Service that deserializes user input with Hessian format. However, this doesn’t mean we can do everything! The main effort of this article is to solve that, so please see the exploitation below. </p>
+<p>Although we know the Web Service deserializes the user input, we can not trigger it. The endpoint is located on both:</p>
+<ul>
+<li>User enrollment interface - <code>https://mobileiron/mifs/services/</code></li>
+<li>Management interface - <code>https://mobileiron:8443/mics/services/</code></li>
+</ul>
+<p>We can only touch the deserialization through the management interface because the user interface blocks the Web Service access. It’s a critical hit for us because most enterprises won’t expose their management interface to the Internet, and a management-only vulnerability is not useful to us so that we have to try harder. :( </p>
+<p>Scrutinizing the architecture, we found Apache blocks our access through Rewrite Rules. It looks good, right?</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span> ^/mifs/services/(.*)$ https://<span class="variable">%&#123;SERVER_NAME&#125;</span>:<span class="number">8443</span>/mifs/services/$<span class="number">1</span><span class="meta"> [R=307,L]</span></span><br><span class="line"><span class="attribute">RewriteRule</span> ^/mifs/services<span class="meta"> [F]</span></span><br></pre></td></tr></table></figure>
+
+<p>MobileIron relied on Apache Rewrite Rules to block all the access to Web Service. It’s in the front of a reverse-proxy architecture, and the backend is a Java-based web server.</p>
+<p>Have you recalled something?</p>
+<br>
+
+<p>Yes, the <a href="https://blog.orange.tw/2018/08/how-i-chained-4-bugs-features-into-rce-on-amazon.html">Breaking Parser Logic</a>! It’s the reverse proxy attack surface I <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#blackbox">proposed in 2015</a>, and presented at <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-18/briefings.html#breaking-parser-logic-take-your-path-normalization-off-and-pop-0days-out">Black Hat USA 2018</a>. This technique leverage the inconsistency between the Apache and Tomcat to bypass the ACL control and reaccess the Web Service. BTW, this excellent technique is also applied to the recently <a target="_blank" rel="noopener" href="https://support.f5.com/csp/article/K52145254">F5 BIG-IP TMUI RCE vulnerability</a>!</p>
+<blockquote>
+<p>https<span>:&#x2F;&#x2F;mobileiron&#x2F;mifs&#x2F;.;&#x2F;services&#x2F;someService</p>
+</blockquote>
+<h1 id="Exploiting-Vulnerabilities"><a href="#Exploiting-Vulnerabilities" class="headerlink" title="Exploiting Vulnerabilities"></a>Exploiting Vulnerabilities</h1><p>OK, now we have access to the deserialization wherever it’s on enrollment interface or management interface. Let’s go back to exploitations!</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mbechler">Moritz Bechler</a> has an awesome research which summarized the Hessian deserialization vulnerability on his whitepaper, <a target="_blank" rel="noopener" href="https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf">Java Unmarshaller Security</a>. From the <a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">marshalsec</a> source code, we learn the Hessian deserialization triggers the <code>equals()</code> and <code>hashcode()</code> while reconstructing a <code>HashMap</code>. It could also trigger the <code>toString()</code> through the <code>XString</code>, and the known exploit gadgets so far are: </p>
+<ul>
+<li>Apache XBean</li>
+<li>Caucho Resin</li>
+<li>Spring AOP</li>
+<li>ROME EqualsBean&#x2F;ToStringBean</li>
+</ul>
+<p>In our environment, we could only trigger the Spring AOP gadget chain and get a JNDI Injection.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>x</td>
+<td>Apache XBean</td>
+<td>JNDI Injection</td>
+</tr>
+<tr>
+<td>x</td>
+<td>Caucho Resin</td>
+<td>JNDI Injection</td>
+</tr>
+<tr>
+<td><strong>√</strong></td>
+<td><strong>Spring AOP</strong></td>
+<td><strong>JNDI Injection</strong></td>
+</tr>
+<tr>
+<td>x</td>
+<td>ROME EqualsBean</td>
+<td>RCE</td>
+</tr>
+</tbody></table>
+<p>Once we have a JNDI Injection, the rest parts of exploitations are easy! We can just leverage <a target="_blank" rel="noopener" href="https://twitter.com/pwntester">Alvaro Muñoz</a> and <a target="_blank" rel="noopener" href="https://twitter.com/olekmirosh">Oleksandr Mirosh</a>‘s work, <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-16/briefings.html#a-journey-from-jndi-ldap-manipulation-to-remote-code-execution-dream-land">A Journey From JNDI&#x2F;LDAP to Remote Code Execution Dream Land</a>, from Black Hat USA 2016 to get the code execution… Is that true? </p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/91bc5be83c2c1329-04.png"></p>
+<p>Since <a target="_blank" rel="noopener" href="https://twitter.com/pwntester">Alvaro Muñoz</a> and <a target="_blank" rel="noopener" href="https://twitter.com/olekmirosh">Oleksandr Mirosh</a> introduced this on Black Hat, we could say that this technique helps countless security researchers and brings Java deserialization vulnerability into a new era. However, Java finally mitigated the last JNDI&#x2F;LDAP puzzle in <a target="_blank" rel="noopener" href="https://www.oracle.com/java/technologies/javase/8u181-relnotes.html">October 2018</a>. After that, all java version higher than 8u181, 7u191, and 6u201 can no longer get code execution through JNDI remote URL-Class loading. Therefore, if we exploit the Hessian deserialization on the latest MobileIron, we must face this problem! </p>
+<p>Java changed the default value of <code>com.sun.jndi.ldap.object.trustURLCodebase</code> to <code>False</code> to prevent attackers from downloading remote URL-Class to get code executions. But only this has been prohibited. We can still manipulate the JNDI and redirect the Naming Reference to a local Java Class!</p>
+<p>The concept is a little bit similar to <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Return-oriented_programming">Return-Oriented Programming</a>, utilizing a local existing Java Class to do further exploitations. You can refer to the article <a target="_blank" rel="noopener" href="https://www.veracode.com/blog/research/exploiting-jndi-injections-java">Exploiting JNDI Injections in Java</a> by <a target="_blank" rel="noopener" href="https://twitter.com/artsploit">Michael Stepankin</a> in early 2019 for details. It describes the attack on POST-JNDI exploitations and how to abuse the Tomcat’s <code>BeanFactory</code> to populate the <code>ELProcessor</code> gadget to get code execution. Based on this concept, researcher <a target="_blank" rel="noopener" href="https://github.com/welk1n">Welkin</a> also provides another <code>ParseClass</code> gadget on Groovy. As described in <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Welk1n/p/11066397.html">his (Chinese) article</a>: </p>
+<blockquote>
+<p>除了 javax.el.ELProcessor，当然也还有很多其他的类符合条件可以作为 beanClass 注入到 BeanFactory 中实现利用。举个例子，如果目标机器 classpath 中有 groovy 的库，则可以结合之前 Orange 师傅发过的 <a href="https://blog.orange.tw/2019/02/abusing-meta-programming-for-unauthenticated-rce.html">Jenkins 的漏洞实现利用</a></p>
+</blockquote>
+<p>It seems the Meta Programming exploitation in my previous Jenkins research could be used here as well. It makes the Meta Programming great again :D</p>
+<p>The approach is fantastic and looks feasible for us. But both gadgets <code>ELProcessor</code> and <code>ParseClass</code> are unavailable due to our outdated target libraries. Tomcat introduced the <code>ELProcessor</code> since 8.5, but our target is 7. As for the Groovy gadget, the target Groovy version is too old (1.5.6 from 2008) to support the Meta Programming, so we still have to find a new gadget by ourselves. We found a new gadget on <code>GroovyShell</code> in the end. If you are interested, you can check the <a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Bypass/pull/1">Pull Request</a> I sent to the <a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Bypass">JNDI-Injection-Bypass</a> project! </p>
+<h1 id="Attacking-Facebook"><a href="#Attacking-Facebook" class="headerlink" title="Attacking Facebook"></a>Attacking Facebook</h1><p>Now we have a perfect RCE by chaining JNDI Injection, Tomcat <code>BeanFactory</code> and <code>GroovyShell</code>. It’s time to hack Facebook!</p>
+<p>Aforementioned, we knew the Facebook uses MobileIron since 2016. Although the server’s index responses 403 Forbidden now, the Web Service is still accessible!</p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/82227c67db9e076c-05.png"></p>
+<p>Everything is ready and wait for our exploit! However, several days before our scheduled attack, we realized that there is a critical problem in our exploit. From <a target="_blank" rel="noopener" href="https://devco.re/blog/2016/04/21/how-I-hacked-facebook-and-found-someones-backdoor-script-eng-ver/">our last time popping shell on Facebook</a>, we noticed it blocks outbound connections due to security concerns. The outbound connection is vital for JNDI Injection because the idea is to make victims connecting to a malicious server to do further exploitations. But now, we can’t even make an outbound connection, not to mention others. </p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png"></p>
+<p>So far, all attack surfaces on JNDI Injection have been closed, we have no choice but to return to Hessian deserialization. But due to the lack of available gadgets, we must discover a new one by ourselves!</p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/b3f1f2c97a1fc264-07.png"></p>
+<p>Before discovering a new gadget, we have to understand the existing gadgets’ root cause properly. After re-reading Moritz Bechler’s <a target="_blank" rel="noopener" href="https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf">paper</a>, a certain word interested me: </p>
+<blockquote>
+<p>Cannot restore Groovy’s MethodClosure as readResolve() is called which throws an exception.</p>
+</blockquote>
+<p>A question quickly came up in my mind: Why did the author leave this word here? Although it failed with exceptions, there must have been something special so that the author write this down.</p>
+<p>Our target is running with a very old Groovy, so we are guessing that the <code>readResolve()</code> constrain might not have been applied to the code base yet! We compared the file <code>groovy/runtime/MethodClosure.java</code> between the latest and 1.5.6. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ diff <span class="number">1_5_6</span>/MethodClosure.java <span class="number">3_0_4</span>/MethodClosure.java</span><br><span class="line"></span><br><span class="line">&gt;     <span class="keyword">private</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line">&gt;         <span class="keyword">if</span> (ALLOW_RESOLVE) &#123;</span><br><span class="line">&gt;             <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&gt;         &#125;</span><br><span class="line">&gt;         <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>();</span><br><span class="line">&gt;     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Yes, we are right. There is no <code>ALLOW_RESOLVE</code> in Groovy 1.5.6, and we later learned <a target="_blank" rel="noopener" href="https://groovy-lang.org/security.html">CVE-2015-3253</a> is just for that. It’s a mitigation for the rising Java deserialization vulnerability in 2015. Since Groovy is an internally used library, developers won’t update it if there is no emergency. The outdated Groovy could also be a good case study to demonstrated how a harmless component can leave you compromised! </p>
+<p>Of course we got the shell on Facebook in the end. Here is the video:</p>
+<iframe allowfullscreen="" height="315" src="https://www.youtube.com/embed/hGTLIIOb14A" width="560"></iframe>
+
+
+<h1 id="Vulnerability-Report-and-Patch"><a href="#Vulnerability-Report-and-Patch" class="headerlink" title="Vulnerability Report and Patch"></a>Vulnerability Report and Patch</h1><p>We have done all the research on March and sent the advisory to MobileIron at 4&#x2F;3. The MobileIron released the patch on 6&#x2F;15 and addressed three CVEs for that. You can check the <a target="_blank" rel="noopener" href="https://www.mobileiron.com/en/blog/mobileiron-security-updates-available">official website</a> for details! </p>
+<ul>
+<li>CVE-2020-15505 - Remote Code Execution</li>
+<li>CVE-2020-15506 - Authentication Bypass</li>
+<li>CVE-2020-15507 - Arbitrary File Reading</li>
+</ul>
+<p>After the patch has been released, we start monitoring the Internet to track the overall fixing progress. Here we check the <code>Last-Modified</code> header on static files so that the result is just for your information. (Unknown stands for the server closed both 443 and 8443 ports) </p>
+<p><img src="/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/14fac262ffbb4707-08.png"></p>
+<p>At the same time, we keep our attentions on Facebook as well. With 15 days no-patch confirm, we finally popped a shell and report to their Bug Bounty program at 7&#x2F;2!</p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>So far, we have demonstrated a completely unauthenticated RCE on MobileIron. From how we get the firmware, find the vulnerability, and bypass the JNDI mitigation and network limitation. There are other stories, but due to the time, we have just listed topics here for those who are interested: </p>
+<ul>
+<li>How to take over the employees’ devices from MDM</li>
+<li>Disassemble the MI Protocol</li>
+<li>And the CVE-2020-15506, an interesting authentication bypass</li>
+</ul>
+<p>I hope this article could draw attention to MDM and the importance of enterprise security! Thanks for reading. :D</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

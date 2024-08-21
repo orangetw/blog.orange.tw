@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="這次跟著 217 到上海參加由 0ops 舉辦的 0ctf 決賽 總體來說這次是我打過最爽的一次 Attack &amp; Defense 比賽，尤其 0cms 這個題目滿對我胃口的，考驗快速 Code Review 找洞、快速修洞、快速寫 Exploit 打全場的能力（好在有 web 題目可以發揮，這次沒有耍廢XDDD） 靠 0cms 刷分刷到第二天幾乎所有隊伍都放棄，把 Web 服務關掉防止失">
+<meta property="og:type" content="article">
+<meta property="og:title" content="講個秘訣 - 0ctf Final 0cms ">
+<meta property="og:url" content="http://blog.orange.tw/posts/2015-05-0ctf-final-0cms/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="這次跟著 217 到上海參加由 0ops 舉辦的 0ctf 決賽 總體來說這次是我打過最爽的一次 Attack &amp; Defense 比賽，尤其 0cms 這個題目滿對我胃口的，考驗快速 Code Review 找洞、快速修洞、快速寫 Exploit 打全場的能力（好在有 web 題目可以發揮，這次沒有耍廢XDDD） 靠 0cms 刷分刷到第二天幾乎所有隊伍都放棄，把 Web 服務關掉防止失">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2015-05-0ctf-final-0cms/e2c98243a3f0649a-01.png">
+<meta property="article:published_time" content="2015-04-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T16:30:04.591Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2015-05-0ctf-final-0cms/e2c98243a3f0649a-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>講個秘訣 - 0ctf Final 0cms  | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        講個秘訣 - 0ctf Final 0cms 
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-04-30T16:00:00.000Z" class="dt-published" itemprop="datePublished">2015-05-01</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>這次跟著 <a target="_blank" rel="noopener" href="http://217.logdown.com/">217</a> 到上海參加由 <a target="_blank" rel="noopener" href="http://www.0ops.net/">0ops</a> 舉辦的 0ctf 決賽</p>
+<p>總體來說這次是我打過最爽的一次 Attack &amp; Defense 比賽，尤其 0cms 這個題目滿對我胃口的，考驗快速 Code Review 找洞、快速修洞、快速寫 Exploit 打全場的能力<br>（好在有 web 題目可以發揮，這次沒有耍廢XDDD）</p>
+<p>靠 0cms 刷分刷到第二天幾乎所有隊伍都放棄，把 Web 服務關掉防止失去更多分，直到比賽結束前兩三小時 Blue-Lotus 跟 Freed0m 才把服務修補好重新開啟上線XD</p>
+<p>當中針對一個弱點有想到比較不一樣的利用方式特此紀錄一下XD</p>
+<p>（紅色&#x3D;被入侵、深黃色&#x3D;服務當掉、淺黃色&#x3D;服務當掉+被入侵）</p>
+<p><img src="/posts/2015-05-0ctf-final-0cms/e2c98243a3f0649a-01.png"></p>
+<p>0cms 是一題以 Webpy 寫的一個線上內容管理系統，配合 SQLite 以及許多個弱點，第一眼看到用到 Webpy 這個 Python framework 就想到烏雲的這篇 <a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/5040">新型任意文件读取漏洞的研究</a>，事後比較好像弱點那部分程式碼真的長得差不多XD</p>
+<p>不過這次要講的不是它XD</p>
+<script src="https://gist.github.com/OrangeTW/624b21900765665bc068.js"></script>
+
+<p>在第 31 行 <code>dispatcher -&gt; __request</code> 的地方有個可以任意引入已知檔案模組的功能，當 URL 是以 <code>/A/B/C</code> 開頭可以執行到類似如下的語法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> A.B <span class="keyword">import</span> B</span><br><span class="line">B.C()</span><br></pre></td></tr></table></figure>
+
+
+<p>不過如果伺服器上沒有可控檔案的話幾乎不能做什麼事情，所以大部份人的玩法都是透過 CMS 本身管理功能有提供一個任意檔案上傳，透過上傳一個 .py 檔案到 action 目錄下再透過這個漏洞去執行造成 Remote Code Execution</p>
+<p>不過當然這麼明顯的上傳當然馬上就被很多隊伍修補了，不過任意引用的部分似乎許多隊伍認為是正常功能以及不搭配上傳無法利用所以都沒修補，所以在比賽第一天晚上花了一點時間研究這個任意引用到底還可以做到什麼樣子的利用</p>
+<p>限制比較麻煩的是要在 A 目錄下找到 B.py 同時檔案內要有 class B 可用，而且 A B C 都限定 a-z0-9 且呼叫 C 除了 self instance 外不能指定其他參數</p>
+<p>看到這些限制又要可以對網站有實質影響所以最後決定看一下 Webpy 的原始碼，花了一陣子後沒發現什麼，不過在 Attack &amp; Defense 比賽中 DoS 的洞也很有利用價值</p>
+<p>再仔細看一下後發現 <code>web/application.py</code> 下有個 <code>class application</code> 符合條件，配合裡面的 <code>stop()</code> 可以直接停止 WSGIServer 把別人服務給關閉XD</p>
+<p>最後 PoC</p>
+<blockquote>
+<p>curl <a target="_blank" rel="noopener" href="http://100.64.101.154/web/application/stop">http://100.64.101.154/web/application/stop</a></p>
+</blockquote>
+<p>靠著這招在第二天狂刷所有隊伍XD 如此這般，不知道有沒有什麼其他更好利用的方式？</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

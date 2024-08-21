@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="[ 繁體中文版本 | English Version ]   In software engineering, the Continuous Integration and Continuous Delivery is a best practice for developers to reduce routine works. In the CI&#x2F;CD, the most well-k">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hacking Jenkins Part 1 - Play with Dynamic Routing">
+<meta property="og:url" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="[ 繁體中文版本 | English Version ]   In software engineering, the Continuous Integration and Continuous Delivery is a best practice for developers to reduce routine works. In the CI&#x2F;CD, the most well-k">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/efb3e254bd8bee78-01.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/46396887771084cd-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/2d0578459d99d63d-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/e5a65f6f70c9919d-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/23238cd39a889cf1-05.png">
+<meta property="article:published_time" content="2019-01-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:17:29.442Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/efb3e254bd8bee78-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hacking Jenkins Part 1 - Play with Dynamic Routing | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hacking Jenkins Part 1 - Play with Dynamic Routing
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-15T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-01-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>[ <a target="_blank" rel="noopener" href="https://devco.re/blog/2019/01/16/hacking-Jenkins-part1-play-with-dynamic-routing/">繁體中文版本</a> | <a href="#">English Version</a> ]</p>
+<p><img src="/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/efb3e254bd8bee78-01.jpg" alt="preview"></p>
+<hr>
+<p>In software engineering, the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Continuous_integration">Continuous Integration</a> and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Continuous_delivery">Continuous Delivery</a> is a best practice for developers to reduce routine works. In the CI&#x2F;CD, the most well-known tool is Jenkins. Due to its ease of use, awesome Pipeline system and integration of Container, Jenkins is also the most widely used CI&#x2F;CD application in the world. According to the <a target="_blank" rel="noopener" href="https://snyk.io/blog/jvm-ecosystem-report-2018-tools">JVM Ecosystem Report</a> by Snyk in 2018, Jenkins held about 60% market share on the survey of CI&#x2F;CD server.  </p>
+<p>For Red Teamers, Jenkins is also the battlefield that every hacker would like to control. If someone takes control of the Jenkins server, he can gain amounts of source code and credential, or even control the Jenkins node! In our <a target="_blank" rel="noopener" href="https://devco.re/">DEVCORE</a> Red Team cases, there are also several cases that compromised whole the corporation just from a Jenkins server as the entry point!  </p>
+<p>This article is mainly about a brief security review on Jenkins in the last year. During this review, we found 7 vulnerabilities including:  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-07-18/#SECURITY-914">CVE-2018-1999002 - Arbitrary file read vulnerability</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-06-25/#SECURITY-915">CVE-2018-1000600 - CSRF and missing permission checks in GitHub Plugin</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-08-15/#SECURITY-1071">CVE-2018-1999046 - Unauthorized users could access agent logs</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-12-05/#SECURITY-595">CVE-2018-1000861 - Code execution through crafted URLs</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2019-01-08/#jenkins-security-advisory-2019-01-08">CVE-2019-1003000 - Sandbox Bypass in Script Security and Pipeline Plugins</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2019-01-08/#jenkins-security-advisory-2019-01-08">CVE-2019-1003001 - Sandbox Bypass in Script Security and Pipeline Plugins</a></li>
+<li><a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2019-01-08/#jenkins-security-advisory-2019-01-08">CVE-2019-1003002 - Sandbox Bypass in Script Security and Pipeline Plugins</a></li>
+</ul>
+<p>Among them, the more discussed one is the vulnerability CVE-2018-1999002. This is an arbitrary file read vulnerability through an unusual attack vector! Tencent YunDing security lab has written a <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1165414">detailed advisory</a> about that, and also demonstrated how to exploit this vulnerability from arbitrary file reading to RCE on a real Jenkins site which found from <a target="_blank" rel="noopener" href="https://www.shodan.io/search?query=jenkins">Shodan</a>!  </p>
+<p>However, we are not going to discuss that in this blogs post. Instead, this post is about another vulnerability found while digging into Stapler framework in order to find a way to bypass the least privilege requirement <code>ANONYMOUS_READ=True</code> of CVE-2018-1999002! If you merely take a look at the advisory description, you may be curious – Is it reality to gain code execution with just a crafted URL?  </p>
+<p>From my own perspective, this vulnerability is just an Access Control List(ACL) bypass, but because this is a problem of the architecture rather than a single program, there are various ways to exploit this bug! In order to pay off the design debt, Jenkins team also takes lots of efforts (patches in <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/commit/47f38d714c99e1841fb737ad1005618eb26ed852">Jenkins side</a> and <a target="_blank" rel="noopener" href="https://github.com/stapler/stapler/commit/28e8eba822a0df9dcd64d20eb63d8ab5f6ee2980">Stapler side</a>) to fix that. The patch not only introduces a new routing blacklist and whitelist but also extends the original <a target="_blank" rel="noopener" href="https://wiki.jenkins.io/display/JENKINS/Plugins+affected+by+the+SECURITY-595+fix">Service Provider Interface (SPI)</a> to protect Jenkins’ routing. Now let’s figure out why Jenkins need to make such a huge code modification!  </p>
+<h1 id="Review-Scope"><a href="#Review-Scope" class="headerlink" title="Review Scope"></a>Review Scope</h1><p>This is not a complete code review (An overall security review takes lots of time…), so this review just aims at high impact bugs. The review scope includes:  </p>
+<ul>
+<li>Jenkins Core</li>
+<li>Stapler Web Framework</li>
+<li>Suggested Plugins</li>
+</ul>
+<p>During the installation, Jenkins asks whether you want to install suggested plugins such as Git, GitHub, SVN and Pipeline. Basically, most people choose yes, or they will get an inconvenient and hard-to-use Jenkins.  </p>
+<p><img src="/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/46396887771084cd-02.png"></p>
+<p><img src="/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/2d0578459d99d63d-03.png"></p>
+<h1 id="Privilege-Levels"><a href="#Privilege-Levels" class="headerlink" title="Privilege Levels"></a>Privilege Levels</h1><p>Because the vulnerability is an ACL bypass, we need to introduce the privilege level in Jenkins first! In Jenkins, there are different kinds of ACL roles, Jenkins even has a specialized plugin <a target="_blank" rel="noopener" href="https://plugins.jenkins.io/matrix-auth">Matrix Authorization Strategy Plugin</a>(also in the suggested plugin list) to configure the detailed permission per project. From an attacker’s view, we roughly classify the ACL into 3 types:  </p>
+<h2 id="1-Full-Access"><a href="#1-Full-Access" class="headerlink" title="1. Full Access"></a>1. Full Access</h2><p>You can fully control Jenkins. Once the attacker gets this permission, he can execute arbitrary Groovy code via <a target="_blank" rel="noopener" href="http://jenkins.local/script">Script Console</a>! </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print <span class="string">&quot;uname -a&quot;</span>.execute().text</span><br></pre></td></tr></table></figure>
+
+<p>This is the most hacker-friendly scenario, but it’s hard to see this configuration publicly now due to the increase of security awareness and lots of bots scanning all the IPv4.  </p>
+<h2 id="2-Read-only-Mode"><a href="#2-Read-only-Mode" class="headerlink" title="2. Read-only Mode"></a>2. Read-only Mode</h2><p>This can be enabled from the <a target="_blank" rel="noopener" href="http://jenkins.local/configureSecurity">Configure Global Security</a> and check the radio box:  </p>
+<blockquote>
+<p>Allow anonymous read access</p>
+</blockquote>
+<p>Under this mode, all contents are visible and readable. Such as agent logs and job&#x2F;node information. For attackers, the best benefit of this mode is the accessibility of a bunch of private source codes! However, the attacker cannot do anything further or execute Groovy scripts!  </p>
+<p>Although this is not the default setting, for DevOps, they may still open this option for automations. According to a little survey on <a target="_blank" rel="noopener" href="https://www.shodan.io/search?query=jenkins">Shodan</a>, there are about 12% servers enabled this mode! We will call this mode <code>ANONYMOUS_READ=True</code> in the following sections.  </p>
+<h2 id="3-Authenticated-Mode"><a href="#3-Authenticated-Mode" class="headerlink" title="3. Authenticated Mode"></a>3. Authenticated Mode</h2><p>This is the default mode. Without a valid credential, you can’t see any information! We will use <code>ANONYMOUS_READ=False</code> to call this mode in following sections.  </p>
+<h1 id="Vulnerability-Analysis"><a href="#Vulnerability-Analysis" class="headerlink" title="Vulnerability Analysis"></a>Vulnerability Analysis</h1><p>To explain this vulnerability, we will start with Jenkins’ <a target="_blank" rel="noopener" href="https://jenkins.io/doc/developer/handling-requests/routing/">Dynamic Routing</a>. In order to provide developers more flexibilities, Jenkins uses a naming convention to resolve the URL and invoke the method dynamically.  </p>
+<p>Jenkins first tokenizes all the URL by <code>/</code>, and begins from <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/jenkins/model/Jenkins.java">jenkins.model.Jenkins</a> as the entry point to match the token one by one. If the token matches (1)public class member or (2)public class method correspond to following naming conventions, Jenkins invokes recursively! </p>
+<blockquote>
+<ol>
+<li>get<token>()</li>
+<li>get<token>(String)</li>
+<li>get<token>(Int)</li>
+<li>get<token>(Long)</li>
+<li>get<token>(StaplerRequest)</li>
+<li>getDynamic(String, …)</li>
+<li>doDynamic(…)</li>
+<li>do<token>(…)</li>
+<li>js<token>(…)</li>
+<li>Class method with @WebMethod annotation</li>
+<li>Class method with @JavaScriptMethod annotation</li>
+</ol>
+</blockquote>
+<p>It looks like Jenkins provides developers a lot of flexibility. However, too much freedom is not always a good thing. There are two problems based on this naming convention!  </p>
+<h2 id="1-Everything-is-the-Subclass-of-java-lang-Object"><a href="#1-Everything-is-the-Subclass-of-java-lang-Object" class="headerlink" title="1. Everything is the Subclass of java.lang.Object"></a>1. Everything is the Subclass of <code>java.lang.Object</code></h2><p>In Java, everything is a subclass of <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html">java.lang.Object</a>. Therefore, all objects must exist the method - <code>getClass()</code>, and the name of <code>getClass()</code> just matches the naming convention rule <code>#1</code>! So the method <code>getClass()</code> can be also invoked during Jenkins dynamic routing!  </p>
+<h2 id="2-Whitelist-Bypass"><a href="#2-Whitelist-Bypass" class="headerlink" title="2. Whitelist Bypass"></a>2. Whitelist Bypass</h2><p>As mentioned before, the biggest difference between <code>ANONYMOUS_READ=True</code> and <code>ANONYMOUS_READ=False</code> is, if the flag set to <code>False</code>, the entry point will do one more check in <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/jenkins/model/Jenkins.java#L4682">jenkins.model.Jenkins#getTarget()</a>. The check is a white-list based URL prefix check and here is the list:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ImmutableSet&lt;String&gt; ALWAYS_READABLE_PATHS = ImmutableSet.of(</span><br><span class="line"><span class="string">&quot;/login&quot;</span>,</span><br><span class="line"><span class="string">&quot;/logout&quot;</span>,</span><br><span class="line"><span class="string">&quot;/accessDenied&quot;</span>,</span><br><span class="line"><span class="string">&quot;/adjuncts/&quot;</span>,</span><br><span class="line"><span class="string">&quot;/error&quot;</span>,</span><br><span class="line"><span class="string">&quot;/oops&quot;</span>,</span><br><span class="line"><span class="string">&quot;/signup&quot;</span>,</span><br><span class="line"><span class="string">&quot;/tcpSlaveAgentListener&quot;</span>,</span><br><span class="line"><span class="string">&quot;/federatedLoginService/&quot;</span>,</span><br><span class="line"><span class="string">&quot;/securityRealm&quot;</span>,</span><br><span class="line"><span class="string">&quot;/instance-identity&quot;</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>That means you are restricted to those entrances, but if you can find a cross reference from the white-list entrance jump to other objects, you can still bypass this URL prefix check! It seems a little bit hard to understand. Let’s give a simple example to demonstrate the dynamic routing:  </p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;jenkin.local&#x2F;adjuncts&#x2F;whatever&#x2F;class&#x2F;classLoader&#x2F;resource&#x2F;index.jsp&#x2F;content</p>
+</blockquote>
+<p>The above URL will invoke following methods in sequence!  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jenkins.model.Jenkins.getAdjuncts(<span class="string">&quot;whatever&quot;</span>) </span><br><span class="line">.getClass()</span><br><span class="line">.getClassLoader()</span><br><span class="line">.getResource(<span class="string">&quot;index.jsp&quot;</span>)</span><br><span class="line">.getContent()</span><br></pre></td></tr></table></figure>
+
+
+<p>This execution chain seems smooth, but sadly, it can not retrieve the result. Therefore, this is not a potential risk, but it’s still a good case to understand the mechanism!  </p>
+<p>Once we realize the principle, the remaining part is like solving a maze. <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/jenkins/model/Jenkins.java">jenkins.model.Jenkins</a> is the entry point. Every member in this object can references to a new object, so our work is to chain the object layer by layer till the exit door, that is, the dangerous method invocation!  </p>
+<p>By the way, the saddest thing is that this vulnerability cannot invoke the SETTER, otherwise this would definitely be another interesting classLoader manipulation bug just like <a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/WW/S2-020">Struts2 RCE</a> and <a target="_blank" rel="noopener" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-1622">Spring Framework RCE</a>!!  </p>
+<h1 id="How-to-Exploit"><a href="#How-to-Exploit" class="headerlink" title="How to Exploit?"></a>How to Exploit?</h1><p>How to exploit? In brief, the whole thing this bug can achieve is to use cross reference objects to bypass ACL policy. To leverage it, we need to find a proper gadget so that we can invoke the object we prefer in this object-forest more conveniently! Here we choose the gadget:  </p>
+<blockquote>
+<p>&#x2F;securityRealm&#x2F;user&#x2F;[username]&#x2F;descriptorByName&#x2F;[descriptor_name]&#x2F;</p>
+</blockquote>
+<p>The gadget will invoke following methods sequencely.  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jenkins.model.Jenkins.getSecurityRealm()</span><br><span class="line">.getUser([username])</span><br><span class="line">.getDescriptorByName([descriptor_name])</span><br></pre></td></tr></table></figure>
+
+
+<p>In Jenkins, all configurable objects will extend the type <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/hudson/model/Descriptor.java">hudson.model.Descriptor</a>. And, any class who extends the <code>Descriptor</code> type is accessible by method <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/hudson/model/DescriptorByNameOwner.java#L51">hudson.model.DescriptorByNameOwner#getDescriptorByName(String)</a>. In general, there are totally about 500 class types can be accessed! But due to the architecture of Jenkins. Most developers will check the permission before the dangerous action again. So even we can find a object reference to the <a target="_blank" rel="noopener" href="http://jenkins.local/script">Script Console</a>, without the permission <code>Jenkins.RUN_SCRIPTS</code>, we still can’t do anything :(  </p>
+<p>Even so, this vulnerability can still be considered as a stepping stone to bypass the first ACL restriction and to chain other bugs. We will show 3 vulnerability-chains as our case study! (Although we just show 3 cases, there are more than 3! If you are intersted, it’s highly recommended to find others by yourself :P )  </p>
+<p>P.S. It should be noted that in the method <code>getUser([username])</code>, it will invoke <code>getOrCreateById(...)</code> with <code>create</code> flag set to <code>True</code>. This result to the creation of a temporary user in memory(which will be listed in the user list but can’t sign in). Although it’s harmless, it is still recognized as a security issue in <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-10-10/">SECURITY-1128</a>.  </p>
+<h2 id="1-Pre-auth-User-Information-Leakage"><a href="#1-Pre-auth-User-Information-Leakage" class="headerlink" title="1. Pre-auth User Information Leakage"></a>1. Pre-auth User Information Leakage</h2><p>While testing Jenkins, it’s a common scenario that you want to perform a brute-force attack but you don’t know which account you can try(a valid credential can read the source at least so it’s worth to be the first attempt).  </p>
+<p>In this situation, this vulnerability is useful!  </p>
+<p>Due to the lack of permission check on search functionality. By modifying the <code>keyword</code> from a to z, an attacker can list all users on Jenkins!</p>
+<h3 id="PoC"><a href="#PoC" class="headerlink" title="PoC:"></a>PoC:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://jenkins.local/securityRealm/user/admin/search/index?q=[keyword]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/e5a65f6f70c9919d-04.png"></p>
+<p>Also, this vulnerability can be also chained with <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2017-10-11/#user-remote-api-disclosed-users-email-addresses">SECURITY-514</a> which reported by <code>Ananthapadmanabhan S R</code> to leak user’s email address! Such as:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://jenkins.local/securityRealm/user/admin/api/xml</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-Chained-with-CVE-2018-1000600-to-a-Pre-auth-Fully-responded-SSRF"><a href="#2-Chained-with-CVE-2018-1000600-to-a-Pre-auth-Fully-responded-SSRF" class="headerlink" title="2. Chained with CVE-2018-1000600 to a Pre-auth Fully-responded SSRF"></a>2. Chained with CVE-2018-1000600 to a Pre-auth Fully-responded SSRF</h2><p>The next bug is <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-06-25/#SECURITY-915">CVE-2018-1000600</a>, this bug is reported by <a target="_blank" rel="noopener" href="https://twitter.com/orange_8361">Orange Tsai</a>(Yes, it’s me :P). About this vulnerability, the official description is:  </p>
+<blockquote>
+<p>CSRF vulnerability and missing permission checks in GitHub Plugin allowed capturing credentials</p>
+</blockquote>
+<p>It can extract any stored credentials with known credentials ID in Jenkins. But the credentials ID is a random UUID if there is no user-supplied value provided. So it seems impossible to exploit this?(Or if someone know how to obtain credentials ID, please tell me!)  </p>
+<p>Although it can’t extract any credentials without known credentials ID, there is still another attack primitive - a fully-response SSRF! We all know how hard it is to exploit a Blind SSRF, so that’s why a fully-responded SSRF is so valuable!  </p>
+<h3 id="PoC-1"><a href="#PoC-1" class="headerlink" title="PoC:"></a>PoC:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://jenkins.local/securityRealm/user/admin/descriptorByName/org.jenkinsci.plugins.github.config.GitHubTokenCredentialsCreator/createTokenByPassword</span><br><span class="line">?apiUrl=http://169.254.169.254/%23</span><br><span class="line">&amp;login=orange</span><br><span class="line">&amp;password=tsai</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/23238cd39a889cf1-05.png"></p>
+<h2 id="3-Pre-auth-Remote-Code-Execution"><a href="#3-Pre-auth-Remote-Code-Execution" class="headerlink" title="3. Pre-auth Remote Code Execution"></a>3. Pre-auth Remote Code Execution</h2><blockquote>
+<p>PLEASE DON’T BULLSHIT, WHERE IS THE RCE!!!</p>
+</blockquote>
+<p>In order to maximize the impact, I also find an <strong>INTERESTING</strong> remote code execution can be chained with this vulnerability to a well-deserved pre-auth RCE! But it’s still on the responsible disclosure process. Please wait and see the Part 2! (Will be published on Mid-February :P)  </p>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><p>Here is my todo list which can make this vulnerability more perfect. If you find any of them please tell me, really appreciate it :P  </p>
+<ul>
+<li>Get the <code>Plugin</code> object reference under <code>ANONYMOUS_READ=False</code>. If this can be done, it can bypass the ACL restriction of <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-07-18/#SECURITY-914">CVE-2018-1999002</a> and <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-02-14/#SECURITY-705">CVE-2018-6356</a> to a indeed pre-auth arbitrary file reading!</li>
+<li>Find another gadget to invoke the method <code>getDescriptorByName(String)</code> under <code>ANONYMOUS_READ=False</code>. In order to fix <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-08-15/#SECURITY-672">SECURITY-672</a>, Jenkins applies a <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/hudson/model/User.java#L1026">check</a> on <a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins/blob/master/core/src/main/java/hudson/model/User.java">hudson.model.User</a> to ensure the least privilege <code>Jenkins.READ</code>. So the original gadget will fail after Jenkins version 2.138.</li>
+</ul>
+<h1 id="Acknowledgement"><a href="#Acknowledgement" class="headerlink" title="Acknowledgement"></a>Acknowledgement</h1><p>Thanks Jenkins Security team especially Daniel Beck for the coordination and bug fixing! Here is the brief timeline:  </p>
+<ul>
+<li>May 30, 2018 - Report vulnerabilities to Jenkins</li>
+<li>Jun 15, 2018 - Jenkins patched the bug and assigned CVE-2018-1000600</li>
+<li>Jul 18, 2018 - Jenkins patched the bug and assigned CVE-2018-1999002</li>
+<li>Aug 15, 2018 - Jenkins patched the bug and assigned CVE-2018-1999046</li>
+<li>Dec 05, 2018 - Jenkins patched the bug and assigned CVE-2018-1000861</li>
+<li>Dec 20, 2018 - Report Groovy vulnerability to Jenkins</li>
+<li>Jan 08, 2019 - Jenkins patched Groovy vulnerability and assigned CVE-2019-1003000, CVE-2019-1003001 and CVE-2019-1003002</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

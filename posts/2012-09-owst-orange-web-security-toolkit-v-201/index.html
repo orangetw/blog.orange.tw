@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="DEBUG 還記得這篇文章嗎 &lt;http:&#x2F;&#x2F;orange-tw.blogspot.tw&#x2F;2011&#x2F;05&#x2F;project-web-security-toolkit.html&gt;   當初說 2.0 版本就 release 出來，現在來還願了XDD  當初只是因為自己在工作上做滲透測試常常會要做的一些重複的事情想說寫個 script 來解決，並且想說寫個 GUI 比較好看，就生出來的小產品">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OWST - Orange Web Security Toolkit v 2.01">
+<meta property="og:url" content="http://blog.orange.tw/posts/2012-09-owst-orange-web-security-toolkit-v-201/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="DEBUG 還記得這篇文章嗎 &lt;http:&#x2F;&#x2F;orange-tw.blogspot.tw&#x2F;2011&#x2F;05&#x2F;project-web-security-toolkit.html&gt;   當初說 2.0 版本就 release 出來，現在來還願了XDD  當初只是因為自己在工作上做滲透測試常常會要做的一些重複的事情想說寫個 script 來解決，並且想說寫個 GUI 比較好看，就生出來的小產品">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2012-09-owst-orange-web-security-toolkit-v-201/0aee4f0ba25a94fe-01.jpg">
+<meta property="article:published_time" content="2012-09-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T05:45:24.629Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2012-09-owst-orange-web-security-toolkit-v-201/0aee4f0ba25a94fe-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>OWST - Orange Web Security Toolkit v 2.01 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        OWST - Orange Web Security Toolkit v 2.01
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2012-09-17T16:00:00.000Z" class="dt-published" itemprop="datePublished">2012-09-18</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a href="https://blog.orange.tw//2012/09/owst-orange-web-security-toolkit-v-201.html">DEBUG</a></p>
+<p>還記得這篇文章嗎</p>
+<pre><code>&lt;http://orange-tw.blogspot.tw/2011/05/project-web-security-toolkit.html&gt; 
+</code></pre>
+<p>當初說 2.0 版本就 release 出來，現在來還願了XDD</p>
+<p><img src="/posts/2012-09-owst-orange-web-security-toolkit-v-201/0aee4f0ba25a94fe-01.jpg"></p>
+<p>當初只是因為自己在工作上做滲透測試常常會要做的一些重複的事情想說寫個 script 來解決，並且想說寫個 GUI 比較好看，就生出來的小產品</p>
+<p>( 後來發現最初的版本還躺在硬碟裡，用VB寫的好蠢好可愛XD )</p>
+<p>後來陸陸續續加上 SQL Injection 弱點診斷以及自動化，接著就越寫越有興趣、越寫越大了</p>
+<p>上面那篇文章發完後就擺爛放了一年左右沒在動了哈哈</p>
+<p>最近又因為某些機緣重新開始整理 code</p>
+<p>主要改進了</p>
+<ol>
+<li>架構整體調整、以及大幅度的重構，一年後再來看自己寫的 code 會發現當初很多地方設計不良以及很容易出錯等</li>
+<li>把一些比較不常用到的功能移除，當初設計目的只是為了自己方便，太進階或者太少用到的功能實根本靠自己會比用工具更快，不然給人看一堆看不懂的東西也沒用XD</li>
+<li>加入新功能</li>
+</ol>
+<p>程式使用 Python + wxPython 寫成，最後使用 py2exe 打包成可執行ㄉㄤ</p>
+<p>用到的 Library 都是 LGPL 以及 BSD 授權</p>
+<p>主要用途:</p>
+<ol>
+<li>快速檢測自己的 Web Application 是否存在一些不該洩漏的敏感性資訊</li>
+<li>自動化 &#x2F; 半自動化的 SQL Injection 檢測工具</li>
+<li>對於 Web Sec 中 SQL Injection 這塊有興趣的人提供一個 sample 測試流程以供學習</li>
+</ol>
+<p>目前支援:</p>
+<ol>
+<li>網站敏感目錄、具有危險性的路徑檢查</li>
+<li>基本編碼以及解碼</li>
+<li>半自動化 SQL Injection ( 全自動化的暫時不加上 )</li>
+<li>SQL Injection 支援</li>
+</ol>
+<ul>
+<li>ACCESS</li>
+<li>MYSQL Union</li>
+<li>MYSQL Error Based</li>
+<li>MYSQL Blind</li>
+<li>MSSQL Error Based</li>
+<li>MSSQL Blind</li>
+<li>ORACLE Error Based</li>
+<li>ORACLE Blind</li>
+<li>ORACLE UTL_HTTP</li>
+</ul>
+<ol start="6">
+<li>額外功能支援</li>
+</ol>
+<ul>
+<li>MYSQL load_file</li>
+<li>MYSQL into outfile</li>
+<li>MSSQL xp_dirtree</li>
+<li>MSSQL xp_cmdshell</li>
+<li>PHP eval connector</li>
+<li>ASP eval&#x2F;execute connector</li>
+<li>Struts2 Code Execution</li>
+</ul>
+<ol start="8">
+<li>針對常見 401 Authorization, Web login page 進行 bruteforce</li>
+<li>支援 Multithread, Proxy, Socks5 … 等等一堆雜項</li>
+</ol>
+<p>相關 Documentation 可以參考這篇</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.slideshare.net/p8361/orange-web-security-toolkit-documentation">http://www.slideshare.net/p8361/orange-web-security-toolkit-documentation</a></li>
+</ul>
+<p>接著是聲明:</p>
+<blockquote>
+<p>***此軟體設計為網頁撰寫、管理人員上自我檢測以及教育用途</p>
+<p>禁止用在非法的行為上，如有非法的行為後果自行承擔，</p>
+<p>在文後提供的下載頁面上也必須經過上述同意才允以下載、使用。***</p>
+</blockquote>
+<p>接著是一些技術細節XD</p>
+<p>在 Settings 下有個 “Debug Mode” 將它開啟的話可以將每個 HTTP Request 中 GET 的網址以及 POST 出去的資料印出</p>
+<p>想學習的人可以自己架設一個具有弱點的網站，之後觀察程式是如何進行檢測的。</p>
+<p>一開始在寫的時候以為很簡單，可以很快的完成，</p>
+<p>但越寫越發現中間的眉眉角角太多了，</p>
+<p>每一個網址就是一個新的環境，要怎麼設計一個 SQL 語句在所有的環境下都可以通用、取得對的資料？</p>
+<p>甚至 Access Database 還有 Race Condition 的問題存在XD</p>
+<p>Python 處理編碼也讓我一個頭兩個大XDD</p>
+<ol>
+<li>ACCESS 的話透過 EXISTS 以及 asc, mid 來進行 Blind Injection 相信已經講到爛掉了XD</li>
+<li>MYSQL 的話則是透過 information_schema 取得相對應的 schema, tables 以及 columns</li>
+<li>MYSQL 可以透過 group_concat, concat_ws 來快速獲取資料</li>
+<li>MYSQL 可以透過 unhex( hex(data) ) 的方式來 bypass 一些 illegal mix of collection 的問題</li>
+<li>MYSQL Error Based 的話可以參考我之前的文章，透過 Duplicate 的方式取得資料</li>
+</ol>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://orange-tw.blogspot.tw/2011/08/sql-injection.html">http://orange-tw.blogspot.tw/2011/08/sql-injection.html</a></li>
+</ul>
+<ol start="7">
+<li>MSSQL 的話相信教學文很多，比較 tricky 的點在於怎麼樣在 Injection 中不重複的取得整個 table 的資料? (MSSQL 沒有 limit, rownum 只能使用 subquery，該用 order by 呢還是用 where not in? )</li>
+<li>MSSQL sysdatabases, sysobjects, syscolumns 甚至 information_schema 都是可利用的</li>
+<li>ORACLE Error Based 使用 utl_addr.get_host_address 來使得錯誤資訊出現</li>
+<li>ORACLE 透過 utl_http.request 之後使用 socket 去接回傳的資料。</li>
+<li>401 Authorization 部分可以很簡單的判斷 status !&#x3D; 401 等於帳號密碼合法，但是一般的 Web login page 就很難判斷了，從判斷是否有 Set-Cookie, Location 等 header 到判斷回傳的網頁是否有關鍵字等， 這部分就寫的比較弱一點</li>
+<li>Struts2 Code Execution 則是因為這個弱點太火紅而加上去的XD</li>
+</ol>
+<p>這些都可以在 Debug Mode 下看到，有興趣學習的人可以慢慢去觀察！</p>
+<p>Tips:</p>
+<ul>
+<li>在 Windows XP 下顯示錯誤無法開啟，請安裝 VC Runtime library 2008</li>
+<li>軟體尚在未成熟階段，有錯誤歡迎回報 ( 回覆本文或是 mail 給我皆可 )</li>
+</ul>
+<p>最後附上載點嚕～</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

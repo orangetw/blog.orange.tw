@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="HITCON 周結束，終於有個時間可以來寫寫個日記，順便記錄一下今年出征的一些記錄  ，這種感覺有點像是電競選手（ 不過比的是駭客技巧就是了XD ）   感謝所有參與的隊友們、以及提供幫助的各位朋友、前輩，以及全額贊助 HITCON 去 Las Vegas 比賽的趨勢科技 （ 幾十個人來回的 Las Vegas 機票真的不便宜… ）。 這邊讓我一一感謝一下強者我隊友們！（排名不分先後xD）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITCON Won the 2nd in DEFCON 22 CTF Final">
+<meta property="og:url" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="HITCON 周結束，終於有個時間可以來寫寫個日記，順便記錄一下今年出征的一些記錄  ，這種感覺有點像是電競選手（ 不過比的是駭客技巧就是了XD ）   感謝所有參與的隊友們、以及提供幫助的各位朋友、前輩，以及全額贊助 HITCON 去 Las Vegas 比賽的趨勢科技 （ 幾十個人來回的 Las Vegas 機票真的不便宜… ）。 這邊讓我一一感謝一下強者我隊友們！（排名不分先後xD）">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/a8eda9c1952b5e35-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/0cfaf5a6b28a6e72-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/dff7085c6d41f137-03.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/bd64d9733871d066-04.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/8441ac4daa3f6aab-05.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/eef4fbef1731ca2f-06.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/db7ef27de32fdce8-07.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/cd306c14973df1ad-08.jpg">
+<meta property="article:published_time" content="2014-08-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:13:41.655Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/a8eda9c1952b5e35-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>HITCON Won the 2nd in DEFCON 22 CTF Final | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HITCON Won the 2nd in DEFCON 22 CTF Final
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-08-25T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-08-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/a8eda9c1952b5e35-01.png" alt="preview"></p>
+<p><a target="_blank" rel="noopener" href="http://hitcon.org/">HITCON</a> 周結束，終於有個時間可以來寫寫個日記，順便記錄一下今年出征的一些記錄  ，這種感覺有點像是電競選手（ 不過比的是駭客技巧就是了XD ）  </p>
+<p>感謝所有參與的隊友們、以及提供幫助的各位朋友、前輩，以及全額贊助 HITCON 去 Las Vegas 比賽的<a target="_blank" rel="noopener" href="http://blog.trendmicro.com.tw/?p=9116">趨勢科技</a> （ 幾十個人來回的 Las Vegas 機票真的不便宜… ）。 這邊讓我一一感謝一下強者我隊友們！（排名不分先後xD）  </p>
+<ul>
+<li>Sean, Jeffxx, Atdog, Ddaa, Lucas 隊伍中的最主要負責找漏洞的神手，沒有他們我們的攻擊能力絕對不可能那麼強</li>
+<li>Jerry 隊伍的防護全部靠他了，甚至強到只要看到攻擊形式就可以把未知的漏洞給修補起來！（順道一提這位強者現在才大二喲！）</li>
+<li>Shik, Peter 兩位 ACM World Final 神手，除了分析外，比賽中只要把攻擊代碼給他們，接下來就可以自動得分了，另外這次 DEFCON 的比賽有道題目是必須要跟演算法有關，有個他們兩個根本就 OP！</li>
+<li>DM4 比賽主機的狀況幾乎都是他在顧的，他寫 script 程式的質量速度真的讓人驚歎！（ 可惡是 Ruby 派XD ）</li>
+</ul>
+<p>當然並不是所有隊員只做一件事，大部份的狀況都是一個隊員要身兼多職，分析 pcap 啦、顧主機、找洞啦等  </p>
+<p>HITCON 隊伍從初賽的臨時抱佛腳賽進決賽名單，到最後成功獲得世界最大比賽 DEFCON CTF 的亞軍，到現在還是很難以相信。  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/0cfaf5a6b28a6e72-02.png"></p>
+<p>相關比賽紀錄可以參考：  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://ddaa.logdown.com/posts/200443-defcon-22-quals-babys-first-heap">Defcon 22 Quals Baby’s First heap</a> by Ddaa</li>
+<li><a href="http://blog.orange.tw/2014/05/defcon-ctf-quals-2014-nonameyet-write-up.html">Defcon CTF Quals 2014 - Nonameyet write up</a> by Orange</li>
+<li><a target="_blank" rel="noopener" href="http://www.jeffxx.com/blog/2014/05/19/defcon-ctf-22-qual-sick-writeup/">Defcon 22 Qual Sick Writeup</a> by Jeffxx （ 也為最後一小時打入決賽驚險記錄 ）</li>
+</ul>
+<h1 id="百度-BCTF"><a href="#百度-BCTF" class="headerlink" title="百度 BCTF"></a>百度 BCTF</h1><p>出征的第一場，是參加由中國百度所主辦的 <a target="_blank" rel="noopener" href="http://bctf.cn/">BCTF</a> 為 HITCON （ 原 HITCON 217 ）的前哨戰，做為第一次參加的正式 Attack &amp; Defense 比賽，很大程度上讓我們體驗了 DEFCON CTF 的規則，驗證了許多原本的猜想，也在此場戰役中發想出了許多 Idea 在後面的 DEFCON CTF 都有被我們給用上，也可以說是「如果沒有這場比賽的熟悉，直接到了 DEFCON CTF 現場應該會手忙腳亂吧XD」  </p>
+<p>（ 主辦方技術支持 Blue Lotus，picture from <a target="_blank" rel="noopener" href="https://www.facebook.com/alan2nala">Alan</a> ）  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/dff7085c6d41f137-03.jpg"></p>
+<p>比賽間，在第一天我們順利找出 secret-guard 題目的 0day 造成分數爬升的差距使得後面隊伍無法追趕，也因為有了先手優勢使我們可以在此場戰役中取得冠軍！  </p>
+<p>在最後一天有個隊伍試圖想對我們使用 fork bomb 來個奮力一搏，不過我們在他們要使用前修補了漏洞XD  </p>
+<p>以及由於第二天分數相差懸殊，使得我們可以在多餘的時間去實作以及分析其他的技巧的可行性，例如  </p>
+<ol>
+<li>分析其他隊伍的修補是否完整，是否有可以繞過的地方。</li>
+<li>在其他隊伍的 Gamebox 上架 socks server</li>
+<li>分析其他隊伍如何防護等</li>
+</ol>
+<p>在此也認識了些聊得來的中國朋友，算是意外的收獲～  </p>
+<h1 id="SECUINSIDE-CTF-FINAL"><a href="#SECUINSIDE-CTF-FINAL" class="headerlink" title="SECUINSIDE CTF FINAL"></a>SECUINSIDE CTF FINAL</h1><p>出征的第二場，是由韓國 <a target="_blank" rel="noopener" href="http://ls-al.org/">ASRT</a> 所主辦的 <a target="_blank" rel="noopener" href="http://secuinside.com/2014/">SECUINSIDE</a> CTF Final，在韓國首爾所舉辦，採用的是 Jeopardy 解題形的方式，作為資安大國的韓國，SECUINSIDE 獎金也是世界最多，第一名可得 88 萬台幣，也開始在韓國知道、認識到世界上的一些強隊，如 9447 是 Australia 的一個學校社團，隊員中竟然還有女生（ 連 DEFCON CTF Final 都有出現，好像真的滿厲害的xD ），韓國 BOB 計劃培養出來的隊伍，看到老外跟老外之前好像都是認識的一樣，有點反省自己的英文水平還是不好  </p>
+<p>決賽共十隊參賽，在這次的比賽中 HITCON 隊伍表現並不如預期，尋找弱點的速度輸其他隊伍、相關的平台也沒準備好，如  </p>
+<ol>
+<li>IOS App Reversing</li>
+<li>Windows 8 App Reversing</li>
+<li>SPARC pwn</li>
+<li>…</li>
+</ol>
+<p>題目中還看到李家同教授的 DNA Crypto 理論，在比賽途中沒人解出時主辦單位還直接貼<a target="_blank" rel="noopener" href="http://algo2006.csie.dyu.edu.tw/paper/2/A21.pdf">論文</a>上來，不過總體來說從這場戰役中體驗到我們的差距仍然距離世界等級有一段差距，如  </p>
+<ol>
+<li>此場比賽中的冠軍，是由天才駭客 Geohot 一個人所組的隊伍 tomcr00se 抱走 88 萬</li>
+<li>日本隊伍 Binja 在此場戰役中取得了進入之前在 DEFCON CTF 初賽無法取得的決賽門票，有題我們一直無法解出的 300 分 pwn 題目，還是由一名日本天才高中生解出</li>
+<li>也有看到某隊伍 Skype 視窗好多人啦XD</li>
+</ol>
+<p>比賽途中也有一些趣事如 BalalaikaCr3w 這個隊伍在嘗試送 Key 時送太快造成主辦單位 Race Condition 所以 200 分的題目可以送兩次變 400 分XD 以及主辦單位特地幫各個國家準備隊伍名稱配上國旗的大帆布看到也真是太感動！  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/bd64d9733871d066-04.jpg"></p>
+<p>相關比賽紀錄可以參考：  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://blog.dm4.tw/blog/2014/07/13/secuinside-2014-final-writeup-reversing-100/">SECUINSIDE CTF Finals 2014 Writeup - Reversing 100</a> by DM4</li>
+</ul>
+<h1 id="DEFCON-CTF-FINAL"><a href="#DEFCON-CTF-FINAL" class="headerlink" title="DEFCON CTF FINAL"></a>DEFCON CTF FINAL</h1><p>由美國 <a target="_blank" rel="noopener" href="http://legitbs.net/">LEGITBS</a> 所主辦的 DEFCON CTF  ，也是世界上相關比賽中最出名的一個，被喻為是駭客界的奧林匹克，由  </p>
+<ul>
+<li>DEFCON 初賽選出前十二名隊伍</li>
+<li>世界上各區域種子賽的冠軍共八隊</li>
+</ul>
+<p>共 20 隊，比賽也是採取 Attack &amp; Defense 形式，共三天。 在比賽中，我們一直無法搞定網路環境  </p>
+<p>（ 需要可以支援 VLAN tag 999 的機器 ）  </p>
+<p>後來跟其他隊伍交流，聽說 Blue Lotus 還特地去買了個 Switch 還不能用XD，另外個隊伍就比較土豪說他們直接用 Mac Mini 當 Router 來用xDDD  </p>
+<p>這就是我們這三天要拼死要保護的主機，並且要想盡辦法入侵同樣別人的這台主機  </p>
+<p>（ picture from <a target="_blank" rel="noopener" href="https://www.facebook.com/alan2nala">Alan</a> ）  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/8441ac4daa3f6aab-05.jpg"></p>
+<p>DEFCON 同時也會世界最大知名駭客研討會，三、四天的行程吸引了萬人以上不論駭客、鎖匠、教授、資安專家等齊聚 Las Vegas，下面則是入場門牌，一張 200 還 220 美金XD  </p>
+<p>「DO NOT OBEY」也是這次這次 Badge 的標語，整個也很符合駭客的習性xD  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/eef4fbef1731ca2f-06.jpg"></p>
+<p>比賽中有幾個特別的成就我這邊列一下，  </p>
+<h2 id="1-HITCON-隊伍為全場三天內第一個取得分數的隊伍，主辦單位為此顯示-First-Blood-於螢幕上"><a href="#1-HITCON-隊伍為全場三天內第一個取得分數的隊伍，主辦單位為此顯示-First-Blood-於螢幕上" class="headerlink" title="1. HITCON 隊伍為全場三天內第一個取得分數的隊伍，主辦單位為此顯示 First Blood 於螢幕上"></a>1. HITCON 隊伍為全場三天內第一個取得分數的隊伍，主辦單位為此顯示 First Blood 於螢幕上</h2><p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/db7ef27de32fdce8-07.jpg"></p>
+<h2 id="2-結束時被冠軍-PPP-過來除了詢問-Eliza-的-exploit-如何撰寫外，使用的後門形式還被稱讚「Your-crontab-is-so-cute-」"><a href="#2-結束時被冠軍-PPP-過來除了詢問-Eliza-的-exploit-如何撰寫外，使用的後門形式還被稱讚「Your-crontab-is-so-cute-」" class="headerlink" title="2. 結束時被冠軍 PPP 過來除了詢問 Eliza 的 exploit 如何撰寫外，使用的後門形式還被稱讚「Your crontab is so cute.」"></a>2. 結束時被冠軍 PPP 過來除了詢問 Eliza 的 exploit 如何撰寫外，使用的後門形式還被稱讚「Your crontab is so cute.」</h2><h2 id="3-從-Youtube-可以看出在這段時間內，我們-HITCON-是唯一可以吃到-PPP-分數的一隊"><a href="#3-從-Youtube-可以看出在這段時間內，我們-HITCON-是唯一可以吃到-PPP-分數的一隊" class="headerlink" title="3. 從 Youtube 可以看出在這段時間內，我們 HITCON 是唯一可以吃到 PPP 分數的一隊"></a>3. 從 Youtube 可以看出在這段時間內，我們 HITCON 是唯一可以吃到 PPP 分數的一隊</h2><iframe allowfullscreen="" frameborder="0" height="315" src="//www.youtube.com/embed/1UT3qXHduts" width="420"></iframe>  
+
+
+<h2 id="最後是所有隊友的合作無間"><a href="#最後是所有隊友的合作無間" class="headerlink" title="最後是所有隊友的合作無間!"></a>最後是所有隊友的合作無間!</h2><p>在比賽第二天的下午到最後一天結束，在被冠軍 PPP 強力猛攻的時期培養出了一個 SOP 流程  </p>
+<ol>
+<li>發現被攻擊，立即記錄下何時於哪個服務失分</li>
+<li>立即有人馬分析封包流量，找出其他隊伍所使用的 exploit 並嘗試 Replay</li>
+<li>如無法成功則送至另外一組人馬手上分析，</li>
+<li>從 exploit 大致分析為何種攻擊方式，並且交給負責的人為自己的服務上 Patch</li>
+<li>將此 exploit 寫成自動化攻擊程式</li>
+</ol>
+<p>所以在比賽後半場，大家都在緊張兮兮深怕 Skype 有訊息跳出來，因為只要一有訊息跳出來則可能代表，又被其他隊伍攻擊成功了，這兩天所消耗的精神真得滿可觀的。  </p>
+<p>PPP 為冠軍真的當之無愧，除了第二天下午發現的 justify 0day 外，還有 wdub, imap 一直連打（ 雖可以 justify replay ，但目測有 ASLR 約 200 ~ 300 次約才有一次成功 ）  </p>
+<p>連唯一的 Badge 題，雖然在比賽中 PPP 沒有成功利用，但事後 <a target="_blank" rel="noopener" href="https://legitbs.net/2014/">LegitBS</a> 敘述 PPP 是有成功做出這題的 exploit 的，但是由於他們設計 Badge 題目的錯誤使得 IP 網段在 10.5.0.??? 的 PPP 無法成功取得分數（ 估計是 Null byte 問題 XD ）  </p>
+<p>事後想想，第三天快結束時， 由於 HITCON 隊伍剛好是以四強的身分坐在 PPP 對面，我的正對面就是 Geohot，那時他突然大吼了一聲，現在想起來也許就是完成 Badger exploit 的感覺，真的是 Never Give Up。  </p>
+<p>（ picture from <a target="_blank" rel="noopener" href="https://legitbs.net/2014/">Legitbs</a> ）  </p>
+<p><img src="/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/cd306c14973df1ad-08.jpg"></p>
+<p>比賽最後五分鐘，主辦單位放起了 Europe 的 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9jK-NcRmVcw">The Final Countdown</a>，除了歌曲剛好倒數五分鐘外，最後結束全場的歡呼拍手有了個努力三天有個完美 Ending 的感覺。  </p>
+<p>比賽的冠軍根據傳統會得到八張黑色 DEFCON Badge，也就是傳說中的 DEFCON 黑卡，憑此卡可以每年免費進入 DEFCON 會場，亞軍以下就沒有什麼獎品了，純粹是知名度！  </p>
+<p>（去年亞軍還有比賽用的 ARM 開發版的說xDD）  </p>
+<p>其他關於 DEFCON CTF Final 心得可以參考：  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.jeffxx.com/blog/2014/08/13/2014-defcon-22-final-can-sai-xin-de-shang/">Defcon 22 Final HITCON 參賽心得 (上)</a> by Jeffxx</li>
+<li><a target="_blank" rel="noopener" href="http://ddaa.logdown.com/posts/220500-defcon-22-ctf-diaries">defcon 22 CTF final diaries</a> by Ddaa</li>
+</ul>
+<hr>
+<p>最後的結語，來點感嘆  </p>
+<p>在 HITCON ENT 跟中國朋友聊到，有個現象，做二進制 Binary 的看不起做 Web、做滲透的，做 Web、滲透的覺得看到做二進制的就很屌。  </p>
+<p>做 Web、滲透除了技能是基本功必要具備外，更多的是技巧（Trick）的了解、想像力以及對於資訊的敏感度，但很多的人以為技巧就是技巧，沒什麼  </p>
+<p>引用一下 「<a target="_blank" rel="noopener" href="http://taosay.net/index.php/2013/02/27/%E4%B8%AD%E5%9B%BD%E9%BB%91%E5%AE%A2%E4%BC%A0%E8%AF%B4%EF%BC%9A%E6%88%91%E6%98%AF%E8%B6%85%E7%BA%A7%E9%BB%91/">中國黑客傳說：我是超級黑</a>」中的文句如是說，  </p>
+<blockquote>
+<p>「技巧也要點一下你才會通啊，不點你可能永遠也通不了」</p>
+</blockquote>
+<p>以同樣難度的題目為例，Binary 可能要花時間分析就可以有結果，Web 只要懂個比較少人懂的 Trick 就可以馬上得分，而且往往有更多的Web 技巧、滲透技巧是無法以 CTF 題目的方式呈現的的，但這樣看下來，好像做 Binary 的就比較厲害，做 Web 或是滲透的就因為花的時間少比較不受重視 :(  </p>
+<p>不可否認的，如果是從資安要入門很多人會推薦從 Web Security 入門，因為是簡單快速能有成就感的一門科目，我也這麼推薦，比起如 Pwnable 或是 Reversing 等需要大量基礎知識的學科，Web 這方便真的相對好入門，以學習曲線舉例會如  </p>
+<p>Web Security、滲透一開始的學期曲線低，但後期的曲線相對是直線攀升的  </p>
+<p>（所以很多人會覺得自己做 Web 或是滲透卡在高不成、低不就的階段）  </p>
+<p>Binary 相關一開始的學習難度高、曲線高，但後期只要努力便可以穩定爬升  </p>
+<p>但很多人只看到好入門這邊做文章，與簡單沒技術畫上等號，然後看到 Kernel、Ring0、組語等就高潮了。  </p>
+<p>（好像在某些地方也有這種現象…）  </p>
+<p>最後 HITCON 隊伍需要各方好手加入，歡迎你們！  </p>
+<p>附上此次<a target="_blank" rel="noopener" href="http://imagingimage.blogspot.tw/">亮相館</a>為本次比賽所拍的紀錄片  </p>
+<iframe allowfullscreen="" frameborder="0" height="315" src="//www.youtube.com/embed/XcneHvq1hbY" width="420"></iframe>  
+
+
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

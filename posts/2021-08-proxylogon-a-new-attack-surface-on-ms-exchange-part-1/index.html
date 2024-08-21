@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="The series of A New Attack Surface on MS Exchange:  A New Attack Surface on MS Exchange Part 1 - ProxyLogon! A New Attack Surface on MS Exchange Part 2 - ProxyOracle! A New Attack Surface on MS Excha">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A New Attack Surface on MS Exchange Part 1 - ProxyLogon!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="The series of A New Attack Surface on MS Exchange:  A New Attack Surface on MS Exchange Part 1 - ProxyLogon! A New Attack Surface on MS Exchange Part 2 - ProxyOracle! A New Attack Surface on MS Excha">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/25374ccc984c5130-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/7e8c21379878e30d-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/d5b300df5f12a9d2-03.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1ad777cc74d67c2c-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1e724de07cf0e217-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/9493ce131add5a0b-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1223ec870a2992e1-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/f87597a24014a226-08.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/c061652bcf8aaa44-09.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/3178d2f1fc318557-10.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/445487485f433399-11.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/5c44e4e6ea1b8733-12.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/c9fc1df20dc4344b-13.png">
+<meta property="article:published_time" content="2021-08-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:09:55.365Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/25374ccc984c5130-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>A New Attack Surface on MS Exchange Part 1 - ProxyLogon! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        A New Attack Surface on MS Exchange Part 1 - ProxyLogon!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-08-05T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-08-06</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/25374ccc984c5130-01.png" alt="preview"></p>
+<p>The series of A New Attack Surface on MS Exchange:</p>
+<ul>
+<li><a href="https://blog.orange.tw/2021/08/proxylogon-a-new-attack-surface-on-ms-exchange-part-1.html">A New Attack Surface on MS Exchange Part 1 - ProxyLogon!</a></li>
+<li><a href="https://blog.orange.tw/2021/08/proxyoracle-a-new-attack-surface-on-ms-exchange-part-2.html">A New Attack Surface on MS Exchange Part 2 - ProxyOracle!</a></li>
+<li><a href="https://blog.orange.tw/2021/08/proxyshell-a-new-attack-surface-on-ms-exchange-part-3.html">A New Attack Surface on MS Exchange Part 3 - ProxyShell!</a></li>
+<li><a href="https://blog.orange.tw/2022/10/proxyrelay-a-new-attack-surface-on-ms-exchange-part-4.html">A New Attack Surface on MS Exchange Part 4 - ProxyRelay!</a></li>
+</ul>
+<p>Microsoft Exchange, as one of the most common email solutions in the world, has become part of the daily operation and security connection for governments and enterprises. This January, we reported a series of vulnerabilities of Exchange Server to Microsoft and named it as <a target="_blank" rel="noopener" href="https://proxylogon.com/">ProxyLogon</a>. ProxyLogon might be the most severe and impactful vulnerability in the Exchange history ever. If you were paying attention to the industry news, you must have heard it.</p>
+<p>While looking into ProxyLogon from the architectural level, we found it is not just a vulnerability, but an attack surface that is totally new and no one has ever mentioned before. This attack surface could lead the hackers or security researchers to more vulnerabilities. Therefore, we decided to focus on this attack surface and eventually found at least 8 vulnerabilities. These vulnerabilities cover from server side, client side, and even crypto bugs. We chained these vulnerabilities into 3 attacks: </p>
+<ol>
+<li>ProxyLogon: The most well-known and impactful Exchange exploit chain</li>
+<li>ProxyOracle: The attack which could recover any password in plaintext format of Exchange users</li>
+<li>ProxyShell: The exploit chain we demonstrated at <a target="_blank" rel="noopener" href="https://twitter.com/thezdi/status/1379467992862449664">Pwn2Own 2021</a> to take over Exchange and earn $200,000 bounty</li>
+</ol>
+<p>I would like to highlight that all vulnerabilities we unveiled here are logic bugs, which means they could be reproduced and exploited more easily than any memory corruption bugs. We have presented our research at <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-21/briefings/schedule/index.html#proxylogon-is-just-the-tip-of-the-iceberg-a-new-attack-surface-on-microsoft-exchange-server-23442">Black Hat USA</a> and <a target="_blank" rel="noopener" href="https://www.defcon.org/html/defcon-29/dc-29-speakers.html">DEFCON</a>, and won the Best Server-Side bug of <a target="_blank" rel="noopener" href="https://pwnies.com/winners/">Pwnie Awards 2021</a>. You can check our presentation materials here:</p>
+<ul>
+<li>ProxyLogon is Just the Tip of the Iceberg: A New Attack Surface on Microsoft Exchange Server! <a target="_blank" rel="noopener" href="https://i.blackhat.com/USA21/Wednesday-Handouts/us-21-ProxyLogon-Is-Just-The-Tip-Of-The-Iceberg-A-New-Attack-Surface-On-Microsoft-Exchange-Server.pdf">[Slides]</a> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=5mqid-7zp8k">[Video]</a></li>
+</ul>
+<p>By understanding the basics of this new attack surface, you won’t be surprised why we can pop out 0days easily!</p>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><p>I would like to state that all the vulnerabilities mentioned have been reported via the responsible vulnerability disclosure process and patched by Microsoft. You could find more detail of the CVEs and the report timeline from the following table. </p>
+<table>
+<thead>
+<tr>
+<th>Report Time</th>
+<th>Name</th>
+<th>CVE</th>
+<th>Patch Time</th>
+<th>CAS<sup>[1]</sup></th>
+<th>Reported By</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Jan 05, 2021</td>
+<td>ProxyLogon</td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855">CVE-2021-26855</a></td>
+<td>Mar 02, 2021</td>
+<td>Yes</td>
+<td>Orange Tsai, Volexity and MSTIC</td>
+</tr>
+<tr>
+<td>Jan 05, 2021</td>
+<td>ProxyLogon</td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-27065">CVE-2021-27065</a></td>
+<td>Mar 02, 2021</td>
+<td>-</td>
+<td>Orange Tsai, Volexity and MSTIC</td>
+</tr>
+<tr>
+<td>Jan 17, 2021</td>
+<td>ProxyOracle</td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-31196">CVE-2021-31196</a></td>
+<td>Jul 13, 2021</td>
+<td>Yes</td>
+<td>Orange Tsai</td>
+</tr>
+<tr>
+<td>Jan 17, 2021</td>
+<td>ProxyOracle</td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-31195">CVE-2021-31195</a></td>
+<td>May 11, 2021</td>
+<td>-</td>
+<td>Orange Tsai</td>
+</tr>
+<tr>
+<td>Apr 02, 2021</td>
+<td>ProxyShell<sup>[2]</sup></td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-34473">CVE-2021-34473</a></td>
+<td>Apr 13, 2021</td>
+<td>Yes</td>
+<td>Orange Tsai working with ZDI</td>
+</tr>
+<tr>
+<td>Apr 02, 2021</td>
+<td>ProxyShell<sup>[2]</sup></td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-34523">CVE-2021-34523</a></td>
+<td>Apr 13, 2021</td>
+<td>Yes</td>
+<td>Orange Tsai working with ZDI</td>
+</tr>
+<tr>
+<td>Apr 02, 2021</td>
+<td>ProxyShell<sup>[2]</sup></td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-31207">CVE-2021-31207</a></td>
+<td>May 11, 2021</td>
+<td>-</td>
+<td>Orange Tsai working with ZDI</td>
+</tr>
+<tr>
+<td>Jun 02, 2021</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>Yes</td>
+<td>Orange Tsai</td>
+</tr>
+<tr>
+<td>Jun 02, 2021</td>
+<td>-</td>
+<td><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-33768">CVE-2021-33768</a></td>
+<td>Jul 13, 2021</td>
+<td>-</td>
+<td>Orange Tsai and Dlive</td>
+</tr>
+</tbody></table>
+<p><em>[1] Bugs relate to this new attack surface direclty</em><br><em>[2] Pwn2Own 2021 bugs</em></p>
+<p>Why did Exchange Server become a hot topic? From my point of view, the whole ProxyLogon attack surface is actually located at an early stage of Exchange request processing. For instance, if the entrance of Exchange is 0, and 100 is the core business logic, ProxyLogon is somewhere around 10. Again, since the vulnerability is located at the beginning place, I believe anyone who has reviewed the security of Exchange carefully would spot the attack surface. This was also <a target="_blank" rel="noopener" href="https://twitter.com/orange_8361/status/1346401788811825153">why I tweeted my worry</a> about bug collision after reporting to Microsoft. The vulnerability was so impactful, yet it’s a simple one and located at such an early stage.</p>
+<p>You all know what happened next, Volexity found that an APT group was leveraging the same SSRF (<a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855">CVE-2021-26855</a>) to access users’ emails in early January 2021 and reported to Microsoft. Microsoft also released the urgent patches in March. From the <a target="_blank" rel="noopener" href="https://youtu.be/rB255D-wnw0?t=999">public information</a> released afterwards, we found that even though they used the same SSRF, the APT group was exploiting it in a very different way from us. We completed the ProxyLogon attack chain through <a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-27065">CVE-2021-27065</a>, while the APT group used EWS and two unknown vulnerabilities in their attack. This has convinced us that there is a bug collision on the SSRF vulnerability.</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/7e8c21379878e30d-02.png"></p>
+<p><em>Image from <a target="_blank" rel="noopener" href="https://www.microsoft.com/security/blog/2021/03/25/analyzing-attacks-taking-advantage-of-the-exchange-server-vulnerabilities/">Microsoft Blog</a></em></p>
+<p>Regarding the ProxyLogon PoC we reported to MSRC appeared in the wild in late February, we were as curious as everyone after eliminating the possibility of leakage from our side through a thorough investigation. With a clearer timeline appearing and more discussion occurring, it seems like this is <a target="_blank" rel="noopener" href="https://msrc-blog.microsoft.com/2012/03/16/proof-of-concept-code-available-for-ms12-020/">not the first time that something like this happened to Microsoft</a>. Maybe you would be interested in learning some <a target="_blank" rel="noopener" href="https://www.wsj.com/articles/microsoft-probing-whether-leak-played-role-in-suspected-chinese-hack-11615575793">interesting stories from here</a>.</p>
+<h1 id="Why-targeting-on-Exchange-Server"><a href="#Why-targeting-on-Exchange-Server" class="headerlink" title="Why targeting on Exchange Server?"></a>Why targeting on Exchange Server?</h1><p>Mail server is a highly valuable asset that holds the most confidential secrets and corporate data. In other words, controlling a mail server means controlling the lifeline of a company. As the most common-use email solution, Exchange Server has been the top target for hackers for a long time. Based on our research, there are more than four hundred thousands Exchange Servers exposed on the Internet. Each server represents a company, and you can imagine how horrible it is while a severe vulnerability appeared in Exchange Server. </p>
+<p>Normally, I will review the existing papers and bugs before starting a research. Among the whole Exchange history, is there any interesting case? Of course. Although most vulnerabilities are based on known attack vectors, such as the deserialization or bad input validation, there are still several bugs that are worth mentioning. </p>
+<h2 id="The-most-special"><a href="#The-most-special" class="headerlink" title="The most special"></a>The most special</h2><p>The most special one is the <a target="_blank" rel="noopener" href="https://msrc-blog.microsoft.com/2017/07/20/englishmansdentist-exploit-analysis/">arsenal</a> from <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Equation_Group">Equation Group</a> in 2017. It’s the only practical and public pre-auth RCE in the Exchange history. Unfortunately, the arsenal only works on an ancient Exchange Server 2003. If the arsenal leak happened earlier, it could end up with another nuclear-level crisis. </p>
+<h2 id="The-most-interesting"><a href="#The-most-interesting" class="headerlink" title="The most interesting"></a>The most interesting</h2><p>The most interesting one is <a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/blog/2018/12/19/an-insincere-form-of-flattery-impersonating-users-on-microsoft-exchange">CVE-2018-8581</a> disclosed by someone who cooperated with ZDI. Though it was simply an SSRF, with the feature, it could be combined with NTLM Relay, the attacker could turn a boring SSRF into <a target="_blank" rel="noopener" href="https://dirkjanm.io/abusing-exchange-one-api-call-away-from-domain-admin/">something really fancy</a>. For instance, it could directly control the whole Domain Controller through a low privilege account.</p>
+<h2 id="The-most-surprising"><a href="#The-most-surprising" class="headerlink" title="The most surprising"></a>The most surprising</h2><p>The most surprising one is <a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/blog/2020/2/24/cve-2020-0688-remote-code-execution-on-microsoft-exchange-server-through-fixed-cryptographic-keys">CVE-2020-0688</a> , which was also disclosed by someone working with ZDI. The root cause of this bug is due to a hard-coded cryptographic key in Microsoft Exchange. With this hard-coded key, an attacker with low privilege can take over the whole Exchange Server. And as you can see, even in 2020, a silly, hard-coded cryptographic key could still be found in an essential software like Exchange. This indicated that Exchange is lacking security reviews, which also inspired me to dig more into the Exchange security.</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/d5b300df5f12a9d2-03.gif"></p>
+<h1 id="Where-is-the-new-attack-surface"><a href="#Where-is-the-new-attack-surface" class="headerlink" title="Where is the new attack surface"></a>Where is the new attack surface</h1><p>Exchange is a very sophisticated application. Since 2000, Exchange has released a new version every 3 years. Whenever Exchange releases a new version, the architecture changes a lot and becomes different. The changes of architecture and iterations make it difficult to upgrade an Exchange Server. In order to ensure the compatibility between the new architecture and old ones, several design debts were incurred to Exchange Server and led to the new attack surface we found. </p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1ad777cc74d67c2c-04.png"></p>
+<p>Where did we focus at Microsoft Exchange? We focused on the Client Access Service, CAS. CAS is a fundamental component of Exchange. Back to the version 2000&#x2F;2003, CAS was an independent Frontend Server in charge of all the Frontend web rendering logics. After several renaming, integrating, and version differences, CAS has been downgraded to a service under the Mailbox Role. The <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/exchange/architecture/architecture?view=exchserver-2019">official documentation from Microsoft</a> indicates that:</p>
+<blockquote>
+<p>Mailbox servers contain the Client Access services that <strong>accept client connections for all protocols</strong>. These frontend services are <strong>responsible for routing or proxying connections</strong> to the corresponding backend services on a Mailbox server</p>
+</blockquote>
+<p>From the narrative you could realize the importance of CAS, and you could imagine how critical it is when bugs are found in such infrastructure. CAS was where we focused on, and where the attack surface appeared.</p>
+<h1 id="The-CAS-architecture"><a href="#The-CAS-architecture" class="headerlink" title="The CAS architecture"></a>The CAS architecture</h1><p>CAS is the fundamental component in charge of accepting all the connections from the client side, no matter if it’s HTTP, POP3, IMAP or SMTP, and proxies the connections to the corresponding Backend Service. As a Web Security researcher, I focused on the Web implementation of CAS. </p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1e724de07cf0e217-05.png"></p>
+<p>The CAS web is built on Microsoft IIS. As you can see, there are two websites inside the IIS. The “Default Website” is the Frontend we mentioned before, and the “Exchange Backend” is where the business logic is. After looking into the configuration carefully, we notice that the Frontend is binding with ports 80 and 443, and the Backend is listening on ports 81 and 444. All the ports are binding with <code>0.0.0.0</code>, which means anyone could access the Frontend and Backend of Exchange directly. Wouldn’t it be dangerous? Please keep this question in mind and we will answer that later.</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/9493ce131add5a0b-06.png"></p>
+<p>Exchange implements the logic of Frontend and Backend via IIS module. There are several modules in Frontend and Backend to complete different tasks, such as the filter, validation, and logging. The Frontend must contain a Proxy Module. The Proxy Module picks up the HTTP request from the client side and adds some internal settings, then forwards the request to the Backend. As for the Backend, all the applications include the Rehydration Module, which is in charge of parsing Frontend requests, populating the client information back, and continuing to process the business logic. Later we will be elaborating how Proxy Module and Rehydration Module work. </p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/1223ec870a2992e1-07.png"></p>
+<h2 id="Frontend-Proxy-Module"><a href="#Frontend-Proxy-Module" class="headerlink" title="Frontend Proxy Module"></a>Frontend Proxy Module</h2><p>Proxy Module chooses a handler based on the current <code>ApplicationPath</code> to process the HTTP request from the client side. For instance, visiting <code>/EWS</code> will use <code>EwsProxyRequestHandler</code>, as for <code>/OWA</code> will trigger <code>OwaProxyRequestHandler</code>. All the handlers in Exchange inherit the class from <code>ProxyRequestHandler</code> and implement its core logic, such as how to deal with the HTTP request from the user, which URL from Backend to proxy to, and how to synchronize the information with the Backend. The class is also the most centric part of the whole Proxy Module, we will separate <code>ProxyRequestHandler</code> into 3 sections:</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/f87597a24014a226-08.png"></p>
+<h3 id="Frontend-Request-Section"><a href="#Frontend-Request-Section" class="headerlink" title="Frontend Request Section"></a>Frontend Request Section</h3><p>The Request section will parse the HTTP request from the client and determine which cookie and header could be proxied to the Backend. Frontend and Backend relied on HTTP Headers to synchronize information and proxy internal status. Therefore, Exchange has defined a blacklist to avoid some internal Headers being misused. </p>
+<p><strong>HttpProxy\ProxyRequestHandler.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="built_in">bool</span> <span class="title">ShouldCopyHeaderToServerRequest</span>(<span class="params"><span class="built_in">string</span> headerName</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;X-CommonAccessToken&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;X-IsFromCafe&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;X-SourceCafeServer&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;msExchProxyUri&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;X-MSExchangeActivityCtx&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;return-client-request-id&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; !<span class="built_in">string</span>.Equals(headerName, <span class="string">&quot;X-Forwarded-For&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      &amp;&amp; (!headerName.StartsWith(<span class="string">&quot;X-Backend-Diag-&quot;</span>, OrdinalIgnoreCase) </span><br><span class="line">      || <span class="keyword">this</span>.ClientRequest.GetHttpRequestBase().IsProbeRequest());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In the last stage of Request, Proxy Module will call the method <code>AddProtocolSpecificHeadersToServerRequest</code> implemented by the handler to add the information to be communicated with the Backend in the HTTP header. This section will also serialize the information from the current login user and put it in a new HTTP header <code>X-CommonAccessToken</code>, which will be forwarded to the Backend later.</p>
+<p>For instance, If I log into Outlook Web Access (OWA) with the name Orange, the <code>X-CommonAccessToken</code> that Frontend proxy to Backend will be:</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/c061652bcf8aaa44-09.png"></p>
+<h3 id="Frontend-Proxy-Section"><a href="#Frontend-Proxy-Section" class="headerlink" title="Frontend Proxy Section"></a>Frontend Proxy Section</h3><p>The Proxy Section first uses the <code>GetTargetBackendServerURL</code> method to calculate which Backend URL should the HTTP request be forwarded to. Then initialize a new HTTP Client request with the method <code>CreateServerRequest</code>.</p>
+<p><strong>HttpProxy\ProxyRequestHandler.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> HttpWebRequest <span class="title">CreateServerRequest</span>(<span class="params">Uri targetUrl</span>)</span> &#123;</span><br><span class="line">    HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(targetUrl);</span><br><span class="line">    <span class="keyword">if</span> (!HttpProxySettings.UseDefaultWebProxy.Value) &#123;</span><br><span class="line">        httpWebRequest.Proxy = NullWebProxy.Instance;</span><br><span class="line">    &#125;</span><br><span class="line">    httpWebRequest.ServicePoint.ConnectionLimit = HttpProxySettings.ServicePointConnectionLimit.Value;</span><br><span class="line">    httpWebRequest.Method = <span class="keyword">this</span>.ClientRequest.HttpMethod;</span><br><span class="line">    httpWebRequest.Headers[<span class="string">&quot;X-FE-ClientIP&quot;</span>] = ClientEndpointResolver.GetClientIP(SharedHttpContextWrapper.GetWrapper(<span class="keyword">this</span>.HttpContext));</span><br><span class="line">    httpWebRequest.Headers[<span class="string">&quot;X-Forwarded-For&quot;</span>] = ClientEndpointResolver.GetClientProxyChainIPs(SharedHttpContextWrapper.GetWrapper(<span class="keyword">this</span>.HttpContext));</span><br><span class="line">    httpWebRequest.Headers[<span class="string">&quot;X-Forwarded-Port&quot;</span>] = ClientEndpointResolver.GetClientPort(SharedHttpContextWrapper.GetWrapper(<span class="keyword">this</span>.HttpContext));</span><br><span class="line">    httpWebRequest.Headers[<span class="string">&quot;X-MS-EdgeIP&quot;</span>] = Utilities.GetEdgeServerIpAsProxyHeader(SharedHttpContextWrapper.GetWrapper(<span class="keyword">this</span>.HttpContext).Request);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> httpWebRequest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Exchange will also generate a Kerberos ticket via the HTTP Service-Class of the Backend and put it in the <code>Authorization</code> header. This header is designed to prevent anonymous users from accessing the Backend directly. With the Kerberos Ticket, the Backend could validate the access from the Frontend.</p>
+<p><strong>HttpProxy\ProxyRequestHandler.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">this</span>.ProxyKerberosAuthentication) &#123;</span><br><span class="line">    serverRequest.ConnectionGroupName = <span class="keyword">this</span>.ClientRequest.UserHostAddress + <span class="string">&quot;:&quot;</span> + GccUtils.GetClientPort(SharedHttpContextWrapper.GetWrapper(<span class="keyword">this</span>.HttpContext));</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.AuthBehavior.AuthState == AuthState.BackEndFullAuth || <span class="keyword">this</span>.</span><br><span class="line">    ShouldBackendRequestBeAnonymous() || (HttpProxySettings.TestBackEndSupportEnabled.Value  </span><br><span class="line">    &amp;&amp; !<span class="built_in">string</span>.IsNullOrEmpty(<span class="keyword">this</span>.ClientRequest.Headers[<span class="string">&quot;TestBackEndUrl&quot;</span>]))) &#123;</span><br><span class="line">    serverRequest.ConnectionGroupName = <span class="string">&quot;Unauthenticated&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    serverRequest.Headers[<span class="string">&quot;Authorization&quot;</span>] = KerberosUtilities.GenerateKerberosAuthHeader(</span><br><span class="line">        serverRequest.Address.Host, <span class="keyword">this</span>.TraceContext, </span><br><span class="line">        <span class="keyword">ref</span> <span class="keyword">this</span>.authenticationContext, <span class="keyword">ref</span> <span class="keyword">this</span>.kerberosChallenge);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>HttpProxy\KerberosUtilities.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">internal</span> <span class="keyword">static</span> <span class="built_in">string</span> <span class="title">GenerateKerberosAuthHeader</span>(<span class="params"><span class="built_in">string</span> host, <span class="built_in">int</span> traceContext, <span class="keyword">ref</span> AuthenticationContext authenticationContext, <span class="keyword">ref</span> <span class="built_in">string</span> kerberosChallenge</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">byte</span>[] array = <span class="literal">null</span>;</span><br><span class="line">    <span class="built_in">byte</span>[] bytes = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    authenticationContext = <span class="keyword">new</span> AuthenticationContext();</span><br><span class="line">    <span class="built_in">string</span> text = <span class="string">&quot;HTTP/&quot;</span> + host;</span><br><span class="line">    authenticationContext.InitializeForOutboundNegotiate(AuthenticationMechanism.Kerberos, text, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    SecurityStatus securityStatus = authenticationContext.NegotiateSecurityContext(inputBuffer, <span class="keyword">out</span> bytes);</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="built_in">string</span> @string = Encoding.ASCII.GetString(bytes);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Negotiate &quot;</span> + @string;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Therefore, a Client request proxied to the Backend will be added with several HTTP Headers for internal use. The two most essential Headers are <code>X-CommonAccessToken</code>, which indicates the mail users’ log in identity, and Kerberos Ticket, which represents legal access from the Frontend.</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/3178d2f1fc318557-10.png"></p>
+<h3 id="Frontend-Response-Section"><a href="#Frontend-Response-Section" class="headerlink" title="Frontend Response Section"></a>Frontend Response Section</h3><p>The last is the section of Response. It receives the response from the Backend and decides which headers or cookies are allowed to be sent back to the Frontend.</p>
+<h2 id="Backend-Rehydration-Module"><a href="#Backend-Rehydration-Module" class="headerlink" title="Backend Rehydration Module"></a>Backend Rehydration Module</h2><p>Now let’s move on and check how the Backend processes the request from the Frontend. The Backend first uses the method <code>IsAuthenticated</code> to check whether the incoming request is authenticated. Then the Backend will verify whether the request is equipped with an extended right called <code>ms-Exch-EPI-Token-Serialization</code> . With the default setting, only Exchange Machine Account would have such authorization. This is also why the Kerberos Ticket generated by the Frontend could pass the checkpoint but you can’t access the Backend directly with a low authorized account. </p>
+<p>After passing the check, Exchange will restore the login identity used in the Frontend, through deserializing the header <code>X-CommonAccessToken</code> back to the original Access Token, and then put it in the <code>httpContext</code> object to progress to the business logic in the Backend.</p>
+<p><strong>Authentication\BackendRehydrationModule.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnAuthenticateRequest</span>(<span class="params"><span class="built_in">object</span> source, EventArgs args</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (httpContext.Request.IsAuthenticated) &#123;</span><br><span class="line">        <span class="keyword">this</span>.ProcessRequest(httpContext);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ProcessRequest</span>(<span class="params">HttpContext httpContext</span>)</span> &#123;</span><br><span class="line">    CommonAccessToken token;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.TryGetCommonAccessToken(httpContext, <span class="keyword">out</span> token)) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="built_in">bool</span> <span class="title">TryGetCommonAccessToken</span>(<span class="params">HttpContext httpContext, <span class="keyword">out</span> CommonAccessToken token</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">string</span> text = httpContext.Request.Headers[<span class="string">&quot;X-CommonAccessToken&quot;</span>];</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(text)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">bool</span> flag;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        flag = <span class="keyword">this</span>.IsTokenSerializationAllowed(httpContext.User.Identity <span class="keyword">as</span> WindowsIdentity);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        httpContext.Items[<span class="string">&quot;BEValidateCATRightsLatency&quot;</span>] = stopwatch.ElapsedMilliseconds - elapsedMilliseconds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    token = CommonAccessToken.Deserialize(text);</span><br><span class="line">    httpContext.Items[<span class="string">&quot;Item-CommonAccessToken&quot;</span>] = token;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="built_in">bool</span> <span class="title">IsTokenSerializationAllowed</span>(<span class="params">WindowsIdentity windowsIdentity</span>)</span> &#123;</span><br><span class="line">   flag2 = LocalServer.AllowsTokenSerializationBy(clientSecurityContext);</span><br><span class="line">   <span class="keyword">return</span> flag2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">AllowsTokenSerializationBy</span>(<span class="params">ClientSecurityContext clientContext</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> LocalServer.HasExtendedRightOnServer(clientContext, </span><br><span class="line">        WellKnownGuid.TokenSerializationRightGuid);  <span class="comment">// ms-Exch-EPI-Token-Serialization</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="The-attack-surface"><a href="#The-attack-surface" class="headerlink" title="The attack surface"></a>The attack surface</h1><p>After a brief introduction to the architecture of CAS, we now realize that CAS is just a well-written HTTP Proxy (or Client), and we know that implementing Proxy isn’t easy. So I was wondering:</p>
+<blockquote>
+<p>Could I use a single HTTP request to access different contexts in Frontend and Backend respectively to cause some confusion?</p>
+</blockquote>
+<p>If we could do that, maaaaaybe I could bypass some Frontend restrictions to access arbitrary Backends and abuse some internal API. Or, we can confuse the context to leverage the inconsistency of the definition of dangerous HTTP headers between the Frontend and Backend to do further interesting attacks. </p>
+<p>With these thoughts in mind, let’s start hunting!</p>
+<h1 id="The-ProxyLogon"><a href="#The-ProxyLogon" class="headerlink" title="The ProxyLogon"></a>The ProxyLogon</h1><p>The first exploit is the ProxyLogon. As introduced before, this may be the most severe vulnerability in the Exchange history ever. ProxyLogon is chained with 2 bugs:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855">CVE-2021-26855</a> - Pre-auth SSRF leads to Authentication Bypass</li>
+<li><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-27065">CVE-2021-27065</a> - Post-auth Arbitrary-File-Write leads to RCE</li>
+</ul>
+<h2 id="CVE-2021-26855-Pre-auth-SSRF"><a href="#CVE-2021-26855-Pre-auth-SSRF" class="headerlink" title="CVE-2021-26855 - Pre-auth SSRF"></a>CVE-2021-26855 - Pre-auth SSRF</h2><p>There are more than 20 handlers corresponding to different application paths in the Frontend. While reviewing the implementations, we found the method <code>GetTargetBackEndServerUrl</code>, which is responsible for calculating the Backend URL in the static resource handler, assigns the Backend target by cookies directly.</p>
+<p>Now you figure out how simple this vulnerability is after learning the architecture!</p>
+<p><strong>HttpProxy\ProxyRequestHandler.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> Uri <span class="title">GetTargetBackEndServerUrl</span>()</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.LogElapsedTime(<span class="string">&quot;E_TargetBEUrl&quot;</span>);</span><br><span class="line">    Uri result;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        UrlAnchorMailbox urlAnchorMailbox = <span class="keyword">this</span>.AnchoredRoutingTarget.AnchorMailbox <span class="keyword">as</span> UrlAnchorMailbox;</span><br><span class="line">        <span class="keyword">if</span> (urlAnchorMailbox != <span class="literal">null</span>) &#123;</span><br><span class="line">            result = urlAnchorMailbox.Url;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            UriBuilder clientUrlForProxy = <span class="keyword">this</span>.GetClientUrlForProxy();</span><br><span class="line">            clientUrlForProxy.Scheme = Uri.UriSchemeHttps;</span><br><span class="line">            clientUrlForProxy.Host = <span class="keyword">this</span>.AnchoredRoutingTarget.BackEndServer.Fqdn;</span><br><span class="line">            clientUrlForProxy.Port = <span class="number">444</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.AnchoredRoutingTarget.BackEndServer.Version &lt; Server.E15MinVersion) &#123;</span><br><span class="line">                <span class="keyword">this</span>.ProxyToDownLevel = <span class="literal">true</span>;</span><br><span class="line">                RequestDetailsLoggerBase&lt;RequestDetailsLogger&gt;.SafeAppendGenericInfo(<span class="keyword">this</span>.Logger, <span class="string">&quot;ProxyToDownLevel&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">                clientUrlForProxy.Port = <span class="number">443</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            result = clientUrlForProxy.Uri;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.LogElapsedTime(<span class="string">&quot;L_TargetBEUrl&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From the code snippet, you can see the property <code>BackEndServer.Fqdn</code> of <code>AnchoredRoutingTarget</code> is assigned from the cookie directly.</p>
+<p><strong>HttpProxy\OwaResourceProxyRequestHandler.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> AnchorMailbox <span class="title">ResolveAnchorMailbox</span>()</span> &#123;</span><br><span class="line">    HttpCookie httpCookie = <span class="keyword">base</span>.ClientRequest.Cookies[<span class="string">&quot;X-AnonResource-Backend&quot;</span>];</span><br><span class="line">    <span class="keyword">if</span> (httpCookie != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.savedBackendServer = httpCookie.Value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(<span class="keyword">this</span>.savedBackendServer)) &#123;</span><br><span class="line">        <span class="keyword">base</span>.Logger.Set(<span class="number">3</span>, <span class="string">&quot;X-AnonResource-Backend-Cookie&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (ExTraceGlobals.VerboseTracer.IsTraceEnabled(<span class="number">1</span>)) &#123;</span><br><span class="line">            ExTraceGlobals.VerboseTracer.TraceDebug&lt;HttpCookie, <span class="built_in">int</span>&gt;((<span class="built_in">long</span>)<span class="keyword">this</span>.GetHashCode(), <span class="string">&quot;[OwaResourceProxyRequestHandler::ResolveAnchorMailbox]: AnonResourceBackend cookie used: &#123;0&#125;; context &#123;1&#125;.&quot;</span>, httpCookie, <span class="keyword">base</span>.TraceContext);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ServerInfoAnchorMailbox(BackEndServer.FromString(<span class="keyword">this</span>.savedBackendServer), <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AnonymousAnchorMailbox(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Though we can only control the <code>Host</code> part of the URL, but hang on, isn’t <a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf">manipulating a URL Parser</a> exactly what I am good at? Exchange builds the Backend URL by built-in <code>UriBuilder</code>. However, since C# didn’t verify the <code>Host</code>, so we can enclose the whole URL with some special characters to access arbitrary servers and ports.</p>
+<blockquote>
+<p>https<span>:&#x2F;&#x2F;[foo]@example.com:443&#x2F;path#]:444&#x2F;owa&#x2F;auth&#x2F;x.js</p>
+</blockquote>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/445487485f433399-11.png"></p>
+<p>So far we have a super SSRF that can control almost all the HTTP requests and get all the replies. The most impressive thing is that the Frontend of Exchange will generate a Kerberos Ticket for us, which means even when we are attacking a protected and domain-joined HTTP service, we can still hack with the authentication of Exchange Machine Account. </p>
+<p>So, what is the root cause of this arbitrary Backend assignment? As mentioned, the Exchange Server changes its architecture while releasing new versions. It might have different functions in different versions even with the same component under the same name. Microsoft has put great effort into ensuring the architectural capability between new and old versions. This cookie is a quick solution and the design debt of Exchange making the Frontend in the new architecture could identify where the old Backend is. </p>
+<h2 id="CVE-2021-27065-Post-auth-Arbitrary-File-Write"><a href="#CVE-2021-27065-Post-auth-Arbitrary-File-Write" class="headerlink" title="CVE-2021-27065 - Post-auth Arbitrary-File-Write"></a>CVE-2021-27065 - Post-auth Arbitrary-File-Write</h2><p>Thanks to the super SSRF allowing us to access the Backend without restriction. The next is to find a RCE bug to chain together. Here we leverage a Backend internal API <code>/proxyLogon.ecp</code> to become the admin. The API is also the reason why we called it ProxyLogon.</p>
+<p>Because we leverage the Frontend handler of static resources to access the ECExchange Control Panel (ECP) Backend, the header <code>msExchLogonMailbox</code> , which is a special HTTP header in the ECP Backend, will not be blocked by the Frontend. By leveraging this minor inconsistency, we can specify ourselves as the SYSTEM user and generate a valid ECP session with the internal API. </p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/5c44e4e6ea1b8733-12.png"></p>
+<p>With the inconsistency between the Frontend and Backend, we can access all the functions on ECP by Header forgery and internal Backend API abuse. Next, we have to find an RCE bug on the ECP interface to chain them together. The ECP wraps the Exchange PowerShell commands as an abstract interface by <code>/ecp/DDI/DDIService.svc</code>. The <code>DDIService</code> defines several PowerShell executing pipelines by XAML so that it can be accessed by Web. While verifying the DDI implementation, we found the tag of WriteFileActivity did not check the file path properly and led to an arbitrary-file-write. </p>
+<p><strong>DDIService\WriteFileActivity.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> RunResult <span class="title">Run</span>(<span class="params">DataRow input, DataTable dataTable, DataObjectStore store, Type codeBehind, Workflow.UpdateTableDelegate updateTableDelegate</span>)</span> &#123;</span><br><span class="line">    DataRow dataRow = dataTable.Rows[<span class="number">0</span>];</span><br><span class="line">    <span class="built_in">string</span> <span class="keyword">value</span> = (<span class="built_in">string</span>)input[<span class="keyword">this</span>.InputVariable];</span><br><span class="line">    <span class="built_in">string</span> path = (<span class="built_in">string</span>)input[<span class="keyword">this</span>.OutputFileNameVariable];</span><br><span class="line">    RunResult runResult = <span class="keyword">new</span> RunResult();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        runResult.ErrorOccur = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">using</span> (StreamWriter streamWriter = <span class="keyword">new</span> StreamWriter(File.Open(path, FileMode.CreateNew)))</span><br><span class="line">        &#123;</span><br><span class="line">            streamWriter.WriteLine(<span class="keyword">value</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        runResult.ErrorOccur = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There are several paths to trigger the vulnerability of arbitrary-file-write. Here we use <code>ResetOABVirtualDirectory.xaml</code> as an example and write the result of <code>Set-OABVirtualDirectory</code> to the webroot to be our Webshell.</p>
+<p><img src="/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/c9fc1df20dc4344b-13.png"></p>
+<p>Now we have a working pre-auth RCE exploit chain. An unauthenticated attacker can execute arbitrary commands on Microsoft Exchange Server through an exposed 443 port. Here is an <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=SvjGMo9aMwE">demonstration video</a>:</p>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/SvjGMo9aMwE" width="560"></iframe>
+
+
+
+<h1 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h1><p>As the first blog of this series, ProxyLogon perfectly shows how severe this attack surface could be. We will have more examples to come. Stay tuned!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

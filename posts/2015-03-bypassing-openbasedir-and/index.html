@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="DEBUG 在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_functions 的保護 常見的繞過方法其實都滿容易防止的不過如果是針對 PHP 本身記憶體上的弱點懂得防禦的管理員相對就少很多了XD 而且對於一般主機，伺服器要求的是穩定所以也不能常常 update PHP 版本 因此抱著練練手感以及增加自己兵器庫的心態來寫寫這個 Exploit 主要參考 Po">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability">
+<meta property="og:url" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="DEBUG 在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_functions 的保護 常見的繞過方法其實都滿容易防止的不過如果是針對 PHP 本身記憶體上的弱點懂得防禦的管理員相對就少很多了XD 而且對於一般主機，伺服器要求的是穩定所以也不能常常 update PHP 版本 因此抱著練練手感以及增加自己兵器庫的心態來寫寫這個 Exploit 主要參考 Po">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/8150c8e02a378ef5-02.png">
+<meta property="article:published_time" content="2015-03-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:08:06.877Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-03-12T16:00:00.000Z" class="dt-published" itemprop="datePublished">2015-03-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a href="https://blog.orange.tw//2015/03/bypassing-openbasedir-and.html">DEBUG</a></p>
+<p>在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_functions 的保護</p>
+<p>常見的繞過方法其實都滿容易防止的不過如果是針對 PHP 本身記憶體上的弱點懂得防禦的管理員相對就少很多了XD</p>
+<p>而且對於一般主機，伺服器要求的是穩定所以也不能常常 update PHP 版本</p>
+<p>因此抱著練練手感以及增加自己兵器庫的心態來寫寫這個 Exploit</p>
+<p>主要參考 PoC <a target="_blank" rel="noopener" href="http://www.inulledmyself.com/2015/02/exploiting-memory-corruption-bugs-in.html">來源</a></p>
+<p>（本想等到這個系列結束再來練不過作者富堅，只好自立自強自己的 Exploit 自己寫XD ）</p>
+<p>用到的弱點是 CVE-2015-0231</p>
+<p>一個 PHP 在處理 unserialize 上所產生的 Use-After-Free ，先利用 O 製作出一個物件，接著清空它，之後再使用 serialize 中 的 R (reference) 去指向已被清空的物件造成 UAF 產生</p>
+<p>（PHP 在 serialize &#x2F; unserialize 上不知道發生過多少次問題了XD）</p>
+<p>所以理論上只要是這個版本所影響的 PHP 版本</p>
+<p>PHP 5.6 &lt; 5.6.5</p>
+<p>PHP 5.5 &lt; 5.5.21</p>
+<p>PHP 5.4 &lt; 5.4.36</p>
+<p>皆會被這個漏洞所影響</p>
+<p>（未測試過所有版本無法保證正確性）</p>
+<p>漏洞利用本質上就是 Use-After-Free</p>
+<p>簡單修改偽造一個 <a target="_blank" rel="noopener" href="http://blog.csdn.net/ohmygirl/article/details/41542445">zval</a>物件去給他引用就可以達到任意地址寫入以及任意地址讀取</p>
+<p>（原網址並沒有提供任意寫入的 PoC 要自己研究生XD）</p>
+<p>任意跳轉的話把 zval 中 type 的部分設成 IS_OBJECT(0x5) 以及把 reference count 設成 0 就會自動被 GC(?) 掉了 XD</p>
+<p>不過在這個 Exploit 中並沒有用到這招</p>
+<p>一開始很單純的想法在 IDA pro 裡面看到 php binary 內有用到 popen 以及 fopen</p>
+<p>兩個在 PHP 內的呼叫都是 </p>
+<blockquote>
+<p>resource popen ( string $command , string $mode )</p>
+<p>resource fopen ( string $filename , string $mode [, bool $use_include_path &#x3D; false [, resource $context ]] )</p>
+</blockquote>
+<p>提供 $filename &#x2F; $command 以及 $mode</p>
+<p>可以直接利用 PHP 內的數據結構將所需的參數放到 popen 內</p>
+<p>最後只要呼叫 fopen(‘&#x2F;bin&#x2F;id’, ‘r’) 應該就是個輕鬆寫意的利用XD</p>
+<p>不過卡了很久最後 strace 發現…</p>
+<p>PHP 中 fopen 最後是用 <a target="_blank" rel="noopener" href="http://linux.die.net/man/3/open">open</a> 來實作，而 fopen 傳進去的第二個參數會被轉成 int oflag …</p>
+<p>所以當 popen 在抓取第二個參數的字串時會出現記憶體存取錯誤</p>
+<p><img src="/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png"></p>
+<p>所以只好換條思路</p>
+<p>找個 PHP 會引用到的 Function 而且兩個參數都為字串型式呢？</p>
+<p>仔細觀察了一下 IDA pro 發現剛好有個符合需求 - rename </p>
+<p>所以接下來的思路就是</p>
+<ol>
+<li>讀取 popen 的 GOT 地址</li>
+<li>寫入到 rename 的 GOT 地址中</li>
+<li>在 PHP 中使用 rename( ‘ls -alh &gt; &#x2F;tmp&#x2F;.xxx’, ‘r’ );</li>
+</ol>
+<p>本地利用完美!</p>
+<p><img src="/posts/2015-03-bypassing-openbasedir-and/8150c8e02a378ef5-02.png"></p>
+<p>接著是遠端利用通用性的問題</p>
+<p>遠端利用的情況下雖然有可能知道對方 PHP 的版本，但在無法確保 binary 的細節以及作業系統的情況下做出遠端 Exploit</p>
+<p>但由於上面的 Exploit 會使用到 GOT 的位置，雖然可以洩漏任意地址，但在不知道 Image Base 的情況下也不知道該洩漏哪塊</p>
+<p>如果是純 PHP CGI 或 FPM 的情況還好</p>
+<p>x86 下沒有 PIE 還可以猜固定的 0x08048000 但是比較常見的情況是 Apache + libphp</p>
+<p>Apache 加載 libphp5.so 後又會有 ASLR 的問題更難猜XD</p>
+<p>不過由於 Apache 在 服務開啟後 create child 是用 prefork 的方式</p>
+<p>所以 walk around 的解法是利用任意洩漏地址 brute dump 出 ELF header 後再去抓出 GOT address</p>
+<p>（缺點會在 error.log 洗很多 Segmentation fault 就是了XD）</p>
+<p>（不過可以先利用 <a target="_blank" rel="noopener" href="https://gist.github.com/tmm08a/5d99e869417f1c52b22d#file-leaklegitimateaddress">leak heap</a> 上的資訊判斷 library 加載的大致位置，可以確定最前面一個 byte 後 SHIFT 左右掃一下約 8000 次內就可以得到 ELF header 最慘也只好要 65536 次內一定可以取得位置！）</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

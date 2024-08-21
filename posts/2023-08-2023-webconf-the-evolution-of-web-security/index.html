@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="TL;DR for Hackers &amp; Researchers: this is a more conceptual talk for web developers. All are in Mandarin but you can check the slides here if interested. 好久沒有打部落格了，紀錄一下這次我在 WebConf 2023 上的演講，大概就是把">
+<meta property="og:type" content="article">
+<meta property="og:title" content="從 2013 到 2023: Web Security 十年之進化與趨勢!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2023-08-2023-webconf-the-evolution-of-web-security/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="TL;DR for Hackers &amp; Researchers: this is a more conceptual talk for web developers. All are in Mandarin but you can check the slides here if interested. 好久沒有打部落格了，紀錄一下這次我在 WebConf 2023 上的演講，大概就是把">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2023-08-2023-webconf-the-evolution-of-web-security/49126aaee4452ee9-01.fixme">
+<meta property="article:published_time" content="2023-08-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:10:17.527Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2023-08-2023-webconf-the-evolution-of-web-security/49126aaee4452ee9-01.fixme">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>從 2013 到 2023: Web Security 十年之進化與趨勢! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        從 2013 到 2023: Web Security 十年之進化與趨勢!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-08-11T16:00:00.000Z" class="dt-published" itemprop="datePublished">2023-08-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>TL;DR for Hackers &amp; Researchers: this is a more conceptual talk for web developers. All are in Mandarin but you can check the slides <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-Presentation-Slides#2023">here</a> if interested.</p>
+<p>好久沒有打部落格了，紀錄一下這次我在 WebConf 2023 上的演講，大概就是把 Web Security 這十年的演化趨勢分類、並給出相對應的攻擊手法當案例，雖然沒配演講看投影片應該不知道在供三小，不過有興趣還是可以<a target="_blank" rel="noopener" href="https://github.com/orangetw/My-Presentation-Slides#2023">點這邊</a>獲得投影片!</p>
+<p>由於聽眾皆為網站開發者 (涵蓋前端、後端甚至架構師)，因此選用的攻擊手法力求簡單、可快速理解又有趣，不談到防禦手法也在因為短短 45 分鐘內絕對涵蓋不完，所以給自己訂下的小目標是: 只要有一項也好，如果開發者遇到同樣場景、腦中會跳出個紅色小框框警告好像有人講過，可以透過這樣的方式稍稍彌平網站開發者與資安從業人員間的差異，那我的目的就達成了!</p>
+<p><img src="/posts/2023-08-2023-webconf-the-evolution-of-web-security/49126aaee4452ee9-01.fixme">  </p>
+<p>所以 Web Security 這十年到底有什麼發展呢? 如果要我用一個字形容，最貼切應該就是「捲」這個字了! Web Security 如今已經競爭到連一個位元組都要斤斤計較，例如 Nginx 經典的 <a target="_blank" rel="noopener" href="https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf#toolbar=0&page=19">Off-by-Slash 問題</a>，到底什麼時候該加斜線什麼時候不該，相信懂得人都會露出會心一笑。</p>
+<p>綜觀這十年間的 Web Security 發展，我總結出了以下四個趨勢 (以下純代表個人觀點，你可以不同意 :)</p>
+<h1 id="1-架構層面的攻擊逐漸成為顯學"><a href="#1-架構層面的攻擊逐漸成為顯學" class="headerlink" title="1. 架構層面的攻擊逐漸成為顯學"></a>1. 架構層面的攻擊逐漸成為顯學</h1><p>隨著網站架構日趨複雜，以往可以在 Single Server 下解決的問題，隨著 Reverse Proxy, Load Balance, Firewall, Cache Server 甚至 CDN 的引入都開始變得複雜，原有的網頁應用、網頁伺服器如何去跟這些新角色進行搭配，這些組合的互動如何引入新的攻擊面，這都是這十年來一直有人在探討的趨勢。 這裡我給出的案例是:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://nathandavison.com/blog/abusing-http-hop-by-hop-request-headers">Abusing HTTP hop-by-hop request headers</a> by Nathan Davison<ul>
+<li><strong>真實世界的案例</strong>: <a target="_blank" rel="noopener" href="https://www.horizon3.ai/f5-icontrol-rest-endpoint-authentication-bypass-technical-deep-dive/">F5 iControl REST Endpoint Authentication Bypass Technical Deep Dive</a> by James Horseman</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="http://omergil.blogspot.com/2017/02/web-cache-deception-attack.html">Web Cache Deception Attack</a> by Omer Gil<ul>
+<li><strong>真實世界的案例</strong>: <a target="_blank" rel="noopener" href="https://vimeo.com/249130093">Web Cache Deception Attack in PayPal Home Page</a></li>
+</ul>
+</li>
+<li>遺珠之憾: <a target="_blank" rel="noopener" href="https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn">HTTP Desync Attacks: Request Smuggling Reborn</a> by James Kettle</li>
+</ol>
+<h1 id="2-對底層邏輯重新梳理的攻擊"><a href="#2-對底層邏輯重新梳理的攻擊" class="headerlink" title="2. 對底層邏輯重新梳理的攻擊"></a>2. 對底層邏輯重新梳理的攻擊</h1><p>隨著資安意識、以及前後端框架的成熟，開發者已逐漸養成使用框架的習慣。為了因應這個趨勢，攻擊者不得不開始往框架、甚至程式語言底層挖掘，如早期的 SQL Injection，隨著 ORM 出現開始被大面積減緩，造成攻擊者開始往 ORM 實作尋找漏洞； 同理 XSS，隨著框架內建的保護已足以應付大部分的開發場景，攻擊者只能開始檢視實作玩起我繞你補的遊戲。</p>
+<p>另一方面重新梳理一些便於開發者使用的框架邏輯也是這幾年發展的一個流派，例如在紅極一時的 <a target="_blank" rel="noopener" href="https://spring.io/security/cve-2022-22965">Spring4Shell</a> 漏洞表面上雖然問題出在 Data Binding 中，但認真梳理後會發現其主因還是在 Java Runtime 版本更新導致其底層內部機制改變受到影響。</p>
+<p>在這個趨勢中我介紹了兩個針對程式語言底層的新攻擊手法:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://i.blackhat.com/us-18/Thu-August-9/us-18-Thomas-Its-A-PHP-Unserialization-Vulnerability-Jim-But-Not-As-We-Know-It-wp.pdf">File Operation Induced Unserialization via the “phar:&#x2F;&#x2F;“ Stream Wrapper</a> by Sam Thomas<ul>
+<li><strong>真實世界的案例</strong>: <a target="_blank" rel="noopener" href="https://www.ambionics.io/blog/laravel-debug-rce">LARAVEL &lt;&#x3D; V8.4.2 DEBUG MODE: REMOTE CODE EXECUTION</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/HoLyVieR/prototype-pollution-nsec18/tree/master">Prototype pollution attack in NodeJS application</a> by Olivier Arteau<ul>
+<li><strong>真實世界的案例</strong>: <a target="_blank" rel="noopener" href="https://research.securitum.com/prototype-pollution-rce-kibana-cve-2019-7609/">Exploiting prototype pollution – RCE in Kibana (CVE-2019-7609)</a> by Michał Bentkowski</li>
+</ul>
+</li>
+</ol>
+<h1 id="3-不一致性所造成的攻擊面"><a href="#3-不一致性所造成的攻擊面" class="headerlink" title="3. 不一致性所造成的攻擊面"></a>3. 不一致性所造成的攻擊面</h1><p>隨著網站功能越趨複雜，資料在網站間的生命週期也越來越長! 一個使用者請求(一筆資料)可能經過中間層 Proxy&#x2F;Cache Server 預處理、商業邏輯再處理、雲端 API 又處理，最後日誌伺服器又要再解釋一遍。 隨著處理資料的來源越多、各家來源對同一筆資料又存在著不同的解釋，解釋間的不一致就可能造成安全上的問題。</p>
+<p>這幾年尤其有趣的是針對 RFC 解釋的攻擊，RFC 只定義了規範卻沒有說明該如何實作，造成不同實作間的差異造成問題，例如案例中光是 JavaScript 與 Erlang 對同一個 JSON 解讀的不一致就造成那麼多問題了，相信這也會是未來 Web Security 的重要趨勢之一!</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf">A New Era of SSRF - Exploiting URL Parser in Trending Programming Languages!</a> by Orange Tsai</li>
+<li><a target="_blank" rel="noopener" href="https://justi.cz/security/2017/11/14/couchdb-rce-npm.html">Remote Code Execution in CouchDB</a> by Max Justicz</li>
+</ol>
+<h1 id="4-跨應用組合所導致的新攻擊"><a href="#4-跨應用組合所導致的新攻擊" class="headerlink" title="4. 跨應用組合所導致的新攻擊"></a>4. 跨應用組合所導致的新攻擊</h1><p>在這個 Web 包山包海開發者什麼都要會的時代，傳統認為寫網站就不須接觸底層結果被 WebAssembly 打臉； 寫網站不須懂密碼學結果出現 Web 3.0，資訊安全從來都不只是一個單一學科，如果只熟悉自己的領域、很容易就會陷入思考誤區甚至被降維打擊! 這十年間 Web Security 也開始往跨應用的攻擊影響，無論是跨協議的組合、跨規範的誤用、跨領域的結合，甚至把不同的 Convention 組合在一起，例如 RFC 的命名規範剛好跟 HTTP 函數庫約定成俗的變數撞名所造成的資安漏洞，近幾年不時會冒出這種打破三觀的例子，讓人不得不佩服到底想像力多豐富才能把這八竿子打不著的東西組合再一起!</p>
+<ol>
+<li>Ticket Trick: <a target="_blank" rel="noopener" href="https://medium.com/intigriti/how-i-hacked-hundreds-of-companies-through-their-helpdesk-b7680ddc2d4c">How I hacked hundreds of companies through their helpdesk</a> by Inti De Ceukelaire</li>
+<li><a target="_blank" rel="noopener" href="https://httpoxy.org/">HTTPoxy Attack</a></li>
+<li><a target="_blank" rel="noopener" href="https://portswigger.net/daily-swig/av-oracle-new-hacking-technique-leverages-antivirus-to-steal-secrets">AvOracle: New Attack Vector Against Anti Virus</a> by Ryo Ichikawa and Ryota Shiga</li>
+<li>遺珠之憾: <a target="_blank" rel="noopener" href="https://i.blackhat.com/USA21/Wednesday-Handouts/us-21-Timeless-Timing-Attacks.pdf">Timeless Timing Attacks</a> by Tom Van Goethem &amp; Mathy Vanhoef</li>
+</ol>
+<h1 id="5-當前端安全不只在前端…"><a href="#5-當前端安全不只在前端…" class="headerlink" title="5. 當前端安全不只在前端…"></a>5. 當前端安全不只在前端…</h1><p>本來整理四個打算點到為止就好，但總是很難把前端安全給移出發展趨勢外，反正四天王總會有五個人對吧! 就把前端安全當成大魔王吧。</p>
+<p>伴隨 Web 2.0 &#x2F; 3.0 的興起，網站開始以使用者為中心、儲存在使用者端的敏感資料也越來越多，這十年間從瀏覽器的興衰、新舊特性的加入到主流框架的切換，前端安全的發展其實完全可以自成一派、發展出許多酷炫技術，甚至倒還有那麼點鑽牛角尖的程度，不過由於前端安全很大一部分還是得基於使用者互動，往往相較之下比較不被那麼受到重視，但隨著 Headless Browser 以及 Electron-Based 桌面應用的發展這種偏見慢慢開始被打破!</p>
+<p>首先是 Chromium 的廣泛應用，越來越多開發者會在伺服器端使用 Headless Browser 直接將網頁渲染成 PDF 或圖片，加上網頁爬蟲的盛行與測試的自動化，以往許多需要使用者互動的 XSS 現在都可以直接在伺服器端(或自動地)觸發，這些都是讓網頁前端安全與後端安全的邊界愈加模糊的一點。</p>
+<p>另一個分水嶺則是 Electron-Based 桌面應用的流行 (當然手機 App 中的 Webview 同理)，當所有受歡迎的桌面應用例如 Slack, Discord, Trello, 甚至連寫程式用的 Visual Studio Code 都成為基於瀏覽器的桌面應用，以往被視為雞肋被認為只能竊取 Cookie 的 XSS 現在搖身一變，成為可以直接跳小算盤的高風險漏洞! 這裡可以看看 Microsoft Teams 的例子，如何透過一個 AngularJS 的特性在桌面應用中創造出 XSS、再透過 Prototype Pollution 完成整個攻擊鏈，透過一個訊息就可以完整控制受害者!</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://speakerdeck.com/masatokinugawa/how-i-hacked-microsoft-teams-and-got-150000-dollars-in-pwn2own">How I Hacked Microsoft Teams and got $150,000 in Pwn2Own</a> by Masato Kinugawa</li>
+</ol>
+<p>總是很懶得寫結語，總之、我相信 Web Security 還是會有下一個十年啦，攻擊也只會更精緻、更刁鑽，至於要持續學習? 躺平? 還是直接交給專業的，就交由各位自己決定囉!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

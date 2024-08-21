@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="這次被以 HITCON 的身份邀請到馬來西亞參加 HITB 2014 CTF，照慣例來寫篇 Write Up 這次結果只有亞軍第二名有點殘念，第二天下午攻擊程式停了四小時少了幾萬分，不然應該有望第一XD 不過也是經驗，有個自動化攻擊以及送 Flag 的 Framework 真的還滿重要的，沒準備好也是失策XDRZ HITB 這次是以 Attack &amp; Defense 加上 Jeopardy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hack in the Box 2014 CTF Writeup - KeygenMe with RSA ">
+<meta property="og:url" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="這次被以 HITCON 的身份邀請到馬來西亞參加 HITB 2014 CTF，照慣例來寫篇 Write Up 這次結果只有亞軍第二名有點殘念，第二天下午攻擊程式停了四小時少了幾萬分，不然應該有望第一XD 不過也是經驗，有個自動化攻擊以及送 Flag 的 Framework 真的還滿重要的，沒準備好也是失策XDRZ HITB 這次是以 Attack &amp; Defense 加上 Jeopardy">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/c763790921f60538-01.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/0ed121c0db14386e-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/b6dd2ca8f438a4d1-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/82b52c8df1349f80-04.png">
+<meta property="article:published_time" content="2014-10-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T16:50:31.579Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/c763790921f60538-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hack in the Box 2014 CTF Writeup - KeygenMe with RSA  | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hack in the Box 2014 CTF Writeup - KeygenMe with RSA 
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-10-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-10-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>這次被以 HITCON 的身份邀請到馬來西亞參加 <a target="_blank" rel="noopener" href="http://conference.hitb.org/hitbsecconf2014kul/capture-the-flag/">HITB 2014 CTF</a>，照慣例來寫篇 Write Up</p>
+<p>這次結果只有亞軍第二名有點殘念，第二天下午攻擊程式停了四小時少了幾萬分，不然應該有望第一XD</p>
+<p>不過也是經驗，有個自動化攻擊以及送 Flag 的 Framework 真的還滿重要的，沒準備好也是失策XDRZ</p>
+<p>HITB 這次是以 Attack &amp; Defense 加上 Jeopardy 形式舉辦，每個隊伍有一檯實體主機，上面 run 個 Ubuntu 14.04 on VMPlayer。 隊伍要想辦法自己取得 root 以及找到服務開啟，到比賽截止前主辦方共放出了 4 個 Daemon 以及 7 個 Challenge</p>
+<p>比賽形式是以宇宙機戰的模式進行，每回合成功 Keep 住 Daemon 獲得 100 生命值，成功攻擊其他隊伍 Daemon Flag 獲得 200 生命值，而 Challenges 則是加分項目，成功解開一個獲得 2000 - 3000 不等的生命值</p>
+<p><img src="/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/c763790921f60538-01.jpg"></p>
+<p>而雖然這次的比賽是以 Attack &amp; Defense 型式進行，不過各 Daemon 服務比較像是 Reversing &amp; Puzzle 的綜合，成功解開後 Daemon 會自行讀取 Flag 吐給你，所以整場比賽也都不會用到 Overflow, Shellcode, ROP… 等，另外的 Challenge 則比較偏向 Reversing 以及 Stego 的形式。</p>
+<p>這次的 Write Up 就是本次 CTF Challenge 中的一題 Reversing 題目，雖然本身是 Web 狗、滲透狗，不過在這種對我們不友善的地方還是只能哭著下去看 T_____T</p>
+<p>題目是一題 Keygen Me，標題是 HITB2013KUL 不知道是 Typo Error 還是去年出的題目沒有用上放到今年開XDDDDD</p>
+<p><img src="/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/0ed121c0db14386e-02.png"></p>
+<p>很直觀的就是一個驗證程式要寫出註冊碼，正確會顯示 Correct 錯誤會顯示 Wrong，理所當然使用爆破直接改跳轉點是沒有用的。 二話不說拖進 IDA!</p>
+<p><img src="/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/b6dd2ca8f438a4d1-03.png"></p>
+<p>一堆臭臭長長的 Function 沒有辨識出來，OEP 怪怪的不過不影響分析，Visual C++ 編出來的程式多了一些怪程式區段滿機車的 T___T</p>
+<p>使用 GetDlgItemText 可以把關鍵地方定位出來，仔細觀察發現程式有使用 MIRACL 的 C++ 大數函示庫，可以從 <a target="_blank" rel="noopener" href="http://bbs.pediy.com/showthread.php?t=35599">這篇</a> 文章中將各個函數作用大致識別出來，如 subtract, divide, powmod 等，如此一來分析輕鬆了許多！</p>
+<p>接著花了幾個小時分析，把大致程式邏輯給弄懂如下</p>
+<p>（IDA 靜態分析中雖然沒有看到對於 e 的賦值，不過可以透過動態追蹤會發現 e &#x3D; 17）</p>
+<script src="//pastebin.com/embed_js.php?i=gPCpnkEn"></script>
+
+
+
+<p>看起來是對 Input 進行處理後使用 RSA 加密起來並且最後與密文進行比對，成功則是正確的 Flag！ RSA 依靠大質數保護演算法的安全，其中用到的大質數乘積為</p>
+<blockquote>
+<p>7906961983747432626460011685427449111190647169309825535629493220735583689550836202522449</p>
+</blockquote>
+<p>滿短的應該可以很快解出，丟進 <a target="_blank" rel="noopener" href="http://www.factordb.com/">Factordb</a> 中可以馬上分解出</p>
+<blockquote>
+<p>7906961983…49 &#x3D; 88899280969284710491078307117271523349979587 x 88942923919478497069248398794539034790292827</p>
+</blockquote>
+<p>所以現在有了</p>
+<blockquote>
+<p>p &#x3D;  88899280969284710491078307117271523349979587<br>q &#x3D; 88942923919478497069248398794539034790292827<br>e &#x3D; 17<br>n &#x3D; 7906961983…49</p>
+</blockquote>
+<p>複習了一下好久沒碰的 RSA，當把 N 解開有了 P 跟 Q 後接下來可以求出 Private Key D 來，這邊使用 rsatool 來用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">orange@me:~$ python rsatool.py \</span><br><span class="line">    -p 88899280969284710491078307117271523349979587 \</span><br><span class="line">    -q 88942923919478497069248398794539034790292827 \</span><br><span class="line">    -e 17 \</span><br><span class="line">    -n 7906961983747432626460011685427449111190647169309825535629493220735583689550836202522449</span><br><span class="line"></span><br><span class="line">Using (p, q) to initialise RSA instance</span><br><span class="line"></span><br><span class="line">n = fe6277ac25de48eedb829ad5458bc32e0dd678c80a123ecd73a54cb08eb719017cc88c751</span><br><span class="line">e = 17 (0x11)</span><br><span class="line">d = d17e446fa6b70ee2d2e40709fd09afcb92ec72dbe4c3614dcfb8a25b150b817622e58ae49</span><br><span class="line">p = 3fc8381a552f012766fc3078a07f8103761c3</span><br><span class="line">q = 3fd03c2f3c9b63f9208ee942c904d16536d5b</span><br></pre></td></tr></table></figure>
+
+
+<p>得到 D 之後就可以解上面要解的密文了！</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">orange@me:~$ echo 021abe7c17d73978e63835b0e76ad6120f5a3f8148f3de87da6e5b07bf7b76041c78aedf0c |  \</span><br><span class="line">    xxd -r -p | python rsacrack.py \</span><br><span class="line">        -d d17e446fa6b70ee2d2e40709fd09afcb92ec72dbe4c3614dcfb8a25b150b817622e58ae49 \</span><br><span class="line">        fe6277ac25de48eedb829ad5458bc32e0dd678c80a123ecd73a54cb08eb719017cc88c751 | xxd -p -c 64</span><br><span class="line"></span><br><span class="line">0000000000000000000000000000000000000000000001c2f3db8f478caafc84b10ed113</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>得到明文 <code>1c2f3db8f478caafc84b10ed113</code>，不過這是運算過後的結果 &#x3D;___&#x3D;</p>
+<p>所以要根據剛剛的運算弄出逆算法（數學苦手XDRZ）</p>
+<p>最後推出</p>
+<blockquote>
+<p>0x1c2f3db8f478caafc84b10ed113 * 66772239585999913610952241123315507216972277506025821^N + 29411180916569003283374190496632319086172136623216324</p>
+</blockquote>
+<p>出來的結果就可以以十進位五個一組五個一組推回原本的 FLAG ，又因為是 mod 的逆運算，根據 N 的值答案可以不只一組（ N&#x3D;1,2,3 … ），最後得出當 N&#x3D;1 的時候會有 printable 的解!</p>
+<blockquote>
+<p>2385648152415111590458116323765417147676516881603229820532451315251688506013237646763</p>
+</blockquote>
+<p>解碼後為</p>
+<p><img src="/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/82b52c8df1349f80-04.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

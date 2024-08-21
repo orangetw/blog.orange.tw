@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="好久沒打網誌XD考試前沒時間就想打到靠北，時間多了就懶Orz… 寒假不知不覺就快過完的說，還有很多事情沒做完，但是動畫倒是看了一堆Orz 當初的進度:  逆向有進步一點滿欣慰的 GrayHat Python才到第三章，開學再繼續讀吧。放寒假真的沒有心情去書桌前XD HackerChallenge多破了五關進步到32名XD 其他就哩哩摳摳吧，摸一點摸一點吧Orz..  順便介紹好用的IDA的插件–&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="增">
+<meta property="og:url" content="http://blog.orange.tw/posts/2010-02-blog-post/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="好久沒打網誌XD考試前沒時間就想打到靠北，時間多了就懶Orz… 寒假不知不覺就快過完的說，還有很多事情沒做完，但是動畫倒是看了一堆Orz 當初的進度:  逆向有進步一點滿欣慰的 GrayHat Python才到第三章，開學再繼續讀吧。放寒假真的沒有心情去書桌前XD HackerChallenge多破了五關進步到32名XD 其他就哩哩摳摳吧，摸一點摸一點吧Orz..  順便介紹好用的IDA的插件–&amp;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2010-02-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T04:58:41.451Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>增 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        增
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2010-02-15T16:00:00.000Z" class="dt-published" itemprop="datePublished">2010-02-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>好久沒打網誌XD<br>考試前沒時間就想打到靠北，時間多了就懶Orz…</p>
+<p>寒假不知不覺就快過完的說，還有很多事情沒做完，但是動畫倒是看了一堆Orz</p>
+<p>當初的進度:</p>
+<ul>
+<li>逆向有進步一點滿欣慰的</li>
+<li>GrayHat Python才到第三章，開學再繼續讀吧。放寒假真的沒有心情去書桌前XD</li>
+<li>HackerChallenge多破了五關進步到32名XD</li>
+<li>其他就哩哩摳摳吧，摸一點摸一點吧Orz..</li>
+</ul>
+<p>順便介紹好用的IDA的插件–&gt; 「Hex-rays」</p>
+<p>可以把IDA反組譯出來的Assembly Language轉回成類C程式，還會幫你把code最佳化，真是強大到靠北XDDD</p>
+<p>看著程式碼再配合OD or IDA真的超爽XDD</p>
+<ul>
+<li>2&#x2F;22 開學</li>
+<li>2&#x2F;24成績單</li>
+</ul>
+<p>不知道分數會怎樣呢?XD</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

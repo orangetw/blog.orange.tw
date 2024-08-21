@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Hi, this is the part 2 of the New MS Exchange Attack Surface. Because this article refers to several architecture introductions and attack surface concepts in the previous article, you could find the">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A New Attack Surface on MS Exchange Part 2 - ProxyOracle!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Hi, this is the part 2 of the New MS Exchange Attack Surface. Because this article refers to several architecture introductions and attack surface concepts in the previous article, you could find the">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7070a738a7bbb7f4-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/594b85a3fe49a0a8-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/236d9aec7a0f2fc7-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/09282ddf111bae56-04.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/593c155dbdf44f84-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7d510dfd776aae8e-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/a3bcbfc2df83c04e-07.png">
+<meta property="article:published_time" content="2021-08-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:10:09.111Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7070a738a7bbb7f4-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>A New Attack Surface on MS Exchange Part 2 - ProxyOracle! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        A New Attack Surface on MS Exchange Part 2 - ProxyOracle!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-08-06T16:00:00.000Z" class="dt-published" itemprop="datePublished">2021-08-07</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7070a738a7bbb7f4-01.png" alt="preview"></p>
+<p>Hi, this is the part 2 of the New MS Exchange Attack Surface. Because this article refers to several architecture introductions and attack surface concepts in the previous article, you could find the first piece here:</p>
+<ul>
+<li><a href="https://blog.orange.tw/2021/08/proxylogon-a-new-attack-surface-on-ms-exchange-part-1.html">A New Attack Surface on MS Exchange Part 1 - ProxyLogon!</a></li>
+</ul>
+<p>This time, we will be introducing ProxyOracle. Compared with ProxyLogon, ProxyOracle is an interesting exploit with a different approach. By simply leading a user to visit a malicious link, ProxyOracle allows an attacker to recover the user’s password in plaintext format completely. ProxyOracle consists of two vulnerabilities: </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-31195">CVE-2021-31195</a> - Reflected Cross-Site Scripting</li>
+<li><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-31196">CVE-2021-31196</a> - Padding Oracle Attack on Exchange Cookies Parsing</li>
+</ul>
+<h1 id="Where-is-ProxyOracle"><a href="#Where-is-ProxyOracle" class="headerlink" title="Where is ProxyOracle"></a>Where is ProxyOracle</h1><p>So where is ProxyOracle? Based on the CAS architecture we introduced before, the Frontend of CAS will first serialize the User Identity to a string and put it in the header of <code>X-CommonAccessToken</code>. The header will be merged into the client’s HTTP request and sent to the Backend later. Once the Backend receives, it deserializes the header back to the original User Identity in Frontend.</p>
+<p>We now know how the Frontend and Backend synchronize the User Identity. The next is to explain how the Frontend knows who you are and processes your credentials. The Outlook Web Access (OWA) uses a fancy interface to handle the whole login mechanism, which is called Form-Based Authentication (FBA). The FBA is a special IIS module that inherits the <code>ProxyModule</code> and is responsible for executing the transformation between the credentials and cookies before entering the proxy logic.</p>
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/594b85a3fe49a0a8-02.png"></p>
+<h1 id="The-FBA-Mechanism"><a href="#The-FBA-Mechanism" class="headerlink" title="The FBA Mechanism"></a>The FBA Mechanism</h1><p>HTTP is a stateless protocol. To keep your login state, FBA saves the username and password in cookies. Every time you visit the OWA, Exchange will parse the cookies, retrieve the credential and try to log in with that. If the login succeed, Exchange will serialize your User Identity into a string, put it into the header of <code>X-CommonAccessToken</code>, and forward it to the Backend.</p>
+<p><strong>HttpProxy\FbaModule.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnBeginRequestInternal</span>(<span class="params">HttpApplication httpApplication</span>)</span> &#123;</span><br><span class="line"></span><br><span class="line">    httpApplication.Context.Items[<span class="string">&quot;AuthType&quot;</span>] = <span class="string">&quot;FBA&quot;</span>;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.HandleFbaAuthFormPost(httpApplication)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.ParseCadataCookies(httpApplication);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (MissingSslCertificateException) &#123;</span><br><span class="line">            NameValueCollection nameValueCollection = <span class="keyword">new</span> NameValueCollection();</span><br><span class="line">            nameValueCollection.Add(<span class="string">&quot;CafeError&quot;</span>, ErrorFE.FEErrorCodes.SSLCertificateProblem.ToString());</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> HttpException(<span class="number">302</span>, AspNetHelper.GetCafeErrorPageRedirectUrl(httpApplication.Context, nameValueCollection));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">base</span>.OnBeginRequestInternal(httpApplication);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>All the cookies are encrypted to ensure even if an attacker can hijack the HTTP request, he&#x2F;she still couldn’t get your credential in plaintext format. FBA leverages 5 special cookies to accomplish the whole de&#x2F;encryption process: </p>
+<ul>
+<li><code>cadata</code> - The encrypted username and password</li>
+<li><code>cadataTTL</code> - The Time-To-Live timestamp</li>
+<li><code>cadataKey</code> - The KEY for encryption</li>
+<li><code>cadataIV</code> - The IV for encryption</li>
+<li><code>cadataSig</code> - The signature to prevent tampering</li>
+</ul>
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/236d9aec7a0f2fc7-03.png"></p>
+<p>The encryption logic will first generate two 16 bytes random strings as the IV and KEY for the current session. The username and password will then be encoded with Base64, encrypted by the algorithm AES and sent back to the client within cookies. Meanwhile, the IV and KEY will be sent to the user, too. To prevent the client from decrypting the credential by the known IV and KEY directly, Exchange will once again use the algorithm RSA to encrypt the IV and KEY via its SSL certificate private key before sending out! </p>
+<p>Here is a Pseudo Code for the encryption logic:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@key = GetServerSSLCert().GetPrivateKey()</span><br><span class="line">cadataSig = RSA(@key).Encrypt(<span class="string">&quot;Fba Rocks!&quot;</span>)</span><br><span class="line">cadataIV  = RSA(@key).Encrypt(GetRandomBytes(<span class="number">16</span>))</span><br><span class="line">cadataKey = RSA(@key).Encrypt(GetRandomBytes(<span class="number">16</span>))</span><br><span class="line"></span><br><span class="line">@timestamp = GetCurrentTimestamp()</span><br><span class="line">cadataTTL  = AES_CBC(cadataKey, cadataIV).Encrypt(@timestamp)</span><br><span class="line"></span><br><span class="line">@blob  = <span class="string">&quot;Basic &quot;</span> + ToBase64String(UserName + <span class="string">&quot;:&quot;</span> + Password)</span><br><span class="line">cadata = AES_CBC(cadataKey, cadataIV).Encrypt(@blob)</span><br></pre></td></tr></table></figure>
+
+<p>The Exchange takes CBC as its padding mode. If you are familiar with Cryptography, you might be wondering whether the CBC mode here is vulnerable to the Padding Oracle Attack? Bingo! As a matter of fact, Padding Oracle Attack is still existing in such essential software like Exchange in 2021!</p>
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/09282ddf111bae56-04.gif"></p>
+<h1 id="CVE-2021-31196-The-Padding-Oracle"><a href="#CVE-2021-31196-The-Padding-Oracle" class="headerlink" title="CVE-2021-31196 - The Padding Oracle"></a>CVE-2021-31196 - The Padding Oracle</h1><p>When there is something wrong with the FBA, Exchange attaches an error code and redirects the HTTP request back to the original login page. So where is the Oracle? In the cookie decryption, Exchange uses an exception to catch the Padding Error, and because of the exception, the program returned immediately so that error code number is <code>0</code>, which means <code>None</code>:</p>
+<blockquote>
+<p>Location: &#x2F;OWA&#x2F;logon.aspx?url&#x3D;…&amp;reason&#x3D;0</p>
+</blockquote>
+<p>In contrast with the Padding Error, if the decryption is good, Exchange will continue the authentication process and try to login with the corrupted username and password. At this moment, the result must be a failure and the error code number is <code>2</code>, which represents <code>InvalidCredntials</code>:</p>
+<blockquote>
+<p>Location: &#x2F;OWA&#x2F;logon.aspx?url&#x3D;…&amp;reason&#x3D;2</p>
+</blockquote>
+<p>The diagram looks like:</p>
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/593c155dbdf44f84-05.png"></p>
+<p>With the difference, we now have an Oracle to identify whether the decryption process is successful or not.</p>
+<p><strong>HttpProxy\FbaModule.cs</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ParseCadataCookies</span>(<span class="params">HttpApplication httpApplication</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HttpContext context = httpApplication.Context;</span><br><span class="line">    HttpRequest request = context.Request;</span><br><span class="line">    HttpResponse response = context.Response;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">string</span> text = request.Cookies[<span class="string">&quot;cadata&quot;</span>].Value;    </span><br><span class="line">    <span class="built_in">string</span> text2 = request.Cookies[<span class="string">&quot;cadataKey&quot;</span>].Value;    </span><br><span class="line">    <span class="built_in">string</span> text3 = request.Cookies[<span class="string">&quot;cadataIV&quot;</span>].Value;    </span><br><span class="line">    <span class="built_in">string</span> text4 = request.Cookies[<span class="string">&quot;cadataSig&quot;</span>].Value;    </span><br><span class="line">    <span class="built_in">string</span> text5 = request.Cookies[<span class="string">&quot;cadataTTL&quot;</span>].Value;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    RSACryptoServiceProvider rsacryptoServiceProvider = (x509Certificate.PrivateKey <span class="keyword">as</span> RSACryptoServiceProvider);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">byte</span>[] array = <span class="literal">null</span>;</span><br><span class="line">    <span class="built_in">byte</span>[] array2 = <span class="literal">null</span>;</span><br><span class="line">    <span class="built_in">byte</span>[] rgb2 = Convert.FromBase64String(text2);</span><br><span class="line">    <span class="built_in">byte</span>[] rgb3 = Convert.FromBase64String(text3);</span><br><span class="line">    array = rsacryptoServiceProvider.Decrypt(rgb2, <span class="literal">true</span>);</span><br><span class="line">    array2 = rsacryptoServiceProvider.Decrypt(rgb3, <span class="literal">true</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">using</span> (AesCryptoServiceProvider aesCryptoServiceProvider = <span class="keyword">new</span> AesCryptoServiceProvider()) &#123;</span><br><span class="line">        aesCryptoServiceProvider.Key = array;</span><br><span class="line">        aesCryptoServiceProvider.IV = array2;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">using</span> (ICryptoTransform cryptoTransform2 = aesCryptoServiceProvider.CreateDecryptor()) &#123;</span><br><span class="line">            <span class="built_in">byte</span>[] bytes2 = <span class="literal">null</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="built_in">byte</span>[] array5 = Convert.FromBase64String(text);</span><br><span class="line">                bytes2 = cryptoTransform2.TransformFinalBlock(array5, <span class="number">0</span>, array5.Length);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (CryptographicException ex8) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ExTraceGlobals.VerboseTracer.IsTraceEnabled(<span class="number">1</span>)) &#123;</span><br><span class="line">                    ExTraceGlobals.VerboseTracer.TraceDebug&lt;CryptographicException&gt;((<span class="built_in">long</span>)<span class="keyword">this</span>.GetHashCode(), <span class="string">&quot;[FbaModule::ParseCadataCookies] Received CryptographicException &#123;0&#125; transforming auth&quot;</span>, ex8);</span><br><span class="line">                &#125;</span><br><span class="line">                httpApplication.Response.AppendToLog(<span class="string">&quot;&amp;CryptoError=PossibleSSLCertrolloverMismatch&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (FormatException ex9) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ExTraceGlobals.VerboseTracer.IsTraceEnabled(<span class="number">1</span>)) &#123;</span><br><span class="line">                    ExTraceGlobals.VerboseTracer.TraceDebug&lt;FormatException&gt;((<span class="built_in">long</span>)<span class="keyword">this</span>.GetHashCode(), <span class="string">&quot;[FbaModule::ParseCadataCookies] Received FormatException &#123;0&#125; decoding caData auth&quot;</span>, ex9);</span><br><span class="line">                &#125;</span><br><span class="line">                httpApplication.Response.AppendToLog(<span class="string">&quot;&amp;DecodeError=InvalidCaDataAuthCookie&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> @string = Encoding.Unicode.GetString(bytes2);</span><br><span class="line">            request.Headers[<span class="string">&quot;Authorization&quot;</span>] = @string;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It should be noted that since the IV is encrypted with the SSL certificate private key, we can’t recover the first block of the ciphertext through XOR. But it wouldn’t cause any problem for us because the C# internally processes the strings as UTF-16, so the first 12 bytes of the ciphertext must be <code>B\x00a\x00s\x00i\x00c\x00 \x00</code>. With one more Base64 encoding applied, we will only lose the first 1.5 bytes in the username field.</p>
+<blockquote>
+<p>(16−6×2) ÷ 2 × (3&#x2F;4) &#x3D; 1.5</p>
+</blockquote>
+<h1 id="The-Exploit"><a href="#The-Exploit" class="headerlink" title="The Exploit"></a>The Exploit</h1><p>As of now, we have a Padding Oracle that allows us to decrypt any user’s cookie. BUT, how can we get the client cookies? Here we find another vulnerability to chain them together.</p>
+<h2 id="XSS-to-Steal-Client-Cookies"><a href="#XSS-to-Steal-Client-Cookies" class="headerlink" title="XSS to Steal Client Cookies"></a>XSS to Steal Client Cookies</h2><p>We discover an XSS (CVE-2021-31195) in the CAS Frontend (Yeah, CAS again) to chain together, the root cause of this XSS is relatively easy: Exchange forgets to sanitize the data before printing it out so that we can use the <code>\</code> to escape from the JSON format and inject arbitrary JavaScript code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https://exchange/owa/auth/frowny.aspx</span><br><span class="line">?app=people</span><br><span class="line">&amp;et=ServerError</span><br><span class="line">&amp;esrc=MasterPage</span><br><span class="line">&amp;te=\</span><br><span class="line">&amp;refurl=&#125;&#125;&#125;;alert(document.domain)//</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7d510dfd776aae8e-06.png"></p>
+<p>But here comes another question: all the sensitive cookies are protected by the HttpOnly flag, which makes us unable to access the cookies by JavaScript. WHAT SHOULD WE DO?</p>
+<h2 id="Bypass-the-HttpOnly"><a href="#Bypass-the-HttpOnly" class="headerlink" title="Bypass the HttpOnly"></a>Bypass the HttpOnly</h2><p>As we could execute arbitrary JavaScript on browsers, why don’t we just insert the SSRF cookie we used in ProxyLogon? Once we add this cookie and assign the Backend target value as our malicious server, Exchange will become a proxy between the victims and us. We can then take over all the client’s HTTP static resources and get the protected HttpOnly cookies! </p>
+<p><img src="/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/a3bcbfc2df83c04e-07.png"></p>
+<p>By chaining bugs together, we have an elegant exploit that can steal any user’s cookies by just sending him&#x2F;her a malicious link. What’s noteworthy is that the XSS here is only helping us to steal the cookie, which means all the decryption processes wouldn’t require any authentication and user interaction. Even if the user closes the browser, it wouldn’t affect our Padding Oracle Attack! </p>
+<p>Here is the <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=VuJvmJZxogc">demonstration video</a> showing how we recover the victim’s password:</p>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/VuJvmJZxogc" width="560"></iframe>
+
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

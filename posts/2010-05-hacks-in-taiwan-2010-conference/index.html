@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="DEBUG 主辦單位：  CHROOT Security Group ( http:&#x2F;&#x2F;www.chroot.org ) 網駭科技 ( http:&#x2F;&#x2F;www.net-hack.com )  協辦單位：  中研院資創中心 自由軟體鑄造場 ( http:&#x2F;&#x2F;www.openfoundry.org ) The Anti-botnet Project of TANet ( http:&#x2F;&#x2F;www.anti-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hacks in Taiwan 2010 Conference">
+<meta property="og:url" content="http://blog.orange.tw/posts/2010-05-hacks-in-taiwan-2010-conference/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="DEBUG 主辦單位：  CHROOT Security Group ( http:&#x2F;&#x2F;www.chroot.org ) 網駭科技 ( http:&#x2F;&#x2F;www.net-hack.com )  協辦單位：  中研院資創中心 自由軟體鑄造場 ( http:&#x2F;&#x2F;www.openfoundry.org ) The Anti-botnet Project of TANet ( http:&#x2F;&#x2F;www.anti-">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2010-05-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:30:11.660Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hacks in Taiwan 2010 Conference | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hacks in Taiwan 2010 Conference
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2010-05-25T16:00:00.000Z" class="dt-published" itemprop="datePublished">2010-05-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a href="https://blog.orange.tw//2010/05/hacks-in-taiwan-2010-conference.html">DEBUG</a></p>
+<p><strong>主辦單位：</strong></p>
+<ul>
+<li>CHROOT Security Group ( <a target="_blank" rel="noopener" href="http://www.chroot.org/">http://www.chroot.org</a> )</li>
+<li>網駭科技 ( <a target="_blank" rel="noopener" href="http://www.net-hack.com/">http://www.net-hack.com</a> )</li>
+</ul>
+<p><strong>協辦單位：</strong></p>
+<ul>
+<li>中研院資創中心 自由軟體鑄造場 ( <a target="_blank" rel="noopener" href="http://www.openfoundry.org/">http://www.openfoundry.org</a> )</li>
+<li>The Anti-botnet Project of TANet ( <a target="_blank" rel="noopener" href="http://www.anti-botnet.edu.tw/">http://www.anti-botnet.edu.tw/</a> ) </li>
+<li>ZusoSecurity ( <a target="_blank" rel="noopener" href="http://www.zuso.org.tw/">http://www.zuso.org.tw</a> ) </li>
+<li>飛特論壇 ( <a target="_blank" rel="noopener" href="http://www.phate.tw/">http://www.phate.tw</a> )</li>
+</ul>
+<p><strong>會議地點：</strong></p>
+<ul>
+<li>中央研究院  人文社會科學館 ( 台北市南港區研究院路二段 128 號 )</li>
+</ul>
+<p><strong>會議時間：</strong></p>
+<ul>
+<li>2010 年 7 月 17 日 ~ 2010 年 7 月 18 日</li>
+</ul>
+<p><strong>報名方式：</strong></p>
+<ul>
+<li>第一階段網路報名：2010 年 6 月 8 日前 ( 學生票新台幣 1200 元 )</li>
+<li>第二階段網路報名：2010 年 7 月 10 日前 ( 學生票新台幣 1300 元 )</li>
+<li>現場報名：會議舉行當日可至現場報名 ( 學生票新台幣 1500 元 ) <ol>
+<li>網路報名：填具完整資料並完成轉帳繳款程序即完成網路報名。</li>
+<li>現場報名：會議舉行當日可至現場報名，人數額滿為止，額滿後恕不開放入場。</li>
+</ol>
+</li>
+</ul>
+<p><strong>學生票驗證資格辦法及說明：</strong></p>
+<ol>
+<li>學生票資格：限 24 歲大專院校以下（不含研究所）持學生證為憑。</li>
+<li>僅接受「學生證」之驗證方式，網路查詢恕無法認可。</li>
+<li>需蓋有 98 學年度上下學期註冊章之學生證。</li>
+<li>未帶證件或不在優惠範圍內者，一律以「一般身份」計，並需補票進場。</li>
+<li>攜伴參加者需提供所有參與者之學生證。</li>
+</ol>
+<p><strong>注意事項：</strong></p>
+<ul>
+<li>請妥善填寫真實資料，並攜帶含相片之證件。</li>
+<li>與會人員請記住您的報名序號，以供查驗身分。</li>
+<li>與會人員往返交通費及需住宿者請自理。</li>
+<li>會議兩天中午均提供餐點及下午茶點。</li>
+</ul>
+<p><strong>報名網址：</strong></p>
+<ul>
+<li>一般票 <a target="_blank" rel="noopener" href="http://registrano.com/events/hit2010">http://registrano.com/events/hit2010</a></li>
+<li>學生票 <a target="_blank" rel="noopener" href="http://registrano.com/events/hit2010-student">http://registrano.com/events/hit2010-student</a></li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://blog.hitcon.org/">官方部落格</a></p>
+</blockquote>
+<p>之前想打的都忘記了說XD</p>
+<p>有人要來嗎??? 來玩嘛來玩嘛～</p>
+<p>今年我變工作人員，也會出WarGame題目唷!!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

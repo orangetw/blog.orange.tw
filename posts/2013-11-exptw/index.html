@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前幾天看到 .tw 域名特價中，失心瘋就買下了幾個 domain。 買了之後也不知道幹嘛，感覺 EXP.tw 那麼短可以放個什麼東西在上面，就一時興起隨手寫了個服務在上面。 寫了兩三天，順便練練寫網頁的手感 XD 目前提供的功能如下  Exploits 漏洞資料庫 單純 Exploit-db.com 上面的文章   Hacked 被入侵網站列表 資料來源 Zone-h.org 資料來源 Wooy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EXP.tw - 文章投稿、駭客資訊、資安文章">
+<meta property="og:url" content="http://blog.orange.tw/posts/2013-11-exptw/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="前幾天看到 .tw 域名特價中，失心瘋就買下了幾個 domain。 買了之後也不知道幹嘛，感覺 EXP.tw 那麼短可以放個什麼東西在上面，就一時興起隨手寫了個服務在上面。 寫了兩三天，順便練練寫網頁的手感 XD 目前提供的功能如下  Exploits 漏洞資料庫 單純 Exploit-db.com 上面的文章   Hacked 被入侵網站列表 資料來源 Zone-h.org 資料來源 Wooy">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-exptw/5c9b4796a5886b87-01.png">
+<meta property="article:published_time" content="2013-11-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T21:45:48.940Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2013-11-exptw/5c9b4796a5886b87-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>EXP.tw - 文章投稿、駭客資訊、資安文章 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        EXP.tw - 文章投稿、駭客資訊、資安文章
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2013-11-23T16:00:00.000Z" class="dt-published" itemprop="datePublished">2013-11-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2013-11-exptw/5c9b4796a5886b87-01.png" alt="preview"></p>
+<p>前幾天看到 .tw 域名特價中，失心瘋就買下了幾個 domain。 買了之後也不知道幹嘛，感覺 EXP.tw 那麼短可以放個什麼東西在上面，就一時興起隨手寫了個服務在上面。</p>
+<p>寫了兩三天，順便練練寫網頁的手感 XD 目前提供的功能如下</p>
+<ul>
+<li>Exploits<ul>
+<li>漏洞資料庫</li>
+<li>單純 Exploit-db.com 上面的文章</li>
+</ul>
+</li>
+<li>Hacked<ul>
+<li>被入侵網站列表</li>
+<li>資料來源 Zone-h.org</li>
+<li>資料來源 Wooyun.org</li>
+</ul>
+</li>
+<li>Articles<ul>
+<li>比較著重在 駭客、駭客團體、資安研究員的 Blog RSS Feed 上</li>
+<li>百度 Blog 上面的資安相關文章，但是百度 Blog 不給 RSS 訂閱，上面又有許多大陸駭客、資安研究員很有質量的文章… 每次都要特地去看很麻煩就放進來了</li>
+<li>資安新聞的話可能之後會在獨立一個類別放置</li>
+</ul>
+</li>
+<li>Writing<ul>
+<li>對於資安上面的文章發表</li>
+<li>有 科普教學、八卦爆卦、心得分享、技巧分享、好物分享、其他雜項 等</li>
+<li>歡迎投稿：）</li>
+</ul>
+</li>
+<li>SNS<ul>
+<li>知名駭客、資安研究員的 Twitter、微博等社交網路內容，基本上很多好玩的或是八卦都是從這些地方出來的 :P</li>
+</ul>
+</li>
+</ul>
+<p>網址在</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://exp.tw/">http://exp.tw/</a></p>
+</blockquote>
+<p>就請各位不吝指教囉：Ｐ<br>（ 還有歡迎投稿 XDD ）</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

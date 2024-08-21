@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="有時網路上逛到就會順便存起來 古典密碼每套密碼表背後都有它的一個故事，仔細體會的話都還滿有趣的XDD 豬圈密碼Pigpen CIpher 罪犯的來信OrzZodiacKiller Cipher From 福爾摩斯小說Danceing Man Code Polybius Square  23 15 32 32 35 52 35 42 32 14  維瓊內爾方陣(Vigenère cipher) 改良">
+<meta property="og:type" content="article">
+<meta property="og:title" content="好玩的圖XD">
+<meta property="og:url" content="http://blog.orange.tw/posts/2010-02-xd/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="有時網路上逛到就會順便存起來 古典密碼每套密碼表背後都有它的一個故事，仔細體會的話都還滿有趣的XDD 豬圈密碼Pigpen CIpher 罪犯的來信OrzZodiacKiller Cipher From 福爾摩斯小說Danceing Man Code Polybius Square  23 15 32 32 35 52 35 42 32 14  維瓊內爾方陣(Vigenère cipher) 改良">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/a4c11b4a9a3ea91c-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/e8bec79ff0ad85a3-02.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/2044f27b728f4db0-03.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/9ed545e57cc1f7e4-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/7ccd9af3813a8101-05.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/6104b29597e737ff-06.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/e5e4813d4fb95b6e-07.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/5f4fe88ae2c84241-08.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/7649c0bd033db9b5-09.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/e6c8af9022cec80c-10.fixme">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/9c28ee172b928a8d-11.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/5f6021cd5052c6b8-12.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/602f788cf0dd0d0a-13.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/cd3bb1b5f577669c-14.gif">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/96a38620cc378ad6-15.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-02-xd/0e299160de2d05c6-16.gif">
+<meta property="article:published_time" content="2010-02-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:40:30.166Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2010-02-xd/a4c11b4a9a3ea91c-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>好玩的圖XD | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        好玩的圖XD
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2010-02-20T16:00:00.000Z" class="dt-published" itemprop="datePublished">2010-02-21</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>有時網路上逛到就會順便存起來</p>
+<h1 id="古典密碼"><a href="#古典密碼" class="headerlink" title="古典密碼"></a>古典密碼</h1><p>每套密碼表背後都有它的一個故事，仔細體會的話都還滿有趣的XDD</p>
+<h3 id="豬圈密碼"><a href="#豬圈密碼" class="headerlink" title="豬圈密碼"></a>豬圈密碼</h3><p><img src="/posts/2010-02-xd/a4c11b4a9a3ea91c-01.png"><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Pigpen_cipher">Pigpen CIpher</a></p>
+<h3 id="罪犯的來信Orz"><a href="#罪犯的來信Orz" class="headerlink" title="罪犯的來信Orz"></a>罪犯的來信Orz</h3><p><img src="/posts/2010-02-xd/e8bec79ff0ad85a3-02.gif"><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Zodiac_Killer">Zodiac</a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Zodiac_Killer">Killer Cipher</a></p>
+<h3 id="From-福爾摩斯小說"><a href="#From-福爾摩斯小說" class="headerlink" title="From 福爾摩斯小說"></a>From 福爾摩斯小說</h3><p><a target="_blank" rel="noopener" href="http://www.purplehell.com/riddletools/danceman.htm">Danceing Man Code</a></p>
+<h3 id="Polybius-Square"><a href="#Polybius-Square" class="headerlink" title="Polybius Square"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Polybius_square">Polybius Square</a></h3><p><img src="/posts/2010-02-xd/2044f27b728f4db0-03.jpg"></p>
+<blockquote>
+<p>23 15 32 32 35 52 35 42 32 14</p>
+</blockquote>
+<h3 id="維瓊內爾方陣-Vigenere-cipher"><a href="#維瓊內爾方陣-Vigenere-cipher" class="headerlink" title="維瓊內爾方陣(Vigenère cipher)"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher">維瓊內爾方陣(Vigenère cipher)</a></h3><p><img src="/posts/2010-02-xd/9ed545e57cc1f7e4-04.png"></p>
+<p>改良版的Caesar Shift，依照選定的key來決定加密的規則</p>
+<h3 id="Dvorak鍵盤位置xD"><a href="#Dvorak鍵盤位置xD" class="headerlink" title="Dvorak鍵盤位置xD"></a>Dvorak鍵盤位置xD</h3><p><img src="/posts/2010-02-xd/7ccd9af3813a8101-05.gif"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/QWERTY">QWERTY</a>(一般鍵盤配置)</p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard">Dvorak</a></p>
+</blockquote>
+<h3 id="克林貢語"><a href="#克林貢語" class="headerlink" title="克林貢語"></a><a target="_blank" rel="noopener" href="http://zh.wikipedia.org/zh-tw/%E5%85%8B%E6%9E%97%E8%B2%A2%E8%AA%9E">克林貢語</a></h3><p><img src="/posts/2010-02-xd/6104b29597e737ff-06.gif"></p>
+<p>From Star Trek</p>
+<h3 id="Enochian-Alphabet"><a href="#Enochian-Alphabet" class="headerlink" title="Enochian Alphabet"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Enochian">Enochian Alphabet</a></h3><p><img src="/posts/2010-02-xd/e5e4813d4fb95b6e-07.gif"></p>
+<h3 id="Queen-Mary"><a href="#Queen-Mary" class="headerlink" title="Queen Mary"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Mary_I_of_Scotland">Queen Mary</a></h3><p><img src="/posts/2010-02-xd/5f4fe88ae2c84241-08.gif"></p>
+<h3 id="Malachim-Alphabet"><a href="#Malachim-Alphabet" class="headerlink" title="Malachim Alphabet"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Malachim">Malachim Alphabet</a></h3><p><img src="/posts/2010-02-xd/7649c0bd033db9b5-09.gif"></p>
+<h3 id="亞維語"><a href="#亞維語" class="headerlink" title="亞維語"></a><a target="_blank" rel="noopener" href="http://zh.wikipedia.org/zh-hant/%E4%BA%9E%E7%B6%AD%E8%AA%9E_(%E8%99%9B%E6%A7%8B%E8%AA%9E%E8%A8%80)">亞維語</a></h3><p><img src="/posts/2010-02-xd/e6c8af9022cec80c-10.fixme"></p>
+<h3 id="Atlantean-alphabet"><a href="#Atlantean-alphabet" class="headerlink" title="Atlantean alphabet"></a><a target="_blank" rel="noopener" href="http://www.omniglot.com/writing/atlantean.htm">Atlantean alphabet</a></h3><p><img src="/posts/2010-02-xd/9c28ee172b928a8d-11.gif"></p>
+<p>也是為了電影Orz</p>
+<h3 id="Elder-Futhark"><a href="#Elder-Futhark" class="headerlink" title="Elder Futhark"></a><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Elder_Futhark">Elder Futhark</a></h3><p><img src="/posts/2010-02-xd/5f6021cd5052c6b8-12.gif"></p>
+<p>From <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Runic_alphabet">Runic alphabet</a> used by 日耳曼人(?)</p>
+<p>Runic Alphabet原來在禁書目錄&amp;零之使魔也有出現過欸xDD</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://tinyurl.com/yamcas2">http://tinyurl.com/yamcas2</a></p>
+</blockquote>
+<h3 id="Templar-Cipher"><a href="#Templar-Cipher" class="headerlink" title="Templar Cipher"></a><a target="_blank" rel="noopener" href="http://freemasonry.bcy.ca/texts/templars_cipher.html">Templar Cipher</a></h3><p><img src="/posts/2010-02-xd/602f788cf0dd0d0a-13.jpg"></p>
+<h3 id="在附上幾張不知名來源的吧XD"><a href="#在附上幾張不知名來源的吧XD" class="headerlink" title="在附上幾張不知名來源的吧XD"></a>在附上幾張不知名來源的吧XD</h3><p><img src="/posts/2010-02-xd/cd3bb1b5f577669c-14.gif"></p>
+<p><img src="/posts/2010-02-xd/96a38620cc378ad6-15.png"></p>
+<p><img src="/posts/2010-02-xd/0e299160de2d05c6-16.gif"></p>
+<p>以上圖為網路收集，如有侵犯版權請來信 :)</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Hi! This is the case study in my Black Hat USA 2018 and DEFCON 26 talk, you can also check slides here:    Breaking Parser Logic! Take Your Path Normalization Off and Pop 0days Out  In past two yea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How I Chained 4 Bugs (Features?) into RCE on Amazon Collaboration System">
+<meta property="og:url" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Hi! This is the case study in my Black Hat USA 2018 and DEFCON 26 talk, you can also check slides here:    Breaking Parser Logic! Take Your Path Normalization Off and Pop 0days Out  In past two yea">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/819d6d0ad207990d-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/cd394c2ba0a63750-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/59e0ff7714e46416-04.png">
+<meta property="article:published_time" content="2018-08-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:16:00.677Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>How I Chained 4 Bugs (Features?) into RCE on Amazon Collaboration System | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        How I Chained 4 Bugs (Features?) into RCE on Amazon Collaboration System
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-08-10T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-08-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png" alt="preview">  </p>
+<p>Hi! This is the case study in my <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-18/briefings/schedule/speakers.html#orange-tsai-35248">Black Hat USA 2018</a> and <a target="_blank" rel="noopener" href="https://www.defcon.org/html/defcon-26/dc-26-speakers.html#Tsai">DEFCON 26</a> talk, you can also check slides here:  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf">Breaking Parser Logic! Take Your Path Normalization Off and Pop 0days Out</a></li>
+</ul>
+<p>In past two years, I started to pay more attention on the “inconsistency” bug. What’s that? It’s just like my <a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf">SSRF talk in Black Hat</a> and <a href="http://blog.orange.tw/2017/07/how-i-chained-4-vulnerabilities-on.html">GitHub SSRF to RCE case</a> last year, finding inconsistency between the URL parser and the URL fetcher that leads to whole SSRF bypass!  </p>
+<p>There is also another very cool article <a target="_blank" rel="noopener" href="https://0x09al.github.io/waf/bypass/ssl/2018/07/02/web-application-firewall-bypass.html">Bypassing Web-Application Firewalls by abusing SSL&#x2F;TLS</a> to illustrate how “inconsistency” be awesome by <a target="_blank" rel="noopener" href="https://twitter.com/0x09AL">@0x09AL</a>  </p>
+<p>So this year, I started focus on the “inconsistency” which lies in the path parser and path normalization!  </p>
+<p>It’s hard to write a well-designed parser. Different entity has its own standard and implementation. In order to fix a bug without impacting business logic, it’s common to apply a work-around or a filter instead of patching the bug directly. Therefore, if there is any inconsistency between the filter and the called method, the security mechanism can be easily bypassed!  </p>
+<p>While I was reading advisories, I noticed a feature called URL Path Parameter. Some researchers have already pointed out this feature may lead to security issues, but it still depends on the programming failure! With a little bit mind-mapping, I found this feature could be perfectly applied on multi-layered architectures, and this is <strong>vulnerable by default without any coding failure</strong>. If you are using reverse proxy with Java as your back-end service, you are under threat!  </p>
+<p>Back to 2015, it was the first time I found this attack surface was during in a red teaming. After that, I realized this was really cool and I’m curious about how many people know that. So I made a <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#blackbox">challenge</a> for <a target="_blank" rel="noopener" href="http://ctf.360.com/2016/en/index.html">WCTF 2016</a>.  </p>
+<p><em>P.S. I have checked scanners in DirBuster, wFuzz, DirB and DirSearch. Until now, only DirSearch joined the pattern on <a target="_blank" rel="noopener" href="https://github.com/maurosoria/dirsearch/commit/9496597cd03d91b29bf3f2e9b0a73f8df23cb3af">1 May, 2017</a></em></p>
+<p>WCTF is a competition held by Belluminar and 360. It’s not similar to general <a target="_blank" rel="noopener" href="https://ctftime.org/ctf-wtf/">Jeopardy or Attack &amp; Defense</a> in other CTF competitions. It invites top 10 teams from all over the world, and every team needs to design two challenges, so there are 20 challenges! The more challenges you solved, the more points you got. However, no one solved my challenge during the competition. Therefore, I think this trick may not be well-known!  </p>
+<p>This year, I decide to share this technique. In order to convince review boards this is awesome, I need more cases to prove it works! So I started hunting bugs! It turns out that, this attack surface can not only leak information but also bypass ACL(Such as my Uber OneLogin bypass <a target="_blank" rel="noopener" href="https://hackerone.com/reports/326080">case</a>) and lead to RCE in several bug bounty programs. This post is one of them!  </p>
+<p>If you are interested in other stories, please check <a target="_blank" rel="noopener" href="http://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf">the slide</a> ASAP!!!</p>
+<p>↓ The inconsistency in multi-layered architectures!  </p>
+<p><img src="/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/819d6d0ad207990d-01.png">  </p>
+<h1 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h1><p>First, thanks Amazon for the open-minded vulnerability disclosure. It’s a really good experience working with Amazon security team(so does Nuxeo team). From the <a target="_blank" rel="noopener" href="https://www.blogger.com/blogger.g?blogID=2987759532072489303#timeline">Timeline</a>, you can see how quick Amazon’s response was and the step they have taken!  </p>
+<p>The whole story started with a domain <a target="_blank" rel="noopener" href="http://collaborate-corp.amazon.com/">collaborate-corp.amazon.com</a>. It seems to be a collaboration system for internal purpose. From the copyright in the bottom, we know this system was built from an open source project <a target="_blank" rel="noopener" href="https://github.com/nuxeo/nuxeo">Nuxeo</a>. It’s a very huge Java project, and I was just wanting to improve my Java auditing skill. So the story begins from that…!  </p>
+<h1 id="Bugs"><a href="#Bugs" class="headerlink" title="Bugs"></a>Bugs</h1><p>For me, when I get a Java source, the first thing is to read the <code>pom.xml</code> and find if there are any outdated packages. In Java ecosystem, most vulnerabilities are due to the <a target="_blank" rel="noopener" href="https://www.owasp.org/index.php/Top_10-2017_A9-Using_Components_with_Known_Vulnerabilities">OWASP Top 10 - A9. known vulnerable components</a>.  </p>
+<p>Is there any Struts2, FastJSON, XStream or components with deserialization bugs before? If yes. Congratz!  </p>
+<p>In Nuxeo, it seems most of packages are up to date. But I find a old friend - Seam Framework. Seam is a web application framework developed by JBoss, and a division of Red Hat. It <strong>HAD BEEN</strong> a popular web framework several years ago, but there are still lots of applications based on Seam :P  </p>
+<p>I have reviewed Seam in 2016 and found numerous <a href="https://blog.orange.tw/2016/12/java-web.html">hacker-friendly features</a>! (Sorry, it’s only in Chinese) However, it looks like we can not direct access the Seam part. But still remark on this, and keep on going!  </p>
+<h2 id="1-Path-normalization-bug-leads-to-ACL-bypass"><a href="#1-Path-normalization-bug-leads-to-ACL-bypass" class="headerlink" title="1. Path normalization bug leads to ACL bypass"></a>1. Path normalization bug leads to ACL bypass</h2><p>While looking at the access control from <code>WEB-INF/web.xml</code>, we find Nuxeo uses a custom authentication filter <code>NuxeoAuthenticationFilter</code> and maps <code>/*</code> to that . From the filter we know most pages require authentication, but there is a whitelist allowed few entrance such as <code>login.jsp</code>. All of that is implemented in a method <code>bypassAuth</code>.  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">bypassAuth</span><span class="params">(HttpServletRequest httpRequest)</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// init unAuthenticatedURLPrefix</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        unAuthenticatedURLPrefixLock.readLock().lock();</span><br><span class="line">        <span class="type">String</span> <span class="variable">requestPage</span> <span class="operator">=</span> getRequestedPage(httpRequest);</span><br><span class="line">        <span class="keyword">for</span> (String prefix : unAuthenticatedURLPrefix) &#123;</span><br><span class="line">            <span class="keyword">if</span> (requestPage.startsWith(prefix)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        unAuthenticatedURLPrefixLock.readLock().unlock();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, <code>bypassAuth</code> retrieves the current requested page to compare with <code>unAuthenticatedURLPrefix</code>. But how <code>bypassAuth</code> retrieves current requested page? Nuxeo writes a method to extract requested page from <code>HttpServletRequest.RequestURI</code>, and the first problem appears here!  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">static</span> String <span class="title function_">getRequestedPage</span><span class="params">(HttpServletRequest httpRequest)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">requestURI</span> <span class="operator">=</span> httpRequest.getRequestURI();</span><br><span class="line">    <span class="type">String</span> <span class="variable">context</span> <span class="operator">=</span> httpRequest.getContextPath() + <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">requestedPage</span> <span class="operator">=</span> requestURI.substring(context.length());</span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> requestedPage.indexOf(<span class="string">&#x27;;&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> i == -<span class="number">1</span> ? requestedPage : requestedPage.substring(<span class="number">0</span>, i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In order to handle URL path parameter, Nuxeo truncates all the trailing parts by semicolon. But the behaviors in URL path parameter are various. Each web server has it’s own implementation. The Nuxeo’s way may be safe in containers like WildFly, JBoss and WebLogic. But it runs under Tomcat! So the difference between the method <code>getRequestedPage</code> and the Servlet Container leads to security problems!  </p>
+<p>Due to the truncation, we can forge a request that matches the whitelist in ACL but reach the unauthorized area in Servlet!  </p>
+<p>In here, we choose <code>login.jsp</code> as our prefix! The ACL bypass may look like this:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ curl -I https://collaborate-corp.amazon.com/nuxeo/[unauthorized_area]</span><br><span class="line">HTTP/1.1 302 Found</span><br><span class="line">Location: login.jsp</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">$ curl -I https://collaborate-corp.amazon.com/nuxeo/login.jsp;/..;/[unauthorized_area]</span><br><span class="line">HTTP/1.1 500 Internal Server Error</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+<p>As you can see, we bypass the redirection for authentication, but most pages still return a 500 error. It’s because the servlet logic is unable to obtain a valid user principle so it throws a Java <code>NullPointerException</code>. Even though, this still gives us a chance to knock the door!  </p>
+<p><em>P.S. Although there is a quicker way to open the door, it’s still worth to write down the first try!</em></p>
+<h2 id="2-Code-reuse-feature-leads-to-partial-EL-invocation"><a href="#2-Code-reuse-feature-leads-to-partial-EL-invocation" class="headerlink" title="2. Code reuse feature leads to partial EL invocation"></a>2. Code reuse feature leads to partial EL invocation</h2><p>As I mentioned before, there are numerous hacker-friendly features in Seam framework. So, for me, the next step is chaining the first bug to access unauthorized Seam servlet!  </p>
+<p>In the following sections, I will explain these “features” one by one in detail!  </p>
+<p>In order to control where browser should be redirected, Seam introduces a series of HTTP parameter, and it is also buggy in these HTTP parameters… <code>actionOutcome</code> is one of them. In 2013, <a target="_blank" rel="noopener" href="https://twitter.com/meder">@meder</a> found a remote code execution on that. You can read the awesome article <a target="_blank" rel="noopener" href="http://blog.o0o.nu/2010/07/cve-2010-1871-jboss-seam-framework.html">CVE-2010-1871: JBoss Seam Framework remote code execution</a> for details! But today, we are going to talk about another one - <code>actionMethod</code>!  </p>
+<p><code>actionMethod</code> is a special parameter that can invoke specific JBoss EL(Expression Language) from query string. It seems dangerous but there are some preconditions before the invocation. The detailed implementation can found in method <a target="_blank" rel="noopener" href="https://github.com/seam2/jboss-seam/blob/f3077fee9d04b2b3545628cd9e6b58c859feb988/jboss-seam/src/main/java/org/jboss/seam/navigation/Pages.java#L697">callAction</a>. In order to invoke the EL, it must satisfy the following preconditions:  </p>
+<ol>
+<li>The value of <code>actionMethod</code> must be a pair which looks like <code>FILENAME:EL_CODE</code></li>
+<li>The <code>FILENAME</code> part must be a real file under context-root</li>
+<li>The file <code>FILENAME</code> must have the content <code>&quot;#&#123;EL_CODE&#125;&quot;</code> in it (double quotes and are required)</li>
+</ol>
+<p>For example: There is a file named <code>login.xhtml</code> under context-root.  </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;entry&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;label&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h:outputLabel</span> <span class="attr">id</span>=<span class="string">&quot;UsernameLabel&quot;</span> <span class="attr">for</span>=<span class="string">&quot;username&quot;</span>&gt;</span>Username:<span class="tag">&lt;/<span class="name">h:outputLabel</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">s:decorate</span> <span class="attr">id</span>=<span class="string">&quot;usernameDecorate&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">h:inputText</span> <span class="attr">id</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;#&#123;user.username&#125;&quot;</span> <span class="attr">required</span>=<span class="string">&quot;true&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">h:inputText</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">s:decorate</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>You can invoke the EL <code>user.username</code> by URL  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://host/whatever.xhtml?actionMethod=/foo.xhtml:user.username</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3-Double-evaluation-leads-to-EL-injection"><a href="#3-Double-evaluation-leads-to-EL-injection" class="headerlink" title="3. Double evaluation leads to EL injection"></a>3. Double evaluation leads to EL injection</h2><p>The previous feature looks eligible. You can not control any file under context-root so that you can’t invoke arbitrary EL on remote server. However, here is one more crazy feature…  </p>
+<p>To make things worse, if the previous one returns a string, and the string looks like an EL. Seam framework will <strong>invoke again</strong>!  </p>
+<p><img src="/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png">  </p>
+<p>Here is the detailed call stack:  </p>
+<ol>
+<li>callAction(Pages.java)</li>
+<li>handleOutcome(Pages.java)</li>
+<li>handleNavigation(SeamNavigationHandler.java)</li>
+<li>interpolateAndRedirect(FacesManager.java)</li>
+<li>interpolate(Interpolator.java)</li>
+<li>interpolateExpressions(Interpolator.java)</li>
+<li>createValueExpression(Expressions.java)</li>
+</ol>
+<p>With this crazy feature. We can execute arbitrary EL if we can control the returned value! This is very similar to <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Return-oriented_programming">ROP(Return-Oriented Programming)</a> in binary exploitation. So we need to find a good gadget!  </p>
+<p>In this case, we choose the gadget under <a target="_blank" rel="noopener" href="https://github.com/nuxeo/nuxeo/blob/master/nuxeo-features/nuxeo-platform-ui-select2/src/main/resources/web/nuxeo.war/widgets/suggest_add_new_directory_entry_iframe.xhtml#L19">widgets&#x2F;suggest_add_new_directory_entry_iframe.xhtml</a>  </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nxu:set</span> <span class="attr">var</span>=<span class="string">&quot;directoryNameForPopup&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">value</span>=<span class="string">&quot;#&#123;request.getParameter(&#x27;directoryNameForPopup&#x27;)&#125;&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">cache</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nxu:set</span> <span class="attr">var</span>=<span class="string">&quot;directoryNameForPopup&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">value</span>=<span class="string">&quot;#&#123;nxu:test(empty directoryNameForPopup, select2DirectoryActions.directoryName, directoryNameForPopup)&#125;&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">cache</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">c:if</span> <span class="attr">test</span>=<span class="string">&quot;#&#123;not empty directoryNameForPopup&#125;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>Why we choose this? It’s because that <code>request.getParameter</code> returns a string that we can control from query string! Although the whole tag is to assign a variable, we can abuse the semantics!  </p>
+<p>So now, we put our second stage payload in the <code>directoryNameForPopup</code>. With the first bug, we can chain them together to execute arbitrary EL without any authentication! Here is the PoC:  </p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">http:</span>/<span class="regexp">/host/nuxeo</span><span class="regexp">/login.jsp;/</span>..;<span class="regexp">/create_file.xhtml</span></span><br><span class="line"><span class="regexp">?actionMethod=widgets/suggest</span>_add_new_directory_entry_iframe.<span class="symbol">xhtml:</span>request.getParameter(<span class="string">&#x27;directoryNameForPopup&#x27;</span>)</span><br><span class="line">&amp;directoryNameForPopup=<span class="regexp">/?<span class="subst">#&#123;<span class="variable constant_">HERE_IS_THE_EL</span>&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+
+<p>Is that over yet? No really! Although we can execute arbitrary EL, we still failed to pop out a shell. Why?  </p>
+<p>Let’s go to next section!  </p>
+<h2 id="4-EL-blacklist-bypass-leads-to-RCE"><a href="#4-EL-blacklist-bypass-leads-to-RCE" class="headerlink" title="4. EL blacklist bypass leads to RCE"></a>4. EL blacklist bypass leads to RCE</h2><p>Seam also knows that EL is insane. Since Seam 2.2.2.Final, there is a new EL blacklist to block dangerous invocations! Unfortunately, Nuxeo uses the latest version of Seam(2.3.1.Final) so that we must find a way to bypass the blacklist. The blacklist can be found in <a target="_blank" rel="noopener" href="https://github.com/seam2/jboss-seam/blob/f3077fee9d04b2b3545628cd9e6b58c859feb988/jboss-seam/src/main/resources/org/jboss/seam/blacklist.properties">resources&#x2F;org&#x2F;jboss&#x2F;seam&#x2F;blacklist.properties</a>.  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.getClass(</span><br><span class="line">.class.</span><br><span class="line">.addRole(</span><br><span class="line">.getPassword(</span><br><span class="line">.removeRole(</span><br></pre></td></tr></table></figure>
+
+
+<p>With a little bit studying, we found the blacklist is just a simple string matching, and we all know that blacklist is always a bad idea. The first time I saw this, I recalled the bypass of <a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/WW/S2-020">Struts2 S2-020</a>. The idea of that bypass and this one is the same. Using array-like operators to avoid blacklist patterns! Just change:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.getClass().forName(<span class="string">&quot;java.lang.Runtime&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>to  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>[<span class="string">&quot;class&quot;</span>].forName(<span class="string">&quot;java.lang.Runtime&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>Is it simple? Yes! That’s all.  </p>
+<p>So the last thing is to write the shellcode in JBoss EL. We use Java reflection API to get the <code>java.lang.Runtime</code> Object, and list all methods from that. The index 7 is the method <code>getRuntime()</code> to return a <code>Runtime</code> instance and the index 15 is the method <code>exec(String)</code> to execute our command!  </p>
+<p>OK! Let’s summarize our steps and chain all together!  </p>
+<ol>
+<li>Path normalization bug leads to ACL bypass</li>
+<li>Bypass whitelist to access unauthorized Seam servlet</li>
+<li>Use Seam feature <code>actionMethod</code> to invoke gadgets in file <code>suggest_add_new_directory_entry_iframe.xhtml</code></li>
+<li>Prepare second stage payload in HTTP parameter <code>directoryNameForPopup</code></li>
+<li>Use array-like operators to bypass the EL blacklist</li>
+<li>Write the shellcode with Java reflection API</li>
+<li>Wait for our shell back and win like a boss ._.&#x2F;</li>
+</ol>
+<p>Here is the whole exploit:  </p>
+<p><img src="/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/cd394c2ba0a63750-03.png">  </p>
+<p>OK, by executing the Perl script, we got the shell!  </p>
+<p><img src="/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/59e0ff7714e46416-04.png">  </p>
+<h1 id="The-fix"><a href="#The-fix" class="headerlink" title="The fix"></a>The fix</h1><p>I will illustrate the fix from 3 aspects!  </p>
+<h2 id="1-JBoss"><a href="#1-JBoss" class="headerlink" title="1. JBoss"></a>1. JBoss</h2><p>As the most buggy thing is on Seam framework. I have reported these “features” to <code>security@jboss.org</code> in Sept 2016. But their reply is:  </p>
+<blockquote>
+<p>Thanks very much for reporting these issues to us.</p>
+<br>
+
+<p>Seam was only included in EAP 5, not 6, or 7. EAP is near the end of maintenance support, which will end in Nov 2016, [1]. The upstream version you used to test was released over 3 years ago.<br>During maintenance support EAP 5 only receives patches for important or critical issues. While you highlight that RCE is possible, only on the precondition that the attack can first upload a file. This seems to reduce the impact to moderate.</p>
+<br>
+
+<p>I think we will not bother to fix these security issues at this stage of the Seam project lifecycle.</p>
+<br>
+
+<p>[1] <a target="_blank" rel="noopener" href="https://access.redhat.com/support/policy/updates/jboss_notes/">https://access.redhat.com/support/policy/updates/jboss_notes/</a></p>
+<br>
+
+<p>We do appreciate your efforts in reporting these issues to us, and hope that you will continue to inform us of security issues in the future.</p>
+</blockquote>
+<p>So due to the EOL, there seems to be no official patch for these crazy features. However, lots of Seam applications are still running in the world. So if you use Seam. I recommend you to mitigate this with Nuxeo’s fix.  </p>
+<h2 id="2-Amazon"><a href="#2-Amazon" class="headerlink" title="2. Amazon"></a>2. Amazon</h2><p>With a rapid investigation, Amazon security team isolated the server, discussed with the reporter about how to mitigate, and listed every step they have taken in detail! It’s a good experience working with them :)  </p>
+<h2 id="3-Nuxeo"><a href="#3-Nuxeo" class="headerlink" title="3. Nuxeo"></a>3. Nuxeo</h2><p>After the notification from Amazon, Nuxeo quickly released a patch in version 8.10. The patch overrides the method <code>callAction()</code> to fix the crazy feature! If you need the patch for your Seam application. You can refer <a target="_blank" rel="noopener" href="https://github.com/nuxeo/jboss-seam/commit/f263738af8eac44cda7a41ea088c99e69a4edb48">the patch here</a>!  </p>
+<h1 id="Timeline"><a href="#Timeline" class="headerlink" title="Timeline"></a>Timeline</h1><ul>
+<li>10 March, 2018 01:13 GMT+8 Report to Amazon security team via <code>aws-security@amazon.com</code></li>
+<li>10 March, 2018 01:38 GMT+8 Receive that they are under investigating</li>
+<li>10 March, 2018 03:12 GMT+8 Ask that can I join the conference call with security team</li>
+<li>10 March, 2018 05:30 GMT+8 Conference call with Amazon, get the status and the step they have taken for the vulnerability</li>
+<li>10 March, 2018 16:05 GMT+8 Ask if it’s possible public disclosure on my Black Hat talk</li>
+<li>15 March, 2018 04:58 GMT+8 Nuxeo released a new version 8.10 that patched the RCE vulnerability</li>
+<li>15 March, 2018 23:00 GMT+8 Conference call with Amazon, know the status and discuss public disclosure details</li>
+<li>05 April, 2018 05:40 GMT+8 Reward the award from Amazon</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

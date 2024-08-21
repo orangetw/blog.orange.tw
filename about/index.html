@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Hi, I am Orange, currently the Principal Security Researcher at DEVCORE, and the core member of CHROOT Security Group in Taiwan. I mainly focus on Web and Application Security, and am a RCE enthusiast">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About">
+<meta property="og:url" content="http://blog.orange.tw/about/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Hi, I am Orange, currently the Principal Security Researcher at DEVCORE, and the core member of CHROOT Security Group in Taiwan. I mainly focus on Web and Application Security, and am a RCE enthusiast">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-08-12T20:35:52.000Z">
+<meta property="article:modified_time" content="2024-08-21T14:07:04.613Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>About | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  
+
+  <div class="content" itemprop="articleBody">
+      
+          <p>Hi, I am Orange, currently the Principal Security Researcher at <a target="_blank" rel="noopener" href="https://devco.re/">DEVCORE</a>, and the core member of <a target="_blank" rel="noopener" href="https://hitcon.org/">CHROOT Security Group</a> in Taiwan. I mainly focus on Web and Application Security, and am a <a href="#Selected-RCEs">RCE enthusiast</a>. My research has received several <a href="#Selected-Honors">hacker awards</a> and has been accepted by numerous <a href="/talks/">security conferences</a>. </p>
+<p>You can find me on <!--[<i class="fa fa-brands fa-github"></i>](https://github.com/orangetw), --><a target="_blank" rel="noopener" href="https://x.com/orange_8361"><i class="fa fa-brands fa-twitter"></i></a>, <a href="mailto:orange@chroot.org"><i class="fa fa-solid fa-envelope"></i></a> and <a target="_blank" rel="noopener" href="https://www.instagram.com/orange.tw.public"><i class="fa fa-brands fa-instagram"></i></a>.</p>
+<h2 id="Selected-Honors"><a href="#Selected-Honors" class="headerlink" title="Selected Honors"></a>Selected Honors</h2><style>
+    strong {
+        text-decoration:underline #44D62C;
+        
+        text-decoration-thickness: 2px;
+        font-size: 1.1em;
+    }
+
+    code {
+        text-decoration: underline;
+        text-decoration-thickness: 0px;
+    }
+
+    i {
+        font-size: 1.2em;
+    }
+</style>
+
+<ul>
+<li>2022 - <strong>Champion</strong> of Pwn2Own Toronto</li>
+<li>2021 - <strong>Winner</strong> of Pwnie Awards — “Best Server-Side Bug” for <a href="#">Exchange Server RCEs</a></li>
+<li>2021 - 3rd of Top 10 Web Hacking Techniques for <a href="#">Exchange Server RCEs</a></li>
+<li>2021 - <strong>Champion</strong> of Pwn2Own Vancouver </li>
+<li>2021 - 28th of Top 100 Microsoft Most Valuable Security Researchers</li>
+<li>2019 - <strong>Winner</strong> of Pwnie Awards — “Best Server-Side Bug” for <a href="#">SSL VPN RCEs</a></li>
+<li>2019 - 4st of Top 10 Web Hacking Techniques for research of <a href="#">SSL VPN RCEs</a></li>
+<li>2019 - 2nd of DEFCON CTF Final as team <a href="#">HITCON x BFKinesiS</a></li>
+<li>2018 - <strong>1st</strong> of Top 10 Web Hacking Techniques for research of <a href="#">Breaking Parser Logics</a></li>
+<li>2017 - <strong>1st</strong> of Top 10 Web Hacking Techniques for research of <a href="#">A New Era Of SSRF</a></li>
+<li>2017 - 2nd of DEFCON CTF Final as team <a target="_blank" rel="noopener" href="https://ctftime.org/team/8299/">HITCON</a></li>
+<li>2015 - <strong>1st</strong> of 0CTF Final as team <a target="_blank" rel="noopener" href="https://ctftime.org/team/5160/">217</a></li>
+<li>2014 - 2nd of DEFCON CTF Final as team <a target="_blank" rel="noopener" href="https://ctftime.org/team/8299/">HITCON</a></li>
+<li>2014 - <strong>1st</strong> of 全國大專院校資安技能金盾獎</li>
+<li>2012 - <strong>1st</strong> of 全國大專院校資安技能金盾獎</li>
+<li>2011 - <strong>1st</strong> of 全國大專院校資安技能金盾獎</li>
+<li>2009 - <strong>1st</strong> of HITCON Wargame Contest</li>
+</ul>
+<h2 id="Selected-RCEs"><a href="#Selected-RCEs" class="headerlink" title="Selected RCEs"></a>Selected RCEs</h2><h3 id="2024"><a href="#2024" class="headerlink" title="2024"></a>2024</h3><ul>
+<li><strong>Apache HTTP Server</strong><ul>
+<li>We proposed <a href="https://blog.orange.tw/2024/08/confusion-attacks-en.html">various attacks</a> and multiple CVEs.</li>
+</ul>
+</li>
+<li><strong>PHP</strong><ul>
+<li><a href="https://blog.orange.tw/2024/06/cve-2024-4577-yet-another-php-rce.html">CVE-2024-4577</a> - An unauthorized Argument Injection vulnerability.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2022"><a href="#2022" class="headerlink" title="2022"></a>2022</h3><ul>
+<li><strong>Sonos One Speaker</strong><ul>
+<li>An unauthorized RCE, <a target="_blank" rel="noopener" href="http://10.26.0.34:4000/data/2023-A-3-Years-Tale-of-Hacking-a-Pwn2Own-Target.pdf">chained</a> from Information Leakage (CVE-2023-27353) to Stack Overflow (CVE-2023-27355).</li>
+</ul>
+</li>
+<li><strong>WSO2 Identity Server</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://security.docs.wso2.com/en/latest/security-announcements/security-advisories/2022/WSO2-2021-1738/">CVE-2022-29464</a> - An unauthorized Arbitrary File Upload vulnerability.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2021"><a href="#2021" class="headerlink" title="2021"></a>2021</h3><ul>
+<li><strong>Microsoft Exchange Server</strong><ul>
+<li><a href="https://blog.orange.tw/2021/08/proxylogon-a-new-attack-surface-on-ms-exchange-part-1.html">ProxyLogon</a> - An unauthorized RCE chained with 3 bugs from SSRF (CVE-2021-26855) to Arbitrary File Writing (CVE-2021-27065).</li>
+<li><a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/blog/2021/8/17/from-pwn2own-2021-a-new-attack-surface-on-microsoft-exchange-proxyshell">ProxyShell</a> - An unauthorized RCE chained with 3 bugs from SSRF (CVE-2021-34473) to Arbitrary File Writing (CVE-2021-31207).</li>
+</ul>
+</li>
+<li><strong>Samba</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://www.samba.org/samba/security/CVE-2021-44142.html">CVE-2021-44142</a> - An Out-of-Bounds Read&#x2F;Write vulnerability.</li>
+</ul>
+</li>
+<li><strong>Neta Talk</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/advisories/ZDI-22-529/">CVE-2022-23122</a> - An unauthorized Out-of-Bounds Write vulnerability.</li>
+<li><a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/advisories/ZDI-22-528/">CVE-2022-23123</a> - An unauthorized Out-of-Bounds Read vulnerability.</li>
+</ul>
+</li>
+<li><strong>Western Digital</strong><ul>
+<li>We chained Neta Talk bugs, and then <a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/blog/2021/11/1/pwn2ownaustin">pwned Western Digital NAS</a> in Pwn2own Austin 2021.</li>
+</ul>
+</li>
+<li><strong>Sonos One Speaker</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://www.zerodayinitiative.com/advisories/ZDI-22-260/">CVE-2022-24046</a> - An unauthorized Integer Underflow vulnerability.</li>
+</ul>
+</li>
+<li><strong>PHPWind</strong><ul>
+<li>An unauthorized RCE, <a href="https://blog.orange.tw/2021/02/a-journey-combining-web-and-binary-exploitation.html">chained</a> from PRNG Prediction to PHP Use-After-Free (CVE-2015-0237)</li>
+</ul>
+</li>
+</ul>
+<h3 id="2020"><a href="#2020" class="headerlink" title="2020"></a>2020</h3><ul>
+<li><strong>Microsoft Exchange Server</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/en-us/vulnerability/CVE-2020-17117">CVE-2020-17117</a> - A Command Injection in Exchange PowerShell Remoting.</li>
+</ul>
+</li>
+<li><strong>Ivanti MobileIron</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://www.ivanti.com/blog/mobileiron-security-updates-available">CVE-2020-15505</a> - An unauthorized Hessian Deserialization vulnerability.</li>
+</ul>
+</li>
+<li><strong>Facebook Bug Bounty</strong><ul>
+<li>Facebook held an unpatched MobileIron instance, and we then <a href="https://blog.orange.tw/2020/09/how-i-hacked-facebook-again-mobileiron-mdm-rce.html">hacked</a> it!</li>
+</ul>
+</li>
+</ul>
+<h3 id="2019"><a href="#2019" class="headerlink" title="2019"></a>2019</h3><ul>
+<li><strong>Twitter Bug Bounty</strong><ul>
+<li>Twitter held an unpatched SSL VPN instance, and we then <a href="https://blog.orange.tw/2019/09/attacking-ssl-vpn-part-3-golden-pulse-secure-rce-chain.html">hacked</a> it!</li>
+</ul>
+</li>
+<li><strong>Uber Bug Bounty</strong><ul>
+<li>Uber held several unpatched SSL VPN instances, and we then <a href="https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html">hacked</a> it!</li>
+</ul>
+</li>
+<li><strong>Tesla Bug Bounty</strong><ul>
+<li>Tesla held several unpatched SSL VPN instances, and we then hacked it!</li>
+</ul>
+</li>
+<li><strong>Riot Games Bug Bounty</strong><ul>
+<li>Riot Games held an unpatched SSL VPN instance, and we then hacked it!</li>
+</ul>
+</li>
+<li><strong>Netflix Bug Bounty</strong><ul>
+<li>Program keeps the report private.</li>
+</ul>
+</li>
+<li><strong>Pulse Secure SSL VPN</strong><ul>
+<li>An unauthenticated RCE, chained from Arbitrary File Reading (CVE-2019-11510) to Command Injection (CVE-2019-11539).</li>
+</ul>
+</li>
+<li><strong>Fortinet FortiGate SSL VPN</strong><ul>
+<li>An unauthenticated RCE, chained from Arbitrary File Reading (CVE-2018-13379) to Heap Overflow (CVE-2018-13383).</li>
+</ul>
+</li>
+<li><strong>Palo Alto GlobalProtect SSL VPN</strong><ul>
+<li>CVE-2017-15944 - An unauthenticated Format String vulnerability.</li>
+</ul>
+</li>
+<li><strong>Jenkins</strong><ul>
+<li>An unauthenticated RCE, chained with 3 bugs from ACL Bypass (CVE-2018-1000861) to <a href="https://blog.orange.tw/2019/02/abusing-meta-programming-for-unauthenticated-rce.html">exploit Metaprogramming</a>.</li>
+</ul>
+</li>
+<li><strong>Hinet GPON Modem</strong><ul>
+<li>An unauthenticated RCE, <a href="https://blog.orange.tw/2019/11/HiNet-GPON-Modem-RCE.html">chained</a> from ACL Bypass to Command Injection (CVE-2019-13411).</li>
+</ul>
+</li>
+</ul>
+<h3 id="2018"><a href="#2018" class="headerlink" title="2018"></a>2018</h3><ul>
+<li><strong>Nuxeo</strong><ul>
+<li>An unauthenticated RCE, chained with 4 bugs from ACL Bypass to EL Injection.</li>
+</ul>
+</li>
+<li><strong>Amazon Bug Bounty</strong><ul>
+<li>Amazon held an unpatched instance, and we then <a href="https://blog.orange.tw/2018/08/how-i-chained-4-bugs-features-into-rce-on-amazon.html">hacked</a> it!</li>
+</ul>
+</li>
+</ul>
+<h3 id="2017"><a href="#2017" class="headerlink" title="2017"></a>2017</h3><ul>
+<li><strong>GitHub Bug Bounty</strong><ul>
+<li>An unauthenticated RCE, <a href="https://blog.orange.tw/2017/07/how-i-chained-4-vulnerabilities-on.html">chained with 4 bugs</a> from Blind SSRF to unsafe deserialization on GitHub Enterprise.</li>
+</ul>
+</li>
+<li><strong>Imgur Bug Bounty</strong><ul>
+<li>Imgur held an unpatched GitHub Enterprise instance, and we then <a target="_blank" rel="noopener" href="https://hackerone.com/reports/206227">hacked</a> it!</li>
+</ul>
+</li>
+</ul>
+<h3 id="2016"><a href="#2016" class="headerlink" title="2016"></a>2016</h3><ul>
+<li><strong>Uber Bug Bounty</strong><ul>
+<li>The rider site <code>rider.ubuer.com</code> is vulnerable to <a href="https://blog.orange.tw/2016/04/bug-bounty-uber-ubercom-remote-code_7.html">Jinja2 SSTI</a>.</li>
+</ul>
+</li>
+<li><strong>Accellion File Transfer</strong><ul>
+<li>An unauthenticated RCE, chained from SQL Injection (CVE-2016-2351) to Local Root (CVE-2016-2352).</li>
+</ul>
+</li>
+<li><strong>Facebook Bug Bounty</strong><ul>
+<li>Facebook held an unpatched Accellion instance, and we then <a href="https://blog.orange.tw/2016/04/bug-bounty-how-i-hacked-facebook-and-found-someones-backdoor-script.html">hacked</a> it!</li>
+</ul>
+</li>
+</ul>
+<h3 id="2013"><a href="#2013" class="headerlink" title="2013"></a>2013</h3><ul>
+<li><strong>Yahoo! Bug Bounty</strong><ul>
+<li>Several <code>*.login.yahoo.com</code> instances are vulnerable to a Struts2 vulnerability, and we <a href="https://blog.orange.tw/2013/11/yahoo-bug-bounty-part-2-loginyahoocom.html">hacked</a> it!</li>
+</ul>
+</li>
+</ul>
+<h3 id="2012"><a href="#2012" class="headerlink" title="2012"></a>2012</h3><ul>
+<li><strong>Microsoft Internet Explorer</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/security-updates/securitybulletins/2012/ms12-071">CVE-2012-4775</a> - A Use-After-Free vulnerability, which is also my first CVE!</li>
+</ul>
+</li>
+</ul>
+
+        
+  </div>
+</article>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

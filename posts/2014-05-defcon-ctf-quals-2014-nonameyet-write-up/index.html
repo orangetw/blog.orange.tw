@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="記錄一下，Defcon 是世界駭客  CTF 比賽最盛大的賽事，每年都是每個國家資安社群比拼較勁的地方，前十二強可以進入八月在 Las Vegas 拉斯維加斯舉辦的決賽，在現場進行實際網路攻防的 Attack &amp; Defense CTF 的比賽！ 在今年，終於湊齊台灣各方戰力順利打入決賽！ 計分板：  這次解了三、四題左右，這次感想有隊友可以 Cover 真的滿不錯的，討論時可以互相發現對">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Defcon CTF Quals 2014 - Nonameyet write up">
+<meta property="og:url" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="記錄一下，Defcon 是世界駭客  CTF 比賽最盛大的賽事，每年都是每個國家資安社群比拼較勁的地方，前十二強可以進入八月在 Las Vegas 拉斯維加斯舉辦的決賽，在現場進行實際網路攻防的 Attack &amp; Defense CTF 的比賽！ 在今年，終於湊齊台灣各方戰力順利打入決賽！ 計分板：  這次解了三、四題左右，這次感想有隊友可以 Cover 真的滿不錯的，討論時可以互相發現對">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/f2109f9503bf8157-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/475e2ea1ba4da1b7-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/5d51124eb693e877-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/cf9130fe77677630-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/c435fc204997de62-05.png">
+<meta property="article:published_time" content="2014-05-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:04:43.743Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/f2109f9503bf8157-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Defcon CTF Quals 2014 - Nonameyet write up | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Defcon CTF Quals 2014 - Nonameyet write up
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-05-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-05-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>記錄一下，Defcon 是世界駭客  CTF 比賽最盛大的賽事，每年都是每個國家資安社群比拼較勁的地方，前十二強可以進入八月在 Las Vegas 拉斯維加斯舉辦的決賽，在現場進行實際網路攻防的 Attack &amp; Defense CTF 的比賽！</p>
+<p>在今年，終於湊齊台灣各方戰力順利打入決賽！</p>
+<p>計分板：</p>
+<p><img src="/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/f2109f9503bf8157-01.png"></p>
+<p>這次解了三、四題左右，這次感想有隊友可以 Cover 真的滿不錯的，討論時可以互相發現對方沒有想到的盲點等</p>
+<p>然後第一次嘗試吃 B 群，超有用的 xDDDD 另外這次與以往不同的是，</p>
+<ol>
+<li><p>題目的分類不像以往依 Web, Forensics, Recon, Binary … 等分類，而是依作者分類</p>
+</li>
+<li><p>這次比賽共 24 題，幾乎七成都是 PWN 的題目</p>
+<p> 這讓所有隊伍從一開始壓力就很大，整個 48 小時比賽節奏很慢</p>
+<p> （由於第一個解開題目的人有下一道題目的開題權，而 PWN 考驗的是細心的分析以及漏洞精準的利用，因此就算到了最後 12 小時還有約 1&#x2F;3 的題目沒開）</p>
+</li>
+<li><p>剩下的題目只有 Protocol 分析、純 Binary 逆向等，並沒有 Forensics</p>
+</li>
+<li><p>Web 題目只有兩題。</p>
+<p> （正確來說只有一題，另外一題是看起來是 Web 其實是 PWN ）<br> （不過身為 Web Security 的愛好者，所以就算是扯到 PWN 還是要把它給解出來，因此特地把這篇寫出來記錄一下！）</p>
+</li>
+</ol>
+<p>這次的題目是 “Nonameyet”，這題約在倒數十二小時時出現，題目敘述是這樣的</p>
+<blockquote>
+<p>I claim no responsibility for the things posted here. nonameyet_27d88d682935932a8b3618ad3c2772ac.2014.shallweplayaga.me:80</p>
+</blockquote>
+<p>網址進去是一個 PHP 寫的照片分享以及上傳網站，很容易不難發現任意檔案下載的漏洞，可以從</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;nonameyet_27d88d682935932a8b3618ad3c2772ac.2014.shallweplayaga.me&#x2F;index.php?page&#x3D;.&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p>下載任意檔案。 雖然大部份功能都是 PHP 撰寫，但是上傳相片的部份卻是放在</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;nonameyet_27d88d682935932a8b3618ad3c2772ac.2014.shallweplayaga.me&#x2F;cgi-bin&#x2F;nonameyet.cgi</p>
+</blockquote>
+<p>這是一個  C 語言所撰寫並編譯成 32 位元 ELF Linux Binary 的可執行檔 （檔案可從<a target="_blank" rel="noopener" href="https://trello-attachments.s3.amazonaws.com/53678e28f6b188db76a0e640/5378a4c4f75d1d7626635f65/c6e927cd86ed0199fff8d7fb5aa56c3e/nonameyet.cgi">這裡下載</a>）</p>
+<p>整個網站要入侵從 PHP 的視野來看無法拿到寫入的權限以及執行命令的權限，所能做的只能讀檔，但為了  PWN 他光讀檔是沒有用的，至少要可以執行指令！</p>
+<p>所以從純 Web 的路下不了手只好從 cgi-bin 下的那個 nonameyet.cgi下手尋找看看是否有可利用的地方，仔細觀察了 一段 不只一段時間，發現</p>
+<ol>
+<li>程式會將從 multipart&#x2F;form-data POST base 的值當作檔案名稱上傳至 cgi-bin&#x2F;photos 資料夾下，但是 open 時權限為 420 無法執行</li>
+<li>無法直接寫入 PHP 木馬到目錄下</li>
+<li>會將上傳後的 POST base 檔名經過 base64 編碼後放在 Cookie 上，其中 base 的內容經過設計後可以 leak memory 洩漏記憶體內容</li>
+<li>base 的值太長會發生 Heap Overflow 但初步看下去沒有可控之處</li>
+<li>有段程式邏輯再處理 base 的內容，尋找他所定義的 TAGS (ex: %Time%, %Date%, %Genr%) 等並取代成相對應於 POST 值的內容</li>
+</ol>
+<p>發現有 Heap Overflow 後就一直再 Fuzz 有沒有方法可以控制 EIP 的（要去追有點累…XDrz）</p>
+<p>嘗試了滿久都失敗最後發現在處理  TAG 時程式去引用時可以去控制一些暫存器內容，經過設計後可以使它產生 Stack Overflow</p>
+<p><img src="/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/475e2ea1ba4da1b7-02.png"></p>
+<p>所以控制好 ecx 以及 esi 接下來讓 mov [ebx], eax 的 ebx 為一個合法的值就可以來到 ret</p>
+<p><img src="/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/5d51124eb693e877-03.png"></p>
+<p>證明 EIP 可控，接下來就是構造 Exploit 的部份，由於 Stack 可寫，讓整個 Exploit 撰寫變得簡單許多，剩下比較機歪的的就是  ASLR 的部份，所以利用 ROP 的手法將 shellcode 放置在 Cookie 的部份，在利用原本程式中的 getenv 執行後結果 eax 會是我們的 shellcode</p>
+<p>最後再找個 call eax 就可以成功執行 shellcode，所以最後構造的 ROP Chain 類似</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">AAAAAAA... # junk</span><br><span class="line">0x00000000 #  要賦予給 n 的值</span><br><span class="line">AAAAAAA... # junk</span><br><span class="line">0x0804af93 # [ pop ebp / ret ]</span><br><span class="line">0x0804f02c # 可寫的地方，會被設為 ebx 的值</span><br><span class="line">0x08048a80 # .GOT getenv</span><br><span class="line">0x08048cff # [call eax]</span><br><span class="line">0x0804d55a # .RODATA 字串 HTTP_COOKIE</span><br></pre></td></tr></table></figure>
+
+
+<p>送出如下的 Request</p>
+<p><img src="/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/cf9130fe77677630-04.png"></p>
+<p>即可拿到反連 shell</p>
+<blockquote>
+<p>The flag is: Angry Rhinoceros. And then I found five dollars.</p>
+</blockquote>
+<p><img src="/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/c435fc204997de62-05.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

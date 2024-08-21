@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="這次為了 AIS3 Final CTF 所出的一道題目，這題在這以初新者導向中的比賽中相對難，不過其中的觀念很有趣，在解題中什麼都給你了就是找不到洞但經人一解釋就會有豁然開朗覺得為什麼自己沒想到的感覺 在做 Web 攻擊、滲透滿多時候思路不能太正派、太直觀，要歪一點、要 “猥瑣” 一點XD 純粹 code review 直接上 code  (可以自己先嘗試一下找不找的到洞XD)     .gist">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AIS3 Final CTF Web Writeup (Race Condition &amp; one-byte off SQL Injection)">
+<meta property="og:url" content="http://blog.orange.tw/posts/2015-09-ais3-final-ctf-web-writeup-race/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="這次為了 AIS3 Final CTF 所出的一道題目，這題在這以初新者導向中的比賽中相對難，不過其中的觀念很有趣，在解題中什麼都給你了就是找不到洞但經人一解釋就會有豁然開朗覺得為什麼自己沒想到的感覺 在做 Web 攻擊、滲透滿多時候思路不能太正派、太直觀，要歪一點、要 “猥瑣” 一點XD 純粹 code review 直接上 code  (可以自己先嘗試一下找不找的到洞XD)     .gist">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-09-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T11:27:56.207Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>AIS3 Final CTF Web Writeup (Race Condition &amp; one-byte off SQL Injection) | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        AIS3 Final CTF Web Writeup (Race Condition &amp; one-byte off SQL Injection)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-09-09T16:00:00.000Z" class="dt-published" itemprop="datePublished">2015-09-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>這次為了 <a target="_blank" rel="noopener" href="http://ais3.org/">AIS3</a> Final CTF 所出的一道題目，這題在這以初新者導向中的比賽中相對難，不過其中的觀念很有趣，在解題中什麼都給你了就是找不到洞但經人一解釋就會有豁然開朗覺得為什麼自己沒想到的感覺</p>
+<p>在做 Web 攻擊、滲透滿多時候思路不能太正派、太直觀，要歪一點、要 “猥瑣” 一點XD</p>
+<p>純粹 code review 直接上 <a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/12b1dd0b64564f4ad2f7">code</a> </p>
+<p>(可以自己先嘗試一下找不找的到洞XD)</p>
+<style type="text/css">
+
+  .gist-file
+  .gist-data {max-height: 500px;}
+</style>
+
+<script src="https://gist.github.com/orangetw/12b1dd0b64564f4ad2f7.js"></script>
+
+
+
+<h2 id="漏洞一-Race-Condition"><a href="#漏洞一-Race-Condition" class="headerlink" title="漏洞一 Race Condition"></a>漏洞一 Race Condition</h2><p>預設註冊的使用者都是會被放進 locks 表中鎖起來的，</p>
+<p>但是只要在註冊中，帳號尚未被新增進 locks 表時(111 &amp; 112 行) 馬上登入的話，</p>
+<p>登入檢查是否被鎖住的限制就可以繞過了！</p>
+<h2 id="漏洞二-one-byte-off-SQL-Injection"><a href="#漏洞二-one-byte-off-SQL-Injection" class="headerlink" title="漏洞二 one-byte off SQL Injection"></a>漏洞二 one-byte off SQL Injection</h2><p>當成功登入後可以新增 note 並且可以看到自己新增的 note</p>
+<p>漏洞發生在第 58 行，當 note 的標題太長為了畫面美觀會進行截斷的動作只限制前 32 個字顯示在畫面上</p>
+<p>這時候因為對 SQL Injection 防護是使用 escape 的方式防護，單引號(‘)會被反斜線 escape 成 (&#39;)，這時候如果精心設計一個長度正確的 payload 就可以讓防護剛好被繞過造成後面的 SQL 語句跟前方連在一起</p>
+<p>Payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST=</span><br><span class="line">title=phddaaphddaaphddaaphddaaphddaa_\</span><br><span class="line">&amp;note=, (select pass from users where name=0x6f72616e6765)#</span><br></pre></td></tr></table></figure>
+
+
+<p><code>phddaaphddaaphddaaphddaaphddaa_\</code> (32 個字長)</p>
+<p>會被 escape 成</p>
+<p><code>phddaaphddaaphddaaphddaaphddaa\_\\</code> (33 個字長)</p>
+<p>此時踩到超過 32 長的限制 (57 &amp; 58 行)，並進行截斷成</p>
+<p><code>phddaaphddaaphddaaphddaaphddaa\_\</code></p>
+<p>導致原本的防護被繞過，使得原本被括起來後面的單引號被 escape 原本的 SQL 語句就變成字串了</p>
+<p>用這個方法就可以成功在 INSERT 語法中進行 SQL Injection 並在自己的 note 中看到資料，取得管理員密碼後即可變身成管理員</p>
+<p>順道一提這個思路在 Discuz 7.2 去年還是前年被爆出的 SQL Injection 中有類似的思路</p>
+<h2 id="漏洞三-Local-File-Inclusion-with-PHP-session"><a href="#漏洞三-Local-File-Inclusion-with-PHP-session" class="headerlink" title="漏洞三 Local File Inclusion with PHP session"></a>漏洞三 Local File Inclusion with PHP session</h2><p>由於 include 前面不可控，所以不能使用 php:&#x2F;&#x2F;filter 或是 zip:&#x2F;&#x2F; phar:&#x2F;&#x2F; 等協議，而後面有 php 的後綴也不能使用 LFI with PHPINFO 的招數</p>
+<p>不過在 PHP 中 SESSION 預設存在 &#x2F;var&#x2F;lib&#x2F;php5&#x2F;sess_* 中</p>
+<p>例如 <code>Cookie: PHPSESSID=123php</code> 會產生 <code>/var/lib/php5/sess_123php</code> 的檔案</p>
+<p>在可以偽造 <code>$_SESSION</code> 內容的時候其實就代表可以產生一個部分內容可控，部分檔名可控的檔案，這時候在使用 LFI 去包含他就可以產生一個 shell 了</p>
+<p>Payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/sqlpwn.php?mode=admin</span><br><span class="line">&amp;boom=../../../../var/lib/php5/sess_123</span><br></pre></td></tr></table></figure>
+
+<p>如此一來可以透過第一個漏洞註冊一個使用者名稱為 <code>&lt;?php eval($\_POST[ccc]);?&gt;</code> 的用戶，之後登入時指定 PHPSESSID 為 php 結尾，再利用所產生的 session file 進行 include 的動作。</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

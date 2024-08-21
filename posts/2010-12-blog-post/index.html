@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="幾百年沒打網誌了XD 心得： 肖想參加很久了，今年終於有資格參加XDD 第一次參賽就得到第二名，感謝各位的承讓 &lt;(_ _)&gt; 組隊 with allenown &amp; taien 早上去吃麥當勞原來是傳統 Subway山初次看起來也是滿壯觀的XDD 第一次參加，手忙腳亂XD 都慌了XDDDD 不像HIT wargame or 自己玩，團隊合作以及時間的掌控戰術很重要 題目難度有點">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第五屆全國大專院校資安技能金盾獎">
+<meta property="og:url" content="http://blog.orange.tw/posts/2010-12-blog-post/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="幾百年沒打網誌了XD 心得： 肖想參加很久了，今年終於有資格參加XDD 第一次參賽就得到第二名，感謝各位的承讓 &lt;(_ _)&gt; 組隊 with allenown &amp; taien 早上去吃麥當勞原來是傳統 Subway山初次看起來也是滿壯觀的XDD 第一次參加，手忙腳亂XD 都慌了XDDDD 不像HIT wargame or 自己玩，團隊合作以及時間的掌控戰術很重要 題目難度有點">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2010-12-blog-post/04db1fae89a72d8b-01.jpg">
+<meta property="article:published_time" content="2010-12-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T03:26:30.952Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2010-12-blog-post/04db1fae89a72d8b-01.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>第五屆全國大專院校資安技能金盾獎 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        第五屆全國大專院校資安技能金盾獎
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2010-12-10T16:00:00.000Z" class="dt-published" itemprop="datePublished">2010-12-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>幾百年沒打網誌了XD</p>
+<h1 id="心得："><a href="#心得：" class="headerlink" title="心得："></a>心得：</h1><ul>
+<li>肖想參加很久了，今年終於有資格參加XDD</li>
+<li>第一次參賽就得到第二名，感謝各位的承讓 &lt;(_ _)&gt;</li>
+<li>組隊 with allenown &amp; taien</li>
+<li>早上去吃麥當勞原來是傳統</li>
+<li>Subway山初次看起來也是滿壯觀的XDD</li>
+<li>第一次參加，手忙腳亂XD</li>
+<li>都慌了XDDDD</li>
+<li>不像HIT wargame or 自己玩，團隊合作以及時間的掌控戰術很重要</li>
+<li>題目難度有點難度，還是感覺要跟出題者心有靈犀一點通才可以</li>
+<li>稍嫌不滿意的是Web相關題目的漏洞是人工設計好判斷input &amp; output 並不是真的有漏洞存在</li>
+<li>今年贈品很不錯，USB冰箱 &amp; Timberland的<a target="_blank" rel="noopener" href="http://shopping.pchome.com.tw/?mod=item&func=exhibit&IT_NO=CEAC3J-A50168035&SR_NO=CEAC3J&ROWNO=6">背包</a> (有點太大是真的XD</li>
+<li>今年已經盡力了，有了這次經驗明年一定會更好!!</li>
+<li>感謝各位可敬的對手 &lt;(_ _)&gt;</li>
+<li>感謝主辦單位 &lt;(_ _)&gt;</li>
+<li>晚上慶功宴，被CSRF了超可怕Q______________Q</li>
+<li>12月我已經過了兩次生日了XDDDDD</li>
+<li>慶功宴很有趣 :))</li>
+<li>太HIGH回到家雙手 + 喉嚨掛彩</li>
+</ul>
+<h1 id="題目："><a href="#題目：" class="headerlink" title="題目："></a>題目：</h1><ul>
+<li>本次金盾決賽題目共15題，{“Forensic”:7, “Web”:4, “Reversing”:1, “Google”:2, “Coding”:1}，大致上</li>
+<li>前半場沒人超過200分XDD</li>
+<li>最漂亮的一題， taien找出SSI，allenown &amp; me突破，團隊合作rock XDD</li>
+<li>Samy的偶像是Lady GaGa ，出自 Black hat 2010 「<a target="_blank" rel="noopener" href="http://media.blackhat.com/bh-us-10/presentations/Kamkar/BlackHat-USA-2010-Kamkar-How-I-Met-Your-Girlfriend-slides.pdf">How-I-Met-Your-Girlfriend</a>」slides 第二頁</li>
+<li>世界上最難的sudoku，google it XD</li>
+<li>.htaccess is 正解， htpasswd 的密碼才是錯誤的(想來想去好不直觀Orz</li>
+<li>500張疊圖很後悔放棄沒去做</li>
+<li>本次有200分就可以有獎品了XDD</li>
+</ul>
+<p>回家後，其實感觸還滿深的，從一開始甚麼都不會學到現在，如今邁入第四年。 忘記跟誰聊天聊到 Dannvix ，正規代表Coding神手今天好像還飛去日本比賽XDD</p>
+<p>其實自己學習的過程比較起一般人很偏，到現在也沒走在正規的道路上XDD 真正正規學的好像也只有CCN{A, P}</p>
+<blockquote>
+<p>「幹壞事是進步最大的原動力」 XDDDD</p>
+</blockquote>
+<p>以及所謂前輩講的「精神時光屋」學習法XD</p>
+<blockquote>
+<p>「只要肯投下心力，就會是你的」</p>
+</blockquote>
+<p>還想要在變得更強！！ 我要成為 ＿ ＿ 王！！！！！</p>
+<p>附圖:</p>
+<p><img src="/posts/2010-12-blog-post/04db1fae89a72d8b-01.jpg"></p>
+<p>ref from <a target="_blank" rel="noopener" href="http://shaolin.tw/">shaolin</a></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

