@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="description" content="[ 繁體中文版本  |  English Version ]  嗨，這是我今年發表在 Black Hat USA 2024 上針對 Apache HTTP Server 的研究。 此外，這份研究也將在 HITCON 和 OrangeCon 上發表，有興趣搶先了解可點此取得投影片：  Confusion Attacks: Exploiting Hidden Semantic Ambiguity in">
 <meta property="og:type" content="article">
-<meta property="og:title" content="(繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!">
+<meta property="og:title" content="(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!">
 <meta property="og:url" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="[ 繁體中文版本  |  English Version ]  嗨，這是我今年發表在 Black Hat USA 2024 上針對 Apache HTTP Server 的研究。 此外，這份研究也將在 HITCON 和 OrangeCon 上發表，有興趣搶先了解可點此取得投影片：  Confusion Attacks: Exploiting Hidden Semantic Ambiguity in">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/c46787187d97fc85-11.png">
 <meta property="og:image" content="http://blog.orange.tw/posts/2024-08-confusion-attacks-ch/444e2b7b11c6c80e-12.png">
 <meta property="article:published_time" content="2024-08-08T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-21T06:25:03.402Z">
+<meta property="article:modified_time" content="2024-08-21T14:37:17.843Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
@@ -51,7 +51,7 @@
     
     <!-- title -->
     
-      <title>(繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server! | Orange Tsai</title><meta name="robots" content="noindex">
+      <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server! | Orange Tsai</title>
     
     <!-- async scripts -->
     <!-- Google Analytics -->
@@ -126,7 +126,7 @@
   <header>
     
     <h1 class="posttitle p-name" itemprop="name headline">
-        (繁體中文) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!
+        (繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!
     </h1>
 
 
@@ -507,7 +507,7 @@
 <p>至於還有哪些方面可以加強呢？ 其實不同的 Httpd 發行版會有不同的設定檔案，因此其它的 Unix-Like 系統例如 RHEL 家族、BSD 系列，甚至使用到 Httpd 的套裝軟體，它們都有機會出現更多可跳脫的重寫規則、更多厲害的 Local Gadgets 甚至意料外的符號跳躍等等 ，就交給有興趣的人繼續吧。</p>
 <p>最後由於時程因素，來不及分享更多在實際網站、設備，甚至開源專案上發現並利用的真實案例，不過你應該已經可以想像 —— 在真實世界中絕對還藏著千千萬萬個比想像中還要大量未開採的規則、可繞過的認證，以及隱藏在檯面下的 CGI，至於如何把這篇裡面所講到的技巧實際應用在全世界上？ 接下來就是你們的任務了！</p>
 <h1 id="結語"><a href="#結語" class="headerlink" title="結語"></a>結語</h1><p>維護一個 Open Source 專案真的是一件很困難的事，尤其在讓使用者方便的同時兼顧舊版本的相容性，稍有不慎可能就會造成整個系統被攻破 (例如 Httpd 2.4.49 中因為一個路徑處理邏輯小改動導致災難性的 <a target="_blank" rel="noopener" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-41773">CVE-2021-41773</a>)，整個開發過程必須要小心翼翼的踩在一堆遺留程式碼以及技術債上。 所以如果真的有 Apache HTTP Server 的開發者看到這篇文我想說： 謝謝你們的貢獻！</p>
-<!-- flag of hidden posts -->
+
   </div>
 </article>
 
