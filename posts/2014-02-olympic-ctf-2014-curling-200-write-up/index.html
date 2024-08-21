@@ -9,25 +9,25 @@
     <meta name="description" content="最近剛好玩了一下 Olympic CTF ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 CURLing 400) 首先是 CURLing 200 分～ 打開是一個新聞系統的頁面  其中選取新聞的參數似乎是去讀取檔案，並且存在 Directory Traversal 漏洞，可以透過 ..&#x2F; 來偽造路徑（還記得 遠通 嗎 XDD）  http">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Olympic CTF 2014 CURLing 200 write up">
-<meta property="og:url" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="最近剛好玩了一下 Olympic CTF ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 CURLing 400) 首先是 CURLing 200 分～ 打開是一個新聞系統的頁面  其中選取新聞的參數似乎是去讀取檔案，並且存在 Directory Traversal 漏洞，可以透過 ..&#x2F; 來偽造路徑（還記得 遠通 嗎 XDD）  http">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/f50c8dafab993186-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/3ecadecdabd389b4-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/ae3be1151b2fc81b-04.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/fdab67997ac8008e-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/a4df2d1a194e7e3f-06.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/43e2195650c13a1c-07.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/411f175d506706c9-08.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/8309c59403b8da8e-09.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/f50c8dafab993186-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/3ecadecdabd389b4-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/ae3be1151b2fc81b-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/fdab67997ac8008e-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/a4df2d1a194e7e3f-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/43e2195650c13a1c-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/411f175d506706c9-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/8309c59403b8da8e-09.png">
 <meta property="article:published_time" content="2014-02-09T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-21T06:04:26.640Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
     
     
       

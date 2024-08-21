@@ -9,25 +9,25 @@
     <meta name="description" content="Yahoo 開始有了 Bug Bounty 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 Yahoo Company Store 優惠卷，結果當然超不爽的，只好 po 個 爆料文 XDDD 結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋（不負責任標題翻譯： 對，我就是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 ">
-<meta property="og:url" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="Yahoo 開始有了 Bug Bounty 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 Yahoo Company Store 優惠卷，結果當然超不爽的，只好 po 個 爆料文 XDDD 結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋（不負責任標題翻譯： 對，我就是">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/f066cea919415f91-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/54f13ff09847b518-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/8f60056ff487fcce-06.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/295cb183bc62a5c6-07.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/016df9db36a9c427-08.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/318c0cb4e613f9ae-09.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/f066cea919415f91-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/cbb2ed8b420372ad-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/54f13ff09847b518-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/8f60056ff487fcce-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/295cb183bc62a5c6-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/016df9db36a9c427-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/318c0cb4e613f9ae-09.png">
 <meta property="article:published_time" content="2013-10-31T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-20T21:53:31.067Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/5c91f7a53a616b40-01.png">
     
     
       
@@ -154,7 +154,7 @@
 <p>結果開始各界撻伐 Yahoo 事情越演越烈，Yahoo Security Team 的 Director 只好發文解釋<br>（不負責任標題翻譯： <a target="_blank" rel="noopener" href="http://yahoodevelopers.tumblr.com/post/62953984019/so-im-the-guy-who-sent-the-t-shirt-out-as-a-thank-you">對，我就是那個送你感謝潮Ｔ的人</a>）</p>
 <p>內文大意整件事件的始末，說明 Yahoo 並沒有完善的漏洞通報流程機制（商品卷還是自掏腰包買的），說明會改善這個機制，會有新的獎勵機制在 10&#x2F;31 公佈，並且新的機制可追溯到 7&#x2F;1 號後回報漏洞的人，並承諾會有 $150 - $15000 的 Reward（所以至少會有 150 美金耶＄＿＄）</p>
 <p>當初看到時覺得挺有趣的就找了幾個問題回報 Yahoo，Client Side 如 XSS 就算了，比較關注在 Server Side 上面的弱點（可以直接打進 Server 比較爽）</p>
-<p>主要回報流程是寄到 <a href="mailto:&#115;&#x65;&#99;&#117;&#x72;&#x69;&#x74;&#121;&#x40;&#121;&#x61;&#x68;&#x6f;&#111;&#45;&#x69;&#110;&#x63;&#x2e;&#99;&#111;&#109;">&#115;&#x65;&#99;&#117;&#x72;&#x69;&#x74;&#121;&#x40;&#121;&#x61;&#x68;&#x6f;&#111;&#45;&#x69;&#110;&#x63;&#x2e;&#99;&#111;&#109;</a> 這個信箱進行回報的動作（英文來來回回了好多信，英文苦手嗚嗚Ｔ＿Ｔ），經過回信確認且修補完成後來發個文章記錄一下細節!</p>
+<p>主要回報流程是寄到 <a href="mailto:&#115;&#101;&#99;&#x75;&#x72;&#105;&#116;&#x79;&#x40;&#x79;&#97;&#x68;&#x6f;&#x6f;&#x2d;&#105;&#110;&#99;&#x2e;&#x63;&#111;&#x6d;">&#115;&#101;&#99;&#x75;&#x72;&#105;&#116;&#x79;&#x40;&#x79;&#97;&#x68;&#x6f;&#x6f;&#x2d;&#105;&#110;&#99;&#x2e;&#x63;&#111;&#x6d;</a> 這個信箱進行回報的動作（英文來來回回了好多信，英文苦手嗚嗚Ｔ＿Ｔ），經過回信確認且修補完成後來發個文章記錄一下細節!</p>
 <p>有找過兩個弱點，預計分成兩篇文章記錄一下攻擊思路跟細節</p>
 <p>第一篇是 台灣 Yahoo Blog 的任意檔案下載漏洞，第二篇是 <a target="_blank" rel="noopener" href="http://orange-tw.blogspot.tw/2013/11/yahoo-bug-bounty-part-2-loginyahoocom.html">*.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞</a>。 </p>
 <p>其實兩個都不算少見的 Vulnerability，發現也不難，只是比起一般弱點，第一個需要細心以及一些經驗，第二個必須要瞭解漏洞原理並且改寫漏洞攻擊代碼</p>

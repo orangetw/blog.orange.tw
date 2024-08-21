@@ -9,24 +9,24 @@
     <meta name="description" content="DEBUG 心得是現在大多數的人對於SQL injection (Mysql)都是union加上information_schema取得資料，但是並不是那麼的簡單，SQL injection其實是一門非常深的學問，就出了這題XD 這個方法最早是在大陸的文章看到，後來有分析到國外的一套SQL自動化攻擊工具havij，裡面也有用到類似的方式。 一個登入介面，題目是  If you can login,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法">
-<meta property="og:url" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="DEBUG 心得是現在大多數的人對於SQL injection (Mysql)都是union加上information_schema取得資料，但是並不是那麼的簡單，SQL injection其實是一門非常深的學問，就出了這題XD 這個方法最早是在大陸的文章看到，後來有分析到國外的一套SQL自動化攻擊工具havij，裡面也有用到類似的方式。 一個登入介面，題目是  If you can login,">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/33b64799b36b3a52-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/02769224b3473ada-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/14993b5a740d538e-04.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/480ed4d60e1eefe5-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/8b2d7173f5e02dd5-06.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/73e2f421d19ba1bf-07.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/03157dc04a3e4907-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/33b64799b36b3a52-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/02769224b3473ada-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/14993b5a740d538e-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/480ed4d60e1eefe5-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/8b2d7173f5e02dd5-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/73e2f421d19ba1bf-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/03157dc04a3e4907-08.png">
 <meta property="article:published_time" content="2011-07-23T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-21T03:13:22.975Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/96ac50d31b1ce6f3-01.png">
     
     
       

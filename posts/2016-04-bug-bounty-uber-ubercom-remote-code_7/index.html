@@ -9,22 +9,22 @@
     <meta name="description" content="好久沒 po 文了XD 幾天前，Uber 公佈了 Bug Bounty 計畫，從  Hackerone 上看到獎金不低，最少的 XSS &#x2F; CSRF 都有 3000 美金起就跳下來看一下有什麼好玩的XD 從官方公佈的技術細節發現 Uber 主要網站是以 Python Flask 以及 NodeJS 為架構，所以在尋找漏洞的時候自然會比較偏以測試這兩種 Framework 的漏洞為主!">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Uber 遠端代碼執行- Uber.com Remote Code Execution via Flask Jinja2 Template Injection">
-<meta property="og:url" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="好久沒 po 文了XD 幾天前，Uber 公佈了 Bug Bounty 計畫，從  Hackerone 上看到獎金不低，最少的 XSS &#x2F; CSRF 都有 3000 美金起就跳下來看一下有什麼好玩的XD 從官方公佈的技術細節發現 Uber 主要網站是以 Python Flask 以及 NodeJS 為架構，所以在尋找漏洞的時候自然會比較偏以測試這兩種 Framework 的漏洞為主!">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/280a3e7ddc59927c-02.jpg">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/1154b6733b7e40d2-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/56812f048d715f9c-04.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/30a9f09949a99fab-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/2d105e71683bc031-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/280a3e7ddc59927c-02.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/1154b6733b7e40d2-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/56812f048d715f9c-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/30a9f09949a99fab-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/2d105e71683bc031-06.png">
 <meta property="article:published_time" content="2016-04-06T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-20T11:16:18.982Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg">
     
     
       

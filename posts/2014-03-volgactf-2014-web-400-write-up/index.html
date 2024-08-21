@@ -9,26 +9,26 @@
     <meta name="description" content="回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下! 解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection API 來找到可利用的地方，網址點開為一個類似 Twitter 的個人留言板服務  註冊登入後長得如下，共有新增留言、設定、個人首頁、登出的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Volga CTF 2014 Web 400 write up">
-<meta property="og:url" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下! 解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection API 來找到可利用的地方，網址點開為一個類似 Twitter 的個人留言板服務  註冊登入後長得如下，共有新增留言、設定、個人首頁、登出的">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73cd3470ddfb60e0-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/6b0cc568c9a4a83b-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/672cc0742c7e56bd-04.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/9bc81385a8fc7ac4-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/3b21f915cb4c40eb-06.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/c991be5c081e46ed-07.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/8b059e226fd3fd3a-08.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73f39b0d2d7cb158-09.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/2300cc88e646b421-10.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73cd3470ddfb60e0-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/6b0cc568c9a4a83b-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/672cc0742c7e56bd-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/9bc81385a8fc7ac4-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/3b21f915cb4c40eb-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/c991be5c081e46ed-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/8b059e226fd3fd3a-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/73f39b0d2d7cb158-09.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/2300cc88e646b421-10.png">
 <meta property="article:published_time" content="2014-03-29T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-20T20:57:53.038Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/917cacd6c892c866-01.png">
     
     
       

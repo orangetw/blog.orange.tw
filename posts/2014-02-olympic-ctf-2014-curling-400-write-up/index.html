@@ -9,27 +9,27 @@
     <meta name="description" content="Olympic CTF CURLing 400 的 write up，前言可以參考 Olympic CTF 2014 CURLing 200 write up 這題也是個人覺得出的非常不錯的題目之一，要解開必須很熟悉 PHP 的特性以及攻擊手法才能解開這道題目，網址打開是一個白畫面，有個 PHP 的錯誤訊息  Notice: Undefined index: rpc_json_call in &amp;#">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Olympic CTF 2014 CURLing 400 write up">
-<meta property="og:url" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="Olympic CTF CURLing 400 的 write up，前言可以參考 Olympic CTF 2014 CURLing 200 write up 這題也是個人覺得出的非常不錯的題目之一，要解開必須很熟悉 PHP 的特性以及攻擊手法才能解開這道題目，網址打開是一個白畫面，有個 PHP 的錯誤訊息  Notice: Undefined index: rpc_json_call in &amp;#">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/bf9dd46ffd4a2516-02.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/9c334d5ef660c42f-03.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e69539db2827ede9-04.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/038d4cfe7851d0fb-05.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/88652366ab818572-06.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e3b0a31103f5ae03-07.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b67f0de80c3376d5-08.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/ee915cfcc7ed1ea4-09.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/109bf4007fc40d72-10.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b134bdcbe7073444-11.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/bf9dd46ffd4a2516-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/9c334d5ef660c42f-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e69539db2827ede9-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/038d4cfe7851d0fb-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/88652366ab818572-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e3b0a31103f5ae03-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b67f0de80c3376d5-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/ee915cfcc7ed1ea4-09.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/109bf4007fc40d72-10.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b134bdcbe7073444-11.png">
 <meta property="article:published_time" content="2014-02-09T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-20T21:07:52.844Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
     
     
       

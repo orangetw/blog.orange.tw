@@ -9,18 +9,18 @@
     <meta name="description" content="DEBUG 在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_functions 的保護 常見的繞過方法其實都滿容易防止的不過如果是針對 PHP 本身記憶體上的弱點懂得防禦的管理員相對就少很多了XD 而且對於一般主機，伺服器要求的是穩定所以也不能常常 update PHP 版本 因此抱著練練手感以及增加自己兵器庫的心態來寫寫這個 Exploit 主要參考 Po">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability">
-<meta property="og:url" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/index.html">
+<meta property="og:url" content="https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/index.html">
 <meta property="og:site_name" content="Orange Tsai">
 <meta property="og:description" content="DEBUG 在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_functions 的保護 常見的繞過方法其實都滿容易防止的不過如果是針對 PHP 本身記憶體上的弱點懂得防禦的管理員相對就少很多了XD 而且對於一般主機，伺服器要求的是穩定所以也不能常常 update PHP 版本 因此抱著練練手感以及增加自己兵器庫的心態來寫寫這個 Exploit 主要參考 Po">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
-<meta property="og:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/8150c8e02a378ef5-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/8150c8e02a378ef5-02.png">
 <meta property="article:published_time" content="2015-03-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-21T06:08:06.877Z">
+<meta property="article:modified_time" content="2024-08-21T15:25:22.581Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/fe169c19cc429d20-01.png">
     
     
       
@@ -41,7 +41,7 @@
     
     <!-- title -->
     
-      <title>Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability | Orange Tsai</title>
+      <title>Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability | Orange Tsai</title><meta name="robots" content="noindex">
     
     <!-- async scripts -->
     <!-- Google Analytics -->
@@ -198,7 +198,7 @@
 <p>所以 walk around 的解法是利用任意洩漏地址 brute dump 出 ELF header 後再去抓出 GOT address</p>
 <p>（缺點會在 error.log 洗很多 Segmentation fault 就是了XD）</p>
 <p>（不過可以先利用 <a target="_blank" rel="noopener" href="https://gist.github.com/tmm08a/5d99e869417f1c52b22d#file-leaklegitimateaddress">leak heap</a> 上的資訊判斷 library 加載的大致位置，可以確定最前面一個 byte 後 SHIFT 左右掃一下約 8000 次內就可以得到 ELF header 最慘也只好要 65536 次內一定可以取得位置！）</p>
-
+<!-- flag of hidden posts -->
   </div>
 </article>
 
