@@ -636,7 +636,6 @@ body {
 #header a {
   background: none;
   color: inherit;
-  text-decoration: 1px;
 }
 #header #logo {
   display: inline-block;
