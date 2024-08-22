@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.orange.tw/posts/2010-07-hacks-in-taiwan/</loc>
+    
+    <lastmod>2024-08-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.orange.tw/talks/index.html</loc>
     
     <lastmod>2024-08-22</lastmod>
@@ -408,15 +417,6 @@
   
   <url>
     <loc>https://blog.orange.tw/posts/2010-05-ramexe/</loc>
-    
-    <lastmod>2024-08-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.orange.tw/posts/2010-07-hacks-in-taiwan/</loc>
     
     <lastmod>2024-08-21</lastmod>
     
