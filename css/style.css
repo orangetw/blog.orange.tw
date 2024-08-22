@@ -1584,67 +1584,68 @@ article .content .caption {
   content: ")";
 }
 .highlight {
-  background: #474949;
-  color: #d1d9e1;
+  background: #23241f;
+  color: #f8f8f2;
 }
-.highlight .code .comment,
-.highlight .code .quote {
-  color: #969896;
+.highlight .code .highlight,
+.highlight .code .tag,
+.highlight .code .subst {
+  color: #f8f8f2;
+}
+.highlight .code .strong,
+.highlight .code .emphasis {
+  color: #a8a8a2;
+}
+.highlight .code .bullet,
+.highlight .code .quote,
+.highlight .code .number,
+.highlight .code .regexp,
+.highlight .code .literal,
+.highlight .code .link {
+  color: #ae81ff;
+}
+.highlight .code .code,
+.highlight .code .title,
+.highlight .code .section,
+.highlight .code .selector-class {
+  color: #a6e22e;
+}
+.highlight .code .strong {
+  font-weight: bold;
+}
+.highlight .code .emphasis {
   font-style: italic;
 }
 .highlight .code .keyword,
 .highlight .code .selector-tag,
-.highlight .code .literal,
-.highlight .code .type,
-.highlight .code .addition {
-  color: #c9c;
-}
-.highlight .code .number,
-.highlight .code .selector-attr,
-.highlight .code .selector-pseudo {
-  color: #f99157;
-}
-.highlight .code .string,
-.highlight .code .doctag,
-.highlight .code .regexp {
-  color: #8abeb7;
-}
-.highlight .code .title,
 .highlight .code .name,
-.highlight .code .section,
-.highlight .code .built_in {
-  color: #b5bd68;
-}
-.highlight .code .variable,
-.highlight .code .template-variable,
-.highlight .code .selector-id,
-.highlight .code .class .title {
-  color: #fc6;
-}
-.highlight .code .section,
-.highlight .code .name,
-.highlight .code .strong {
-  font-weight: bold;
+.highlight .code .attr {
+  color: #f92672;
 }
 .highlight .code .symbol,
-.highlight .code .bullet,
-.highlight .code .subst,
-.highlight .code .meta,
-.highlight .code .link {
-  color: #f99157;
-}
-.highlight .code .deletion {
-  color: #dc322f;
-}
-.highlight .code .formula {
-  background: #eee8d5;
-}
-.highlight .code .attr,
 .highlight .code .attribute {
-  color: #81a2be;
+  color: #66d9ef;
 }
-.highlight .code .emphasis {
-  font-style: italic;
+.highlight .code .params,
+.highlight .code .class .title {
+  color: #f8f8f2;
+}
+.highlight .code .string,
+.highlight .code .type,
+.highlight .code .built_in,
+.highlight .code .builtin-name,
+.highlight .code .selector-id,
+.highlight .code .selector-attr,
+.highlight .code .selector-pseudo,
+.highlight .code .addition,
+.highlight .code .variable,
+.highlight .code .template-variable {
+  color: #e6db74;
+}
+.highlight .code .comment,
+.highlight .code .deletion,
+.highlight .code .meta {
+  color: #75715e;
 }
 pre {
   overflow-x: auto;
@@ -1673,7 +1674,6 @@ code {
   margin: 1rem 0;
   padding: 10px 15px;
   border-radius: 4px;
-  background: #f5f5f5;
   font-family: "Menlo", "Meslo LG", monospace;
   -webkit-border-radius: 4px;
 }

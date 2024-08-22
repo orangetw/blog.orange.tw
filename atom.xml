@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2024-08-21T14:36:57.212Z</updated>
+  <updated>2024-08-21T15:20:05.003Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
+    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T14:36:57.212Z</updated>
+    <updated>2024-08-21T15:20:05.003Z</updated>
     
     
       
@@ -35,11 +35,11 @@
   </entry>
   
   <entry>
-    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
+    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T15:20:05.003Z</updated>
+    <updated>2024-08-21T14:36:57.212Z</updated>
     
     
       
@@ -925,24 +925,6 @@
   </entry>
   
   <entry>
-    <title>Olympic CTF 2014 CURLing 400 write up</title>
-    <link href="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/"/>
-    <id>https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/</id>
-    <published>2014-02-09T16:00:00.000Z</published>
-    <updated>2024-08-20T21:07:52.844Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://olympic-ctf.ru/&quot;&gt;Olympic CTF&lt;/a&gt; CURLing 400 的 write up，前言可以參考 &lt;a href=&quot;http://blog.orange.tw/2014/02/olympic-ctf-2014-c</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>Olympic CTF 2014 CURLing 200 write up</title>
     <link href="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/"/>
     <id>https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/</id>
@@ -953,6 +935,24 @@
       
       
     <summary type="html">&lt;p&gt;最近剛好玩了一下 &lt;a href=&quot;https://olympic-ctf.ru/&quot;&gt;Olympic CTF&lt;/a&gt; ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 &lt;a href=&quot;http://blog.oran</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Olympic CTF 2014 CURLing 400 write up</title>
+    <link href="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/"/>
+    <id>https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/</id>
+    <published>2014-02-09T16:00:00.000Z</published>
+    <updated>2024-08-20T21:07:52.844Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://olympic-ctf.ru/&quot;&gt;Olympic CTF&lt;/a&gt; CURLing 400 的 write up，前言可以參考 &lt;a href=&quot;http://blog.orange.tw/2014/02/olympic-ctf-2014-c</summary>
       
     
     
@@ -1662,24 +1662,6 @@
   </entry>
   
   <entry>
-    <title>Forensic Challenge 2010</title>
-    <link href="https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/"/>
-    <id>https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/</id>
-    <published>2010-02-20T16:00:00.000Z</published>
-    <updated>2024-08-21T03:33:28.957Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace&quot;&gt;&lt;a href=&quot;#Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>好玩的圖XD</title>
     <link href="https://blog.orange.tw/posts/2010-02-xd/"/>
     <id>https://blog.orange.tw/posts/2010-02-xd/</id>
@@ -1692,6 +1674,24 @@
     <summary type="html">&lt;p&gt;有時網路上逛到就會順便存起來&lt;/p&gt;
 &lt;h1 id=&quot;古典密碼&quot;&gt;&lt;a href=&quot;#古典密碼&quot; class=&quot;headerlink&quot; title=&quot;古典密碼&quot;&gt;&lt;/a&gt;古典密碼&lt;/h1&gt;&lt;p&gt;每套密碼表背後都有它的一個故事，仔細體會的話都還滿有趣的XDD&lt;/p&gt;
 &lt;h3 </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Forensic Challenge 2010</title>
+    <link href="https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/"/>
+    <id>https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/</id>
+    <published>2010-02-20T16:00:00.000Z</published>
+    <updated>2024-08-21T03:33:28.957Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace&quot;&gt;&lt;a href=&quot;#Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace</summary>
       
     
     
