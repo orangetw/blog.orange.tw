@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="本來這篇文章叫做 HITCON CTF 2016 初賽出題小記的，可是擺著擺著就兩個月過去惹～  轉來寫寫跟 Java 有關的東西XD 關於序今年五六月的時候，看到某個曾經很多人用但快停止維護的 Java Web Framework 弱點的修補方式感覺還有戲所以開始追一下原始碼挖 0-Day，順便整理一下 Java Web 相關弱點 — 😊覺得有趣。 通常自己在外面演講時對於 Web Secur">
+
+    
+      <meta name="description" content="本來這篇文章叫做 HITCON CTF 2016 初賽出題小記的，可是擺著擺著就兩個月過去惹～  轉來寫寫跟 Java 有關的東西XD 關於序今年五六月的時候，看到某個曾經很多人用但快停止維護的 Java Web Framework 弱點的修補方式感覺還有戲所以開始追一下原始碼挖 0-Day，順便整理一下 Java Web 相關弱點 — 😊覺得有趣。 通常自己在外面演講時對於 Web Secur">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[隨筆] Java Web 漏洞生態食物鏈">
 <meta property="og:url" content="https://blog.orange.tw/posts/2016-12-java-web/index.html">
@@ -18,6 +20,8 @@
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
+    
+
     
     
       
@@ -199,7 +203,7 @@
 </blockquote>
 <p>出來混遲早要還的，不然技術債會越累積越多，接下來有空的話應該會嘗試檢視 Spring Framework Source Code，畢竟也是現在的主流! </p>
 <p>至於 S 什麼什麼 T 什麼什麼 2 的就不用多講了XD</p>
-<h2 id="題外話-1"><a href="#題外話-1" class="headerlink" title="題外話 1"></a>題外話 1</h2><p>題外話是，在 Review 完 Seam Framework 後回報了幾個漏洞給 <a href="mailto:&#115;&#101;&#x63;&#117;&#x72;&#x69;&#x74;&#x79;&#64;&#106;&#x62;&#111;&#x73;&#x73;&#46;&#111;&#114;&#103;">&#115;&#101;&#x63;&#117;&#x72;&#x69;&#x74;&#x79;&#64;&#106;&#x62;&#111;&#x73;&#x73;&#46;&#111;&#114;&#103;</a> ，不過回覆則說因為 Seam 只能在 JBoss EAP 7 下使用，而 JBoss EAP 也即將在 2016&#x2F;11 月停止維護，所以除了重要或是嚴重風險的漏洞外皆不修復。</p>
+<h2 id="題外話-1"><a href="#題外話-1" class="headerlink" title="題外話 1"></a>題外話 1</h2><p>題外話是，在 Review 完 Seam Framework 後回報了幾個漏洞給 <a href="mailto:&#115;&#101;&#x63;&#x75;&#114;&#x69;&#116;&#x79;&#x40;&#106;&#98;&#x6f;&#115;&#x73;&#46;&#x6f;&#114;&#x67;">&#115;&#101;&#x63;&#x75;&#114;&#x69;&#116;&#x79;&#x40;&#106;&#98;&#x6f;&#115;&#x73;&#46;&#x6f;&#114;&#x67;</a> ，不過回覆則說因為 Seam 只能在 JBoss EAP 7 下使用，而 JBoss EAP 也即將在 2016&#x2F;11 月停止維護，所以除了重要或是嚴重風險的漏洞外皆不修復。</p>
 <p>所以你知道的，現在用 Seam 寫的網頁都可以 </p>
 <p>嗯，真棒XD</p>
 <h2 id="題外話-2"><a href="#題外話-2" class="headerlink" title="題外話 2"></a>題外話 2</h2><p>Apple 敏感檔案存取的漏洞是新訓進去前發現的，出來要回報時就發現不能用不知道是修掉還怎樣QQ </p>
