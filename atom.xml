@@ -1,0 +1,1894 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Orange Tsai</title>
+  
+  
+  <link href="https://blog.orange.tw/atom.xml" rel="self"/>
+  
+  <link href="https://blog.orange.tw/"/>
+  <updated>2024-08-21T15:20:05.003Z</updated>
+  <id>https://blog.orange.tw/</id>
+  
+  <author>
+    <name>Orange Tsai</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
+    <published>2024-08-08T16:00:00.000Z</published>
+    <updated>2024-08-21T15:20:05.003Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://blog.orange.tw/2024/08/confusion-attacks-ch.html&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a href=&quot;https://blog.orange.tw/2024/08/confusion-att</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
+    <published>2024-08-08T16:00:00.000Z</published>
+    <updated>2024-08-21T14:36:57.212Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://blog.orange.tw/2024/08/confusion-attacks-ch.html&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a href=&quot;https://blog.orange.tw/2024/08/confusion-att</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>CVE-2024-4577 - Yet Another PHP RCE: Make PHP-CGI Argument Injection Great Again!</title>
+    <link href="https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/"/>
+    <id>https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/</id>
+    <published>2024-06-06T16:00:00.000Z</published>
+    <updated>2024-08-19T15:41:19.260Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;This is a side story&amp;#x2F;extra bug while I’m preparing for my &lt;a href=&quot;https://www.blackhat.com/us-24/briefings/schedule/index.html#conf</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>從 2013 到 2023: Web Security 十年之進化與趨勢!</title>
+    <link href="https://blog.orange.tw/posts/2023-08-2023-webconf-the-evolution-of-web-security/"/>
+    <id>https://blog.orange.tw/posts/2023-08-2023-webconf-the-evolution-of-web-security/</id>
+    <published>2023-08-11T16:00:00.000Z</published>
+    <updated>2024-08-21T06:10:17.527Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;TL;DR for Hackers &amp;amp; Researchers: this is a more conceptual talk for web developers. All are in Mandarin but you can check the slides </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A New Attack Surface on MS Exchange Part 4 - ProxyRelay!</title>
+    <link href="https://blog.orange.tw/posts/2022-10-proxyrelay-a-new-attack-surface-on-ms-exchange-part-4/"/>
+    <id>https://blog.orange.tw/posts/2022-10-proxyrelay-a-new-attack-surface-on-ms-exchange-part-4/</id>
+    <published>2022-10-18T16:00:00.000Z</published>
+    <updated>2024-08-20T07:37:54.818Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2022-10-proxyrelay-a-new-attack-surface-on-ms-exchange-part-4/2c29d0f4d257c078-01.jpeg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;This is a </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Let&#39;s Dance in the Cache - Destabilizing Hash Table on Microsoft IIS!</title>
+    <link href="https://blog.orange.tw/posts/2022-08-lets-dance-in-the-cache-destabilizing-hash-table-on-microsoft-iis/"/>
+    <id>https://blog.orange.tw/posts/2022-08-lets-dance-in-the-cache-destabilizing-hash-table-on-microsoft-iis/</id>
+    <published>2022-08-17T16:00:00.000Z</published>
+    <updated>2024-08-19T16:06:34.226Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2022-08-lets-dance-in-the-cache-destabilizing-hash-table-on-microsoft-iis/d9a302d219bb7c0e-01.png&quot; alt=&quot;preview&quot;&gt;  &lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A New Attack Surface on MS Exchange Part 3 - ProxyShell!</title>
+    <link href="https://blog.orange.tw/posts/2021-08-proxyshell-a-new-attack-surface-on-ms-exchange-part-3/"/>
+    <id>https://blog.orange.tw/posts/2021-08-proxyshell-a-new-attack-surface-on-ms-exchange-part-3/</id>
+    <published>2021-08-17T16:00:00.000Z</published>
+    <updated>2024-08-19T16:08:16.025Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2021-08-proxyshell-a-new-attack-surface-on-ms-exchange-part-3/abb4dd2a14140e1b-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;P.S. Th</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A New Attack Surface on MS Exchange Part 2 - ProxyOracle!</title>
+    <link href="https://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/"/>
+    <id>https://blog.orange.tw/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/</id>
+    <published>2021-08-06T16:00:00.000Z</published>
+    <updated>2024-08-21T06:10:09.111Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2021-08-proxyoracle-a-new-attack-surface-on-ms-exchange-part-2/7070a738a7bbb7f4-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Hi, this i</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A New Attack Surface on MS Exchange Part 1 - ProxyLogon!</title>
+    <link href="https://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/"/>
+    <id>https://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/</id>
+    <published>2021-08-05T16:00:00.000Z</published>
+    <updated>2024-08-21T06:09:55.365Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/25374ccc984c5130-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;The series </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A Journey Combining Web Hacking and Binary Exploitation in Real World!</title>
+    <link href="https://blog.orange.tw/posts/2021-02-a-journey-combining-web-and-binary-exploitation/"/>
+    <id>https://blog.orange.tw/posts/2021-02-a-journey-combining-web-and-binary-exploitation/</id>
+    <published>2021-02-23T16:00:00.000Z</published>
+    <updated>2024-08-19T16:49:41.427Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Hi, this blog post is just a short post to address the technique part in one of my Red Team cases last year. I believe it’s worth sharing</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>How I Hacked Facebook Again! Unauthenticated RCE on MobileIron MDM</title>
+    <link href="https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/"/>
+    <id>https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/</id>
+    <published>2020-09-11T16:00:00.000Z</published>
+    <updated>2024-08-19T16:56:36.500Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Hi, it’s a long ti</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>你用它上網，我用它進你內網! 中華電信數據機遠端代碼執行漏洞</title>
+    <link href="https://blog.orange.tw/posts/2019-11-HiNet-GPON-Modem-RCE/"/>
+    <id>https://blog.orange.tw/posts/2019-11-HiNet-GPON-Modem-RCE/</id>
+    <published>2019-11-10T16:00:00.000Z</published>
+    <updated>2024-08-19T16:59:37.823Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2019-11-HiNet-GPON-Modem-RCE/8af98f4ac35d5432-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;For non-native readers, this is a writeup of</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>An analysis and thought about recently PHP-FPM RCE (CVE-2019-11043)</title>
+    <link href="https://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/"/>
+    <id>https://blog.orange.tw/posts/2019-10-an-analysis-and-thought-about-recently/</id>
+    <published>2019-10-29T16:00:00.000Z</published>
+    <updated>2024-08-20T07:38:15.618Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;First of all, this is such a really interesting bug! From a small memory defect to code execution. It combines both binary and web techni</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Attacking SSL VPN - Part 3: The Golden Pulse Secure SSL VPN RCE Chain, with Twitter as Case Study!</title>
+    <link href="https://blog.orange.tw/posts/2019-09-attacking-ssl-vpn-part-3-golden-pulse-secure-rce-chain/"/>
+    <id>https://blog.orange.tw/posts/2019-09-attacking-ssl-vpn-part-3-golden-pulse-secure-rce-chain/</id>
+    <published>2019-09-01T16:00:00.000Z</published>
+    <updated>2024-08-21T06:09:44.706Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2019-09-attacking-ssl-vpn-part-3-golden-pulse-secure-rce-chain/96945a638e4d2cbf-01.png&quot; alt=&quot;preview&quot;&gt;   &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Aut</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Attacking SSL VPN - Part 2: Breaking the Fortigate SSL VPN</title>
+    <link href="https://blog.orange.tw/posts/2019-08-attacking-ssl-vpn-part-2-breaking-the-fortigate-ssl-vpn/"/>
+    <id>https://blog.orange.tw/posts/2019-08-attacking-ssl-vpn-part-2-breaking-the-fortigate-ssl-vpn/</id>
+    <published>2019-08-09T16:00:00.000Z</published>
+    <updated>2024-08-21T06:24:54.911Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2019-08-attacking-ssl-vpn-part-2-breaking-the-fortigate-ssl-vpn/d33f700b857adff7-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Autho</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Attacking SSL VPN - Part 1: PreAuth RCE on Palo Alto GlobalProtect, with Uber as Case Study!</title>
+    <link href="https://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/"/>
+    <id>https://blog.orange.tw/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/</id>
+    <published>2019-07-16T16:00:00.000Z</published>
+    <updated>2024-08-20T08:14:23.364Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2019-07-attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto/cd0aa4394622462a-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Author: Ora</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>A Wormable XSS on HackMD!</title>
+    <link href="https://blog.orange.tw/posts/2019-03-a-wormable-xss-on-hackmd/"/>
+    <id>https://blog.orange.tw/posts/2019-03-a-wormable-xss-on-hackmd/</id>
+    <published>2019-03-11T16:00:00.000Z</published>
+    <updated>2024-08-20T08:39:10.075Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 Web Security 中，我喜歡伺服器端的漏洞更勝於客戶端的漏洞!(當然可以直接拿 shell 的客戶端洞不在此限XD) 因為可以直接控制別人的伺服器對我來說更有趣! 正因如此，我以往的文章對於 XSS 及 CSRF 等相關弱點也較少著墨(仔細翻一下也只有 2018</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacking Jenkins Part 2 - Abusing Meta Programming for Unauthenticated RCE!</title>
+    <link href="https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/"/>
+    <id>https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/</id>
+    <published>2019-02-18T16:00:00.000Z</published>
+    <updated>2024-08-21T06:18:49.801Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2019/02/19/hacking-Jenkins-part2-abusing-meta-programming-for-unauthenticated-RCE/&quot;&gt;繁體中文版本&lt;/a&gt; | &lt;a href</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacking Jenkins Part 1 - Play with Dynamic Routing</title>
+    <link href="https://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/"/>
+    <id>https://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/</id>
+    <published>2019-01-15T16:00:00.000Z</published>
+    <updated>2024-08-21T06:17:29.442Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2019/01/16/hacking-Jenkins-part1-play-with-dynamic-routing/&quot;&gt;繁體中文版本&lt;/a&gt; | &lt;a href=&quot;#&quot;&gt;English Version&lt;/a</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON CTF 2018 - One Line PHP Challenge</title>
+    <link href="https://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/"/>
+    <id>https://blog.orange.tw/posts/2018-10-hitcon-ctf-2018-one-line-php-challenge/</id>
+    <published>2018-10-23T16:00:00.000Z</published>
+    <updated>2024-08-21T06:22:54.659Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;In every year’s HITCON CTF, I will prepare at least one PHP exploit challenge which the source code is very straightforward, short and ea</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>How I Chained 4 Bugs (Features?) into RCE on Amazon Collaboration System</title>
+    <link href="https://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/"/>
+    <id>https://blog.orange.tw/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/</id>
+    <published>2018-08-10T16:00:00.000Z</published>
+    <updated>2024-08-21T06:16:00.677Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2018-08-how-i-chained-4-bugs-features-into-rce-on-amazon/21dbb5d9feac7693-02.png&quot; alt=&quot;preview&quot;&gt;  &lt;/p&gt;
+&lt;p&gt;Hi! This is th</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>圖床</title>
+    <link href="https://blog.orange.tw/posts/2018-08-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2018-08-blog-post/</id>
+    <published>2018-08-05T16:00:00.000Z</published>
+    <updated>2024-08-22T09:32:08.315Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2024/08/blog-post.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/posts/2018-08-blog-post/cfc3e3710d273d3b-01.jpeg&quot;&gt;&lt;/</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Google CTF 2018 Quals Web Challenge - gCalc</title>
+    <link href="https://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/"/>
+    <id>https://blog.orange.tw/posts/2018-06-google-ctf-2018-quals-web-gcalc/</id>
+    <published>2018-06-26T16:00:00.000Z</published>
+    <updated>2024-08-21T06:14:49.594Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;gCalc is the web challenge in Google CTF 2018 quals and only 15 teams solved during 2 days’ competition!  &lt;/p&gt;
+&lt;p&gt;This challenge is a ver</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Pwn a CTF Platform with Java JRMP Gadget</title>
+    <link href="https://blog.orange.tw/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/"/>
+    <id>https://blog.orange.tw/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/</id>
+    <published>2018-03-25T16:00:00.000Z</published>
+    <updated>2024-08-21T06:14:16.055Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;打 CTF 打膩覺得沒啥新鮮感嗎，來試試打掉整個 CTF 計分板吧! 前幾個月，剛好看到某個大型 CTF 比賽開放註冊，但不允許台灣參加有點難過 :(&lt;/p&gt;
+&lt;p&gt;看著官網最下面發現是 FlappyPig 所主辦，又附上 &lt;a href=&quot;https://github.c</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>PHP CVE-2018-5711 - Hanging Websites by a Harmful GIF</title>
+    <link href="https://blog.orange.tw/posts/2018-01-php-cve-2018-5711-hanging-websites-by/"/>
+    <id>https://blog.orange.tw/posts/2018-01-php-cve-2018-5711-hanging-websites-by/</id>
+    <published>2018-01-20T16:00:00.000Z</published>
+    <updated>2024-08-21T06:14:04.807Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Recently, I reviewed several Web frameworks and language implementations, and found some vulnerabilities.  &lt;/p&gt;
+&lt;p&gt;This is an simple and </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>How I Chained 4 vulnerabilities on GitHub Enterprise, From SSRF Execution Chain to RCE!</title>
+    <link href="https://blog.orange.tw/posts/2017-07-how-i-chained-4-vulnerabilities-on/"/>
+    <id>https://blog.orange.tw/posts/2017-07-how-i-chained-4-vulnerabilities-on/</id>
+    <published>2017-07-27T16:00:00.000Z</published>
+    <updated>2024-08-20T11:01:02.890Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Hi, it’s been a long time since my last blog post.&lt;/p&gt;
+&lt;p&gt;In the past few months, I spent lots of time preparing for the talk of &lt;a href=</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>GitHub Enterprise SQL Injection</title>
+    <link href="https://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/"/>
+    <id>https://blog.orange.tw/posts/2017-01-bug-bounty-github-enterprise-sql-injection/</id>
+    <published>2017-01-06T16:00:00.000Z</published>
+    <updated>2024-08-21T06:22:37.100Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2017-01-bug-bounty-github-enterprise-sql-injection/efb3e6ce144c9274-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;Before&quot;&gt;&lt;a href=&quot;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>[隨筆] Java Web 漏洞生態食物鏈</title>
+    <link href="https://blog.orange.tw/posts/2016-12-java-web/"/>
+    <id>https://blog.orange.tw/posts/2016-12-java-web/</id>
+    <published>2016-12-06T16:00:00.000Z</published>
+    <updated>2024-08-20T11:06:37.363Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;本來這篇文章叫做 HITCON CTF 2016 初賽出題小記的，可是擺著擺著就兩個月過去惹～ &lt;/p&gt;
+&lt;p&gt;轉來寫寫跟 Java 有關的東西XD&lt;/p&gt;
+&lt;h1 id=&quot;關於序&quot;&gt;&lt;a href=&quot;#關於序&quot; class=&quot;headerlink&quot; title=&quot;關於序&quot;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Collection of CTF Web Challenges I made</title>
+    <link href="https://blog.orange.tw/posts/2016-10-collection-of-ctf-web-challenges-i-made/"/>
+    <id>https://blog.orange.tw/posts/2016-10-collection-of-ctf-web-challenges-i-made/</id>
+    <published>2016-10-12T16:00:00.000Z</published>
+    <updated>2024-08-20T11:07:21.643Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;把出過的 CTF Web 題都整理上 GitHub 惹，包括原始碼、解法、所用到技術、散落在外的 Write ups 等等&lt;/p&gt;
+&lt;p&gt;This is the repository of CTF Web challenges I made. It contains cha</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON 2016 投影片 - Bug Bounty 獎金獵人甘苦談 那些年我回報過的漏洞</title>
+    <link href="https://blog.orange.tw/posts/2016-07-hitcon-2016-slides-bug-bounty-hunter/"/>
+    <id>https://blog.orange.tw/posts/2016-07-hitcon-2016-slides-bug-bounty-hunter/</id>
+    <published>2016-07-22T16:00:00.000Z</published>
+    <updated>2024-08-20T16:25:46.430Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;This is my talk about being a Bug Bounty Hunter at &lt;a href=&quot;http://hitcon.org/2016/CMT/&quot;&gt;HITCON Community 2016&lt;/a&gt;. It shared some of my </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>How I Hacked Facebook, and Found Someone&#39;s Backdoor Script</title>
+    <link href="https://blog.orange.tw/posts/2016-04-bug-bounty-how-i-hacked-facebook-and-found-someones-backdoor-script/"/>
+    <id>https://blog.orange.tw/posts/2016-04-bug-bounty-how-i-hacked-facebook-and-found-someones-backdoor-script/</id>
+    <published>2016-04-20T16:00:00.000Z</published>
+    <updated>2024-08-20T11:12:48.750Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2016-04-bug-bounty-how-i-hacked-facebook-and-found-someones-backdoor-script/33ada75d3fa24746-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Uber 遠端代碼執行- Uber.com Remote Code Execution via Flask Jinja2 Template Injection</title>
+    <link href="https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/"/>
+    <id>https://blog.orange.tw/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/</id>
+    <published>2016-04-06T16:00:00.000Z</published>
+    <updated>2024-08-20T11:16:18.982Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2016-04-bug-bounty-uber-ubercom-remote-code_7/43da2ae8d44965cf-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;好久沒 po 文了XD&lt;/p&gt;
+&lt;p&gt;幾天前，Uber</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON CTF 2015 Quals &amp; Final 心得備份</title>
+    <link href="https://blog.orange.tw/posts/2016-01-hitcon-ctf-2015-quals-final/"/>
+    <id>https://blog.orange.tw/posts/2016-01-hitcon-ctf-2015-quals-final/</id>
+    <published>2016-01-13T16:00:00.000Z</published>
+    <updated>2024-08-21T06:09:31.362Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;當初好像沒留底稿只發布在 Facebook 跟烏雲，今天睡醒發現又有人在轉貼這篇，想說留個備份好了XD&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.facebook.com/notes/orange-tsai/hitcon-ctf-2015-qual</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Google &amp; Facebook Bug Bounty GET</title>
+    <link href="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/"/>
+    <id>https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/</id>
+    <published>2015-09-28T16:00:00.000Z</published>
+    <updated>2024-08-20T11:27:36.110Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;先說這篇純粹炫耀文xD&lt;/p&gt;
+&lt;p&gt;暨 2013 年 Yahoo 開始有 &lt;a href=&quot;http://bugbounty.yahoo.com/&quot;&gt;Bug Bounty&lt;/a&gt; 那時搶個流行找了兩個漏洞回報 Yahoo 然後&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>AIS3 Final CTF Web Writeup (Race Condition &amp; one-byte off SQL Injection)</title>
+    <link href="https://blog.orange.tw/posts/2015-09-ais3-final-ctf-web-writeup-race/"/>
+    <id>https://blog.orange.tw/posts/2015-09-ais3-final-ctf-web-writeup-race/</id>
+    <published>2015-09-09T16:00:00.000Z</published>
+    <updated>2024-08-20T11:27:56.207Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;這次為了 &lt;a href=&quot;http://ais3.org/&quot;&gt;AIS3&lt;/a&gt; Final CTF 所出的一道題目，這題在這以初新者導向中的比賽中相對難，不過其中的觀念很有趣，在解題中什麼都給你了就是找不到洞但經人一解釋就會有豁然開朗覺得為什麼自己沒想到的感覺&lt;/p&gt;
+&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Remote Code Execution through GDB Remote Debugging Protocol</title>
+    <link href="https://blog.orange.tw/posts/2015-08-remote-code-execution-on-gdb-remote/"/>
+    <id>https://blog.orange.tw/posts/2015-08-remote-code-execution-on-gdb-remote/</id>
+    <published>2015-08-30T16:00:00.000Z</published>
+    <updated>2024-08-20T16:12:53.584Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在準備 DEFCON CTF 時額外想到的小玩具，很多人使用 GDB remote debugging 時為了方便遠端使用，會將 port 綁在 0.0.0.0 上使得攻擊者可以連接上做一些事情&lt;/p&gt;
+&lt;p&gt;至於可以做哪些事情，不來個遠端代碼執行就不好玩了XD&lt;/p&gt;
+&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON 2015 Community 演講投影片 - 那些 Web Hacking 中的奇技淫巧</title>
+    <link href="https://blog.orange.tw/posts/2015-08-hitcon-2015-community-web-hacking/"/>
+    <id>https://blog.orange.tw/posts/2015-08-hitcon-2015-community-web-hacking/</id>
+    <published>2015-08-27T16:00:00.000Z</published>
+    <updated>2024-08-21T06:13:51.312Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;噗，在 HITCON 2015 Community 的投影片，講一些好玩的特性跟技巧!&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/orangetw/My-Presentation-Slides/blob/main/dat</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>2015 烏雲峰會演講投影片 「關於 HITCON CTF 的那些事 之 Web 狗如何在險惡的 CTF 世界中存活？」</title>
+    <link href="https://blog.orange.tw/posts/2015-07-2015-hitcon-ctf-web-ctf/"/>
+    <id>https://blog.orange.tw/posts/2015-07-2015-hitcon-ctf-web-ctf/</id>
+    <published>2015-07-17T16:00:00.000Z</published>
+    <updated>2024-08-20T16:27:41.267Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;應邀以 HITCON CTF 隊長的身份到 &lt;a href=&quot;http://summit.wooyun.org/&quot;&gt;烏雲峰會&lt;/a&gt; 講一下過去比賽中遇到的一些趣事，順便解釋一下許多人好奇 HITCON 以及 217, BambooFox 的關係，基本上就是獨立的三支隊伍&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>講個秘訣 - 0ctf Final 0cms </title>
+    <link href="https://blog.orange.tw/posts/2015-05-0ctf-final-0cms/"/>
+    <id>https://blog.orange.tw/posts/2015-05-0ctf-final-0cms/</id>
+    <published>2015-04-30T16:00:00.000Z</published>
+    <updated>2024-08-20T16:30:04.591Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;這次跟著 &lt;a href=&quot;http://217.logdown.com/&quot;&gt;217&lt;/a&gt; 到上海參加由 &lt;a href=&quot;http://www.0ops.net/&quot;&gt;0ops&lt;/a&gt; 舉辦的 0ctf 決賽&lt;/p&gt;
+&lt;p&gt;總體來說這次是我打過最爽的一次 Attack &amp;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Web 狗沒人權 TAT?</title>
+    <link href="https://blog.orange.tw/posts/2015-04-web/"/>
+    <id>https://blog.orange.tw/posts/2015-04-web/</id>
+    <published>2015-04-12T16:00:00.000Z</published>
+    <updated>2024-08-20T16:31:19.838Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2015-04-web/99656a33f84646cc-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;花了很大力氣蒐集了許多資訊，花了幾個月模擬著可能的突破口一個個檢視，終於發現某個網路邊界有 SQL Injection 可</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Bypassing open_basedir and disable_functions by Using PHP Use-After-Free Vulnerability</title>
+    <link href="https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/"/>
+    <id>https://blog.orange.tw/posts/2015-03-bypassing-openbasedir-and/</id>
+    <published>2015-03-12T16:00:00.000Z</published>
+    <updated>2024-08-22T09:32:04.012Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2015/03/bypassing-openbasedir-and.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在滲透入侵 VPS 之類的主機常常會有 open_basedir 以及 disable_fun</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Boston Key Party CTF 2015 [Harvard Square] [Andrew &amp; Broadway] Write-ups</title>
+    <link href="https://blog.orange.tw/posts/2015-03-boston-key-parcty-ctf-2015-harvard/"/>
+    <id>https://blog.orange.tw/posts/2015-03-boston-key-parcty-ctf-2015-harvard/</id>
+    <published>2015-03-01T16:00:00.000Z</published>
+    <updated>2024-08-20T16:37:01.249Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Boston Key Party 是今年 Defcon CTF 的倒數第二場資格賽，雖然只拿了 &lt;a href=&quot;https://ctftime.org/event/163&quot;&gt;第二名&lt;/a&gt; 不過由於冠軍的 PPP 已經確定保送所以應該是可以遞補上今年 Defcon 決賽資</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>103 年資安技能金盾獎</title>
+    <link href="https://blog.orange.tw/posts/2014-12-103/"/>
+    <id>https://blog.orange.tw/posts/2014-12-103/</id>
+    <published>2014-12-10T16:00:00.000Z</published>
+    <updated>2024-08-20T16:37:50.355Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;紀錄一下XD&lt;/p&gt;
+&lt;p&gt;103 年資安技能金盾獎，台科大 「一輩子的明太子大食團」，冠軍！&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/posts/2014-12-103/1d765f2c169f3243-01.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;（圖文不符，放張圖好像比較有內容點）&lt;/</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hack in the Box 2014 CTF Writeup - KeygenMe with RSA </title>
+    <link href="https://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/"/>
+    <id>https://blog.orange.tw/posts/2014-10-hack-in-box-2014-ctf-writeup-keygenme/</id>
+    <published>2014-10-18T16:00:00.000Z</published>
+    <updated>2024-08-20T16:50:31.579Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;這次被以 HITCON 的身份邀請到馬來西亞參加 &lt;a href=&quot;http://conference.hitb.org/hitbsecconf2014kul/capture-the-flag/&quot;&gt;HITB 2014 CTF&lt;/a&gt;，照慣例來寫篇 Write Up&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON Won the 2nd in DEFCON 22 CTF Final</title>
+    <link href="https://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/"/>
+    <id>https://blog.orange.tw/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/</id>
+    <published>2014-08-25T16:00:00.000Z</published>
+    <updated>2024-08-21T06:13:41.655Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2014-08-hitcon-win-2nd-in-defcon-22-ctf-final/a8eda9c1952b5e35-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://hitcon.org/</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Defcon CTF Quals 2014 - Nonameyet write up</title>
+    <link href="https://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/"/>
+    <id>https://blog.orange.tw/posts/2014-05-defcon-ctf-quals-2014-nonameyet-write-up/</id>
+    <published>2014-05-18T16:00:00.000Z</published>
+    <updated>2024-08-21T06:04:43.743Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;記錄一下，Defcon 是世界駭客  CTF 比賽最盛大的賽事，每年都是每個國家資安社群比拼較勁的地方，前十二強可以進入八月在 Las Vegas 拉斯維加斯舉辦的決賽，在現場進行實際網路攻防的 Attack &amp;amp; Defense CTF 的比賽！&lt;/p&gt;
+&lt;p&gt;在今</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Pw3ed CTF LeaderBoard - Git Misconfiguration &amp; SQL Injection</title>
+    <link href="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/"/>
+    <id>https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/</id>
+    <published>2014-03-30T16:00:00.000Z</published>
+    <updated>2024-08-20T21:01:43.924Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;（前情提要）&lt;/p&gt;
+&lt;p&gt;某月某日晚上，人在外面有約正巧無法參與在週末所舉辦的 CTF，這次的這個 CTF 競賽似乎是某個國家某個實驗室第一次舉辦的對外 CTF 競賽，在 &lt;a href=&quot;http://ctftime.org/&quot;&gt;Ctftime.org&lt;/a&gt; 也有獨立</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Volga CTF 2014 Web 400 write up</title>
+    <link href="https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/"/>
+    <id>https://blog.orange.tw/posts/2014-03-volgactf-2014-web-400-write-up/</id>
+    <published>2014-03-29T16:00:00.000Z</published>
+    <updated>2024-08-20T20:57:53.038Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;回到家看到 CRAX Team 在玩 VolgaCTF 就順手玩了一下!&lt;/p&gt;
+&lt;p&gt;解這題的時候順便讓我練習到了之前就想好好惡補一下的 EL 注入（Expression Language Injection） ，最後花了滿多時間再用 Java 的 Reflection </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Olympic CTF 2014 CURLing 200 write up</title>
+    <link href="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/"/>
+    <id>https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/</id>
+    <published>2014-02-09T16:00:00.000Z</published>
+    <updated>2024-08-21T06:04:26.640Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;最近剛好玩了一下 &lt;a href=&quot;https://olympic-ctf.ru/&quot;&gt;Olympic CTF&lt;/a&gt; ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 &lt;a href=&quot;http://blog.oran</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Olympic CTF 2014 CURLing 400 write up</title>
+    <link href="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/"/>
+    <id>https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/</id>
+    <published>2014-02-09T16:00:00.000Z</published>
+    <updated>2024-08-20T21:07:52.844Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://olympic-ctf.ru/&quot;&gt;Olympic CTF&lt;/a&gt; CURLing 400 的 write up，前言可以參考 &lt;a href=&quot;http://blog.orange.tw/2014/02/olympic-ctf-2014-c</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>MD5 for Fun - Fun with MD5 hashes</title>
+    <link href="https://blog.orange.tw/posts/2013-12-md5-for-fun-fun-with-md5-hashes/"/>
+    <id>https://blog.orange.tw/posts/2013-12-md5-for-fun-fun-with-md5-hashes/</id>
+    <published>2013-12-24T16:00:00.000Z</published>
+    <updated>2024-08-20T21:44:25.297Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;想了一下還是發個文章來記錄一下xD&lt;/p&gt;
+&lt;p&gt;最近在整理硬碟，因為好玩寫了一個網站（服務？）&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://md5fun.exp.tw/&quot;&gt;http://md5fun.exp.tw&lt;/a&gt;&lt;/p&gt;
+&lt;/block</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>EXP.tw - 文章投稿、駭客資訊、資安文章</title>
+    <link href="https://blog.orange.tw/posts/2013-11-exptw/"/>
+    <id>https://blog.orange.tw/posts/2013-11-exptw/</id>
+    <published>2013-11-23T16:00:00.000Z</published>
+    <updated>2024-08-20T21:45:48.940Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2013-11-exptw/5c9b4796a5886b87-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;前幾天看到 .tw 域名特價中，失心瘋就買下了幾個 domain。 買了之後也不知道幹嘛，感覺 EXP.tw 那麼短可</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Yahoo Bug Bounty Part 2 - *.login.yahoo.com Remote Code Execution 遠端代碼執行漏洞</title>
+    <link href="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/"/>
+    <id>https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-2-loginyahoocom/</id>
+    <published>2013-11-03T16:00:00.000Z</published>
+    <updated>2024-08-20T21:58:11.100Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Yahoo 系列的 Part 2 來囉～ Bug Bounty 緣起說明以及 Part 1 請看以下鏈結&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://orange-tw.blogspot.tw/2013/11/yahoo-bug-bounty-p</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 </title>
+    <link href="https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/"/>
+    <id>https://blog.orange.tw/posts/2013-11-yahoo-bug-bounty-part-1-yahoo-blog/</id>
+    <published>2013-10-31T16:00:00.000Z</published>
+    <updated>2024-08-20T21:53:31.067Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Yahoo 開始有了 &lt;a href=&quot;http://bugbounty.yahoo.com/&quot;&gt;Bug Bounty&lt;/a&gt; 制度! 緣起也滿有趣的，國外有個資安專家找到 Yahoo 的 XSS 漏洞結果回報後只得到 $12.50 &lt;a href=&quot;http://comp</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>PHPConf 2013 投影片 - 矛盾大對決！</title>
+    <link href="https://blog.orange.tw/posts/2013-10-phpconf-2013/"/>
+    <id>https://blog.orange.tw/posts/2013-10-phpconf-2013/</id>
+    <published>2013-10-04T16:00:00.000Z</published>
+    <updated>2024-08-20T21:59:20.345Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;矛盾大對決 - &lt;/p&gt;
+&lt;h2 id=&quot;「能入侵任何網站的駭客-vs-絕對不會被入侵的網站」&quot;&gt;&lt;a href=&quot;#「能入侵任何網站的駭客-vs-絕對不會被入侵的網站」&quot; class=&quot;headerlink&quot; title=&quot;「能入侵任何網站的駭客 vs. 絕對不會被入侵的</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>這不是金盾獎Ｔ＿Ｔ</title>
+    <link href="https://blog.orange.tw/posts/2013-09-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2013-09-blog-post/</id>
+    <published>2013-09-23T16:00:00.000Z</published>
+    <updated>2024-08-20T22:01:04.447Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Update - 2013&amp;#x2F;09&amp;#x2F;24 20:20 - 官方已修正此問題。&lt;/p&gt;
+&lt;p&gt;又到了一年一度的金盾獎了！今年報名網站好像又找了新的公司來負責處理！ 照著正常流程，註冊 -&amp;gt; 登入 -&amp;gt; 輸入報名資料 -&amp;gt; 送出 -&amp;gt; </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON 2013 Wargame - Pwn3d 500 詳解</title>
+    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/"/>
+    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/</id>
+    <published>2013-07-20T16:00:00.000Z</published>
+    <updated>2024-08-20T22:05:28.633Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前在 tw.PyCon.org 2013 上有分享到 Django 在 &lt;code&gt;SECRE_KEY&lt;/code&gt; 洩漏的情況有機會造成 Remote Code Execution，這個 Pwn3d 500 就是那次演講的實例 (&lt;a href=&quot;http://oran</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HITCON 2013 Wargame - Web 500 詳解</title>
+    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/"/>
+    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/</id>
+    <published>2013-07-20T16:00:00.000Z</published>
+    <updated>2024-08-21T06:12:44.348Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Web 500 是一題 PHP source code review 找 vuln 的題目&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png&quot;&gt;&lt;/p&gt;
+&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>0-Day 輕鬆談 (0-Day Easy Talk) - Happy Fuzzing Internet Explorer</title>
+    <link href="https://blog.orange.tw/posts/2013-07-0-day-0-day-easy-talk-happy-fuzzing/"/>
+    <id>https://blog.orange.tw/posts/2013-07-0-day-0-day-easy-talk-happy-fuzzing/</id>
+    <published>2013-07-18T16:00:00.000Z</published>
+    <updated>2024-08-20T22:06:12.814Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;這是我在台灣駭客年會 Hacks in Taiwan HITCON 2013 的演講&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;0-Day 怎麼來？ Fuzzing 做為一種尋找漏洞的方式，讓你連躺著都有 0-Day 進帳。&lt;/p&gt;
+&lt;p&gt;這是一場輕鬆的演講， 分享一些 Fuzzer 的設計</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Pycon2013 Slide - 駭客看 Django</title>
+    <link href="https://blog.orange.tw/posts/2013-05-pycon2013-slide-django/"/>
+    <id>https://blog.orange.tw/posts/2013-05-pycon2013-slide-django/</id>
+    <published>2013-05-25T16:00:00.000Z</published>
+    <updated>2024-08-20T22:06:46.241Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 Taiwan Python Conference 2013 的演講投影片&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;P.S. 我不是駭客，我不會寫 Django&lt;/em&gt;&lt;/p&gt;
+&lt;script async=&quot;&quot; class=&quot;speakerdeck-embed&quot; data-id=&quot;c3a</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>CVE-2013-0305 Django Credit Get</title>
+    <link href="https://blog.orange.tw/posts/2013-02-cve-2013-0305-django-credit-get/"/>
+    <id>https://blog.orange.tw/posts/2013-02-cve-2013-0305-django-credit-get/</id>
+    <published>2013-02-22T16:00:00.000Z</published>
+    <updated>2024-08-20T22:08:57.668Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;人死留名，虎死留皮，紀念一下xD&lt;/p&gt;
+&lt;p&gt;原本只是想找個 Open Source 的東西來看看的，Code Review 研究一下 Django 歷年被發現的弱點，在追 CVE-2010-4534 時發現的另外一種利用方法，基本上需要進入管理界面才可以利用，在真實環境</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>WebConf 2013「Best Practices - The Upload」投影片</title>
+    <link href="https://blog.orange.tw/posts/2013-01-webconf-2013best-practices-upload/"/>
+    <id>https://blog.orange.tw/posts/2013-01-webconf-2013best-practices-upload/</id>
+    <published>2013-01-12T16:00:00.000Z</published>
+    <updated>2024-08-21T09:50:46.613Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;很榮幸被邀請到 WebConf 2013 分享關於 Web Security 上相關的議題 &lt;a href=&quot;http://www.webconf.tw/&quot;&gt;WebConf 2013 網站&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;第一在六、七百人的場子演講，還是在兩天最後一場議程的主會議廳，</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>101 年全國大專院校資安技能金盾獎</title>
+    <link href="https://blog.orange.tw/posts/2013-01-101/"/>
+    <id>https://blog.orange.tw/posts/2013-01-101/</id>
+    <published>2013-01-06T16:00:00.000Z</published>
+    <updated>2024-08-21T06:12:34.293Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Lag 了半個月很久這篇算是紀錄一下 xD  &lt;/p&gt;
+&lt;p&gt;感覺自己越來越懶散了~“~   &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;台科大 - 「NISRA 金盾大食團」&lt;/strong&gt; 冠軍 again！  &lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>被微軟感謝了&gt;&lt;  MS12-071 - CVE-2012-4775</title>
+    <link href="https://blog.orange.tw/posts/2012-11-ms12-071-cve-2012-4775/"/>
+    <id>https://blog.orange.tw/posts/2012-11-ms12-071-cve-2012-4775/</id>
+    <published>2012-11-13T16:00:00.000Z</published>
+    <updated>2024-08-21T02:49:34.470Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;先說這是炫耀文XD&lt;/p&gt;
+&lt;p&gt;雖然不是第一次找到 0day ，不過倒是第一次 Report 漏洞有我名字，開心紀念一下成就++ :P&lt;/p&gt;
+&lt;p&gt;MS12-071 Internet Explorer 9 Remote Code Execution (CTreeNode</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>PHPCONF 2012 - Security in PHP 那些在滲透測試的小技巧</title>
+    <link href="https://blog.orange.tw/posts/2012-11-phpconf-2012-security-in-php/"/>
+    <id>https://blog.orange.tw/posts/2012-11-phpconf-2012-security-in-php/</id>
+    <published>2012-11-02T16:00:00.000Z</published>
+    <updated>2024-08-21T09:49:31.158Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 PHPCONF 2012 的投影片，主要講到三種 trick&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;PHP路徑正規化&lt;/li&gt;
+&lt;li&gt;Double-Byte Charset 的 Escape&lt;/li&gt;
+&lt;li&gt;Double Quotes 的 Evaluate&lt;/li&gt;
+&lt;/ol&gt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Study-Area，「網頁安全 Web Security 入門」投影片</title>
+    <link href="https://blog.orange.tw/posts/2012-09-satainan-web-security/"/>
+    <id>https://blog.orange.tw/posts/2012-09-satainan-web-security/</id>
+    <published>2012-09-28T16:00:00.000Z</published>
+    <updated>2024-08-21T09:51:23.683Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 Study-Area 台南以及台中 演講的投影片，活動鏈結：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://phorum.study-area.org/index.php/topic,67659.0.html&quot;&gt;http://phorum.st</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>OWST - Orange Web Security Toolkit v 2.01</title>
+    <link href="https://blog.orange.tw/posts/2012-09-owst-orange-web-security-toolkit-v-201/"/>
+    <id>https://blog.orange.tw/posts/2012-09-owst-orange-web-security-toolkit-v-201/</id>
+    <published>2012-09-17T16:00:00.000Z</published>
+    <updated>2024-08-22T09:31:56.347Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2012/09/owst-orange-web-security-toolkit-v-201.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;還記得這篇文章嗎&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;http:/</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan 2012 Potent Pwnables 3 出題詳解</title>
+    <link href="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/"/>
+    <id>https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/</id>
+    <published>2012-07-23T16:00:00.000Z</published>
+    <updated>2024-08-21T06:07:14.128Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3be3e2765196a836-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;照慣例今年還是有個經典遊戲題，皮卡丘打排球相信是許多</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan 2012 Web Hacking 1 出題詳解</title>
+    <link href="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-web-hacking-1/"/>
+    <id>https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-web-hacking-1/</id>
+    <published>2012-07-22T16:00:00.000Z</published>
+    <updated>2024-08-21T02:59:38.624Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;簡單的 Code Review，所以只有 100 分&lt;/p&gt;
+&lt;p&gt;結束突然有點感嘆覺得說，台灣玩 Web Hacking 的人雖然多，但都不精，而且滿大比例是 …… 的orz&lt;/p&gt;
+&lt;p&gt;題目很簡單，Web Hacking 1 外國人題目一出來沒多久就解出來，基本上有在</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Defcon ctf 20 qual pp100 Writeup</title>
+    <link href="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/"/>
+    <id>https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/</id>
+    <published>2012-06-18T16:00:00.000Z</published>
+    <updated>2024-08-21T03:04:24.216Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2012/06/defcon-ctf-20-qual-pp100-writeup.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;又到了一年一度的駭客界盛事 Defcon ctf qual 的……. 半個月後了</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>一百年度全國大專院校資安技能金盾獎 XD</title>
+    <link href="https://blog.orange.tw/posts/2011-12-xd/"/>
+    <id>https://blog.orange.tw/posts/2011-12-xd/</id>
+    <published>2011-12-09T16:00:00.000Z</published>
+    <updated>2024-08-21T03:07:52.703Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Ya~ 冠軍！！！！&lt;/p&gt;
+&lt;p&gt;今年是參加的第二年，真的有比去年進步成為第一名了！！XD&lt;/p&gt;
+&lt;p&gt;隊伍名稱： &lt;strong&gt;[&lt;a href=&quot;http://www.nisra.net/&quot;&gt;NISRA&lt;/a&gt;] 台科大分舵&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;這樣講</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>關於SQL Injection的那些奇淫異巧</title>
+    <link href="https://blog.orange.tw/posts/2011-08-sql-injection/"/>
+    <id>https://blog.orange.tw/posts/2011-08-sql-injection/</id>
+    <published>2011-08-26T16:00:00.000Z</published>
+    <updated>2024-08-21T03:09:02.550Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/viewer?a=v&amp;pid=explorer&amp;chrome=true&amp;srcid=0B0r_xEcaZ8-JYzk3NzA0NzItNTJlMS00YTUyLThkNTQtODVk</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>台灣駭客年會 HITCON2011，Wargame Web 3出題心得 &amp; 解法</title>
+    <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-3/"/>
+    <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-3/</id>
+    <published>2011-07-24T16:00:00.000Z</published>
+    <updated>2024-08-21T03:15:44.461Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;心得：這題出現的形式以及解法都是Real case in real world的，整個網站很安全都用Prepared statement保護SQL sentence，但是插入column name的時候就不能使用Prepared statement了，整個網站很安全剛好被我</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法</title>
+    <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/"/>
+    <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/</id>
+    <published>2011-07-23T16:00:00.000Z</published>
+    <updated>2024-08-21T06:12:26.675Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法</title>
+    <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/"/>
+    <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/</id>
+    <published>2011-07-23T16:00:00.000Z</published>
+    <updated>2024-08-21T03:13:22.975Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2011/07/hitcon2011wargame-web-4.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;心得是現在大多數的人對於SQL injection (Mysql)都是union加上informa</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>[Project] Web Security Toolkit</title>
+    <link href="https://blog.orange.tw/posts/2011-05-project-web-security-toolkit/"/>
+    <id>https://blog.orange.tw/posts/2011-05-project-web-security-toolkit/</id>
+    <published>2011-05-21T16:00:00.000Z</published>
+    <updated>2024-08-21T03:19:26.272Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;以前為了方便寫的小工具，最近改版越寫越有興趣就變成自己的一個小Project了XDD&lt;/p&gt;
+&lt;p&gt;整個重新用Python寫了約4000行左右XD UI也用wxPython的AUI改過&lt;/p&gt;
+&lt;p&gt;現有功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Senstive file, dir</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>整理</title>
+    <link href="https://blog.orange.tw/posts/2011-04-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2011-04-blog-post/</id>
+    <published>2011-04-18T16:00:00.000Z</published>
+    <updated>2024-08-21T03:21:12.527Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;最近的一些學習資料整理這樣XD&lt;/p&gt;
+&lt;h1 id=&quot;About歷史：&quot;&gt;&lt;a href=&quot;#About歷史：&quot; class=&quot;headerlink&quot; title=&quot;About歷史：&quot;&gt;&lt;/a&gt;About歷史：&lt;/h1&gt;&lt;h3 id=&quot;Memory-Corruption-</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Download_Exec shellcode fix &amp; for Windows 7</title>
+    <link href="https://blog.orange.tw/posts/2011-04-downloadexec-shellcode-fix-for-windows/"/>
+    <id>https://blog.orange.tw/posts/2011-04-downloadexec-shellcode-fix-for-windows/</id>
+    <published>2011-04-17T16:00:00.000Z</published>
+    <updated>2024-08-21T06:12:05.265Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;很久沒打網誌了丟些來湊篇幅XD&lt;/p&gt;
+&lt;p&gt;某些需求，需要Download and Exec file的shellcode，而且要For win7也可以work的，網路上找不到經指點只好自己改，改的時候才發現還是有些問題XD&lt;/p&gt;
+&lt;p&gt;shellcode原始版本 Fr</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第五屆全國大專院校資安技能金盾獎</title>
+    <link href="https://blog.orange.tw/posts/2010-12-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2010-12-blog-post/</id>
+    <published>2010-12-10T16:00:00.000Z</published>
+    <updated>2024-08-21T03:26:30.952Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;幾百年沒打網誌了XD&lt;/p&gt;
+&lt;h1 id=&quot;心得：&quot;&gt;&lt;a href=&quot;#心得：&quot; class=&quot;headerlink&quot; title=&quot;心得：&quot;&gt;&lt;/a&gt;心得：&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;肖想參加很久了，今年終於有資格參加XDD&lt;/li&gt;
+&lt;li&gt;第一次參賽就得到第二名，</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan 第六屆台灣駭客年會</title>
+    <link href="https://blog.orange.tw/posts/2010-07-hacks-in-taiwan/"/>
+    <id>https://blog.orange.tw/posts/2010-07-hacks-in-taiwan/</id>
+    <published>2010-07-05T16:00:00.000Z</published>
+    <updated>2024-08-21T03:27:14.927Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;有趣的網宣XD&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;台灣駭客年會 HIT2010 ( &lt;a href=&quot;http://www.hitcon.org/hit2010/&quot;&gt;http://www.hitcon.org/hit2010/&lt;/a&gt; )&lt;br&gt;網路報名截止日期： 2010&amp;#x2F</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>ram.exe</title>
+    <link href="https://blog.orange.tw/posts/2010-05-ramexe/"/>
+    <id>https://blog.orange.tw/posts/2010-05-ramexe/</id>
+    <published>2010-05-29T16:00:00.000Z</published>
+    <updated>2024-08-21T03:28:25.664Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;載點: &lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.mediafire.com/?zwimi3wwnzy&quot;&gt;http://www.mediafire.com/?zwimi3wwnzy&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;禮拜天玩Defcon Crypto300 的產物，還滿可</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>動物園行</title>
+    <link href="https://blog.orange.tw/posts/2010-05-blog-post_28/"/>
+    <id>https://blog.orange.tw/posts/2010-05-blog-post_28/</id>
+    <published>2010-05-27T16:00:00.000Z</published>
+    <updated>2024-08-21T03:30:46.785Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;5&amp;#x2F;24 (一)&lt;/p&gt;
+&lt;p&gt;動物園行&lt;/p&gt;
+&lt;p&gt;當天對自己說好要幼稚點&lt;/p&gt;
+&lt;p&gt;裝幼稚裝弱裝可憐被你們玩&lt;/p&gt;
+&lt;p&gt;學弟妹也很捧場&lt;/p&gt;
+&lt;p&gt;你們超棒 :)&lt;/p&gt;
+&lt;p&gt;第一次當隊輔的紀念&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/posts/2</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan 2010 Conference</title>
+    <link href="https://blog.orange.tw/posts/2010-05-hacks-in-taiwan-2010-conference/"/>
+    <id>https://blog.orange.tw/posts/2010-05-hacks-in-taiwan-2010-conference/</id>
+    <published>2010-05-25T16:00:00.000Z</published>
+    <updated>2024-08-21T03:30:11.660Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2010/05/hacks-in-taiwan-2010-conference.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;主辦單位：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CHROO</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>爽</title>
+    <link href="https://blog.orange.tw/posts/2010-05-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2010-05-blog-post/</id>
+    <published>2010-05-11T16:00:00.000Z</published>
+    <updated>2024-08-21T03:31:39.855Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;爽，台科大備取上了XD&lt;/p&gt;
+&lt;p&gt;最近解overflow game碰到的問題，在自己的server就是溢出不成功，objdump後發覺會比原始多出__stack_chk_fail來檢查有沒有被 overflow&lt;/p&gt;
+&lt;p&gt;查了一下， &lt;a href=&quot;http://</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Note</title>
+    <link href="https://blog.orange.tw/posts/2010-04-note/"/>
+    <id>https://blog.orange.tw/posts/2010-04-note/</id>
+    <published>2010-04-05T16:00:00.000Z</published>
+    <updated>2024-08-21T03:32:27.848Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;又是好久的一段時間XD&lt;/p&gt;
+&lt;p&gt;第二階段推台科大不分系&amp;amp;市北教資科，台科大不用面試，純靠備審資料。&lt;/p&gt;
+&lt;p&gt;市北教面試 04&amp;#x2F;11 拜託讓我上!!&lt;/p&gt;
+&lt;p&gt;04&amp;#x2F;18，中研院OSSF的講課，就盡力做到最好吧Orz。不過這會是一個</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Forensic Challenge 2010</title>
+    <link href="https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/"/>
+    <id>https://blog.orange.tw/posts/2010-02-forensic-challenge-2010/</id>
+    <published>2010-02-20T16:00:00.000Z</published>
+    <updated>2024-08-21T03:33:28.957Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace&quot;&gt;&lt;a href=&quot;#Challenge-1-of-the-Forensic-Challenge-2010-pcap-attack-trace</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>好玩的圖XD</title>
+    <link href="https://blog.orange.tw/posts/2010-02-xd/"/>
+    <id>https://blog.orange.tw/posts/2010-02-xd/</id>
+    <published>2010-02-20T16:00:00.000Z</published>
+    <updated>2024-08-21T03:40:30.166Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;有時網路上逛到就會順便存起來&lt;/p&gt;
+&lt;h1 id=&quot;古典密碼&quot;&gt;&lt;a href=&quot;#古典密碼&quot; class=&quot;headerlink&quot; title=&quot;古典密碼&quot;&gt;&lt;/a&gt;古典密碼&lt;/h1&gt;&lt;p&gt;每套密碼表背後都有它的一個故事，仔細體會的話都還滿有趣的XDD&lt;/p&gt;
+&lt;h3 </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>這......?</title>
+    <link href="https://blog.orange.tw/posts/2010-02-blog-post_18/"/>
+    <id>https://blog.orange.tw/posts/2010-02-blog-post_18/</id>
+    <published>2010-02-17T16:00:00.000Z</published>
+    <updated>2024-08-21T04:57:23.178Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;某個keygenMe，Hex-rays 出來的程式碼， 是先(v9+1) 乘上 (v8 + (*(argv + 1))[v9 + 4]) 在乘上 (v8+1) 後再取(*(argv + 1))[v9]的餘數吧!! 沒錯吧 !!!!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/pos</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>增</title>
+    <link href="https://blog.orange.tw/posts/2010-02-blog-post/"/>
+    <id>https://blog.orange.tw/posts/2010-02-blog-post/</id>
+    <published>2010-02-15T16:00:00.000Z</published>
+    <updated>2024-08-21T04:58:41.451Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;好久沒打網誌XD&lt;br&gt;考試前沒時間就想打到靠北，時間多了就懶Orz…&lt;/p&gt;
+&lt;p&gt;寒假不知不覺就快過完的說，還有很多事情沒做完，但是動畫倒是看了一堆Orz&lt;/p&gt;
+&lt;p&gt;當初的進度:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;逆向有進步一點滿欣慰的&lt;/li&gt;
+&lt;li&gt;GrayHat P</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Orz</title>
+    <link href="https://blog.orange.tw/posts/2010-02-orz/"/>
+    <id>https://blog.orange.tw/posts/2010-02-orz/</id>
+    <published>2010-02-09T16:00:00.000Z</published>
+    <updated>2024-08-21T04:59:15.529Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;不小心把文章都刪掉了…..怎麼會這樣!&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Update: 感謝allen幫忙找回xDD&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>0day~</title>
+    <link href="https://blog.orange.tw/posts/2010-01-0day/"/>
+    <id>https://blog.orange.tw/posts/2010-01-0day/</id>
+    <published>2010-01-27T16:00:00.000Z</published>
+    <updated>2024-08-21T04:59:57.255Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;不是0day別開心xD&lt;/p&gt;
+&lt;p&gt;今天看考場 在景美女中，難得遇到老同學Apple竟然被坳請客TT&lt;/p&gt;
+&lt;p&gt;不過還滿白目的xDDDDDD&lt;/p&gt;
+&lt;p&gt;明天考國數社&lt;br&gt;上吧!!!!!!!&lt;/p&gt;
+&lt;p&gt;希望數學簡單點&lt;br&gt;希望國文簡單點&lt;br&gt;希望社會簡單點</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>....</title>
+    <link href="https://blog.orange.tw/posts/2010-01-blog-post_9987/"/>
+    <id>https://blog.orange.tw/posts/2010-01-blog-post_9987/</id>
+    <published>2010-01-21T16:00:00.000Z</published>
+    <updated>2024-08-21T05:01:03.754Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;*!! 超不爽&lt;/p&gt;
+&lt;p&gt;.&lt;br&gt;..&lt;br&gt;...&lt;br&gt;....&lt;br&gt;.....&lt;br&gt;......&lt;/p&gt;
+&lt;p&gt;算了先打一下學測後todo吧&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;RSS 好像快3000篇欸&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;讀完Gray Hat </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>嘿</title>
+    <link href="https://blog.orange.tw/posts/2010-01-blog-post_10/"/>
+    <id>https://blog.orange.tw/posts/2010-01-blog-post_10/</id>
+    <published>2010-01-09T16:00:00.000Z</published>
+    <updated>2024-08-21T05:01:21.790Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;1&amp;#x2F;10日祝自己生日快樂吧，學測倒數20天..&lt;/p&gt;
+&lt;p&gt;先去趕那天殺的英文百寶書吧…..&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>聖誕快樂</title>
+    <link href="https://blog.orange.tw/posts/2009-12-blog-post_26/"/>
+    <id>https://blog.orange.tw/posts/2009-12-blog-post_26/</id>
+    <published>2009-12-25T16:00:00.000Z</published>
+    <updated>2024-08-21T05:02:10.589Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2009-12-blog-post_26/e1ead7af4d41dbc0-01.jpg&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;聖誕快樂^__^&lt;/p&gt;
+&lt;p&gt;謝謝巧克力&lt;br&gt;謝謝餅乾&lt;br&gt;謝謝棒棒糖&lt;br&gt;謝謝依蓁蓁&lt;br&gt;謝</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>搬家</title>
+    <link href="https://blog.orange.tw/posts/2009-12-blog-post_3757/"/>
+    <id>https://blog.orange.tw/posts/2009-12-blog-post_3757/</id>
+    <published>2009-12-24T16:00:00.000Z</published>
+    <updated>2024-08-21T15:25:07.925Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2009/12/blog-post_3757.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;照慣例吧&lt;/p&gt;
+&lt;p&gt;Hello World!!&lt;/p&gt;
+&lt;p&gt;繼續去讀書…..&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
+    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
+    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
+    <published>2009-12-24T16:00:00.000Z</published>
+    <updated>2024-08-21T08:42:57.390Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
+&lt;p&gt;行前準備:&lt;/p&gt;
+&lt;ul&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
