@@ -516,12 +516,14 @@ body {
 .content a {
   color: #c61;
   text-decoration: none;
-}
-.content a:hover {
-  background-image: linear-gradient(transparent, transparent 4px, #22272a 4px, #22272a);
+  background-image: linear-gradient(transparent, transparent 5px, #22272a 5px, #22272a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
+  background-image: none;
+}
+.content a:hover {
+  background-image: linear-gradient(transparent, transparent 4px, #000 4px, #000);
 }
 .content a.icon {
   background: none;
@@ -563,28 +565,6 @@ body {
   background-size: 100% 6px;
   background-repeat: repeat-x;
 }
-.post-list a {
-  color: #ff4500;
-  text-decoration: underline;
-  text-decoration-thickness: 1%;
-  text-decoration-color: #44d62c;
-  text-underline-offset: 2px;
-  text-shadow: 0px 0px 1px rgba(0,0,0,0.15);
-}
-.post-list a:hover {
-  font-weight: bold;
-  background-image: linear-gradient(transparent, transparent 4px, #44d62c 4px, #44d62c);
-  background-position: bottom;
-  background-size: 100% 6px;
-  background-repeat: repeat-x;
-}
-@media (min-width: 850px) {
-  .post-list a {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-}
 @media (min-width: 540px) {
   .image-wrap {
     flex-direction: row;
@@ -614,6 +594,13 @@ body {
 @media (min-width: 480px) {
   p {
     text-align: justify;
+  }
+}
+@media (min-width: 850px) {
+  .post-list a {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 #header {
@@ -1086,6 +1073,15 @@ body {
   color: #666;
   font-size: 14px;
 }
+.post-list a {
+  color: #ff4500;
+  text-decoration: underline;
+  text-decoration-thickness: 1%;
+  text-decoration-color: #44d62c;
+  background-image: none;
+  text-underline-offset: 2px;
+  text-shadow: 0px 0px 1px rgba(0,0,0,0.15);
+}
 @media (min-width: 480px) {
   .post-list .post-item {
     display: flex;
@@ -1174,6 +1170,7 @@ article header .author {
 article header .author a {
   color: #000 !important;
   text-decoration: underline #44d62c;
+  background-image: none;
   text-decoration-thickness: 1px;
   font-size: 1.1em;
   font-weight: bold;
@@ -1566,6 +1563,14 @@ article .content .caption {
     opacity: 1;
   }
 }
+@keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 #categories .category-list-title {
   color: #666;
 }
@@ -1579,61 +1584,67 @@ article .content .caption {
   content: ")";
 }
 .highlight {
-  background: #272822;
-  color: #ddd;
-}
-.highlight .code .tag,
-.highlight .code .keyword,
-.highlight .code .selector-tag,
-.highlight .code .literal,
-.highlight .code .strong,
-.highlight .code .name {
-  color: #f92672;
-}
-.highlight .code .code {
-  color: #66d9ef;
-}
-.highlight .code .class .title {
-  color: #fff;
-}
-.highlight .code .attribute,
-.highlight .code .symbol,
-.highlight .code .regexp,
-.highlight .code .link {
-  color: #bf79db;
-}
-.highlight .code .string,
-.highlight .code .bullet,
-.highlight .code .subst,
-.highlight .code .title,
-.highlight .code .section,
-.highlight .code .emphasis,
-.highlight .code .type,
-.highlight .code .built_in,
-.highlight .code .builtin-name,
-.highlight .code .selector-attr,
-.highlight .code .selector-pseudo,
-.highlight .code .addition,
-.highlight .code .variable,
-.highlight .code .template-tag,
-.highlight .code .template-variable {
-  color: #a6e22e;
+  background: #474949;
+  color: #d1d9e1;
 }
 .highlight .code .comment,
-.highlight .code .quote,
-.highlight .code .deletion,
-.highlight .code .meta {
-  color: #75715e;
+.highlight .code .quote {
+  color: #969896;
+  font-style: italic;
 }
 .highlight .code .keyword,
 .highlight .code .selector-tag,
 .highlight .code .literal,
-.highlight .code .doctag,
-.highlight .code .title,
-.highlight .code .section,
 .highlight .code .type,
-.highlight .code .selector-id {
+.highlight .code .addition {
+  color: #c9c;
+}
+.highlight .code .number,
+.highlight .code .selector-attr,
+.highlight .code .selector-pseudo {
+  color: #f99157;
+}
+.highlight .code .string,
+.highlight .code .doctag,
+.highlight .code .regexp {
+  color: #8abeb7;
+}
+.highlight .code .title,
+.highlight .code .name,
+.highlight .code .section,
+.highlight .code .built_in {
+  color: #b5bd68;
+}
+.highlight .code .variable,
+.highlight .code .template-variable,
+.highlight .code .selector-id,
+.highlight .code .class .title {
+  color: #fc6;
+}
+.highlight .code .section,
+.highlight .code .name,
+.highlight .code .strong {
   font-weight: bold;
+}
+.highlight .code .symbol,
+.highlight .code .bullet,
+.highlight .code .subst,
+.highlight .code .meta,
+.highlight .code .link {
+  color: #f99157;
+}
+.highlight .code .deletion {
+  color: #dc322f;
+}
+.highlight .code .formula {
+  background: #eee8d5;
+}
+.highlight .code .attr,
+.highlight .code .attribute {
+  color: #81a2be;
+}
+.highlight .code .emphasis {
+  font-style: italic;
 }
 pre {
   overflow-x: auto;
@@ -1662,6 +1673,7 @@ code {
   margin: 1rem 0;
   padding: 10px 15px;
   border-radius: 4px;
+  background: #f5f5f5;
   font-family: "Menlo", "Meslo LG", monospace;
   -webkit-border-radius: 4px;
 }
@@ -1723,35 +1735,10 @@ code {
 #header-post #actions {
   direction: ltr !important;
 }
-@-moz-keyframes tooltip-appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@-webkit-keyframes tooltip-appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@-o-keyframes tooltip-appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes tooltip-appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.post-list a:hover {
+  font-weight: bold;
+  background-image: linear-gradient(transparent, transparent 4px, #44d62c 4px, #44d62c);
+  background-position: bottom;
+  background-size: 100% 6px;
+  background-repeat: repeat-x;
 }
