@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2024-08-21T14:36:57.212Z</updated>
+  <updated>2024-08-21T15:20:05.003Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
+    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T14:36:57.212Z</updated>
+    <updated>2024-08-21T15:20:05.003Z</updated>
     
     
       
@@ -35,11 +35,11 @@
   </entry>
   
   <entry>
-    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
+    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T15:20:05.003Z</updated>
+    <updated>2024-08-21T14:36:57.212Z</updated>
     
     
       
@@ -1078,6 +1078,24 @@
   </entry>
   
   <entry>
+    <title>HITCON 2013 Wargame - Pwn3d 500 詳解</title>
+    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/"/>
+    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/</id>
+    <published>2013-07-20T16:00:00.000Z</published>
+    <updated>2024-08-20T22:05:28.633Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前在 tw.PyCon.org 2013 上有分享到 Django 在 &lt;code&gt;SECRE_KEY&lt;/code&gt; 洩漏的情況有機會造成 Remote Code Execution，這個 Pwn3d 500 就是那次演講的實例 (&lt;a href=&quot;http://oran</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>HITCON 2013 Wargame - Web 500 詳解</title>
     <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/"/>
     <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/</id>
@@ -1090,24 +1108,6 @@
     <summary type="html">&lt;p&gt;Web 500 是一題 PHP source code review 找 vuln 的題目&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png&quot;&gt;&lt;/p&gt;
 &lt;</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>HITCON 2013 Wargame - Pwn3d 500 詳解</title>
-    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/"/>
-    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/</id>
-    <published>2013-07-20T16:00:00.000Z</published>
-    <updated>2024-08-20T22:05:28.633Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;之前在 tw.PyCon.org 2013 上有分享到 Django 在 &lt;code&gt;SECRE_KEY&lt;/code&gt; 洩漏的情況有機會造成 Remote Code Execution，這個 Pwn3d 500 就是那次演講的實例 (&lt;a href=&quot;http://oran</summary>
       
     
     
@@ -1415,25 +1415,6 @@
   </entry>
   
   <entry>
-    <title>台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法</title>
-    <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/"/>
-    <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/</id>
-    <published>2011-07-23T16:00:00.000Z</published>
-    <updated>2024-08-21T06:12:26.675Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
-&lt;p&gt;心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>台灣駭客年會 HITCON2011，Wargame Web 4出題心得 &amp; 解法</title>
     <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/"/>
     <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-web-4/</id>
@@ -1445,6 +1426,25 @@
       
     <summary type="html">&lt;p&gt;&lt;a href=&quot;https://blog.orange.tw//2011/07/hitcon2011wargame-web-4.html&quot;&gt;DEBUG&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;心得是現在大多數的人對於SQL injection (Mysql)都是union加上informa</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法</title>
+    <link href="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/"/>
+    <id>https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/</id>
+    <published>2011-07-23T16:00:00.000Z</published>
+    <updated>2024-08-21T06:12:26.675Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
+&lt;p&gt;心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳</summary>
       
     
     
