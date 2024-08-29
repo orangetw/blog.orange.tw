@@ -590,6 +590,10 @@ body {
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
+  .post-list a {
+    font-weight: bold;
+    text-decoration-thickness: 2px !important;
+  }
 }
 @media (min-width: 480px) {
   p {

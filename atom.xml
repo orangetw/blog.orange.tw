@@ -57,12 +57,12 @@
     <link href="https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/"/>
     <id>https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/</id>
     <published>2024-06-06T16:00:00.000Z</published>
-    <updated>2024-08-19T15:41:19.260Z</updated>
+    <updated>2024-08-29T13:00:52.492Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;This is a side story&amp;#x2F;extra bug while I’m preparing for my &lt;a href=&quot;https://www.blackhat.com/us-24/briefings/schedule/index.html#conf</summary>
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2024/06/06/security-alert-cve-2024-4577-php-cgi-argument-injection-vulnerability/&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a hre</summary>
       
     
     
@@ -206,13 +206,12 @@
     <link href="https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/"/>
     <id>https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/</id>
     <published>2020-09-11T16:00:00.000Z</published>
-    <updated>2024-08-19T16:56:36.500Z</updated>
+    <updated>2024-08-29T13:01:37.732Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/d63da265360e3020-01.png&quot; alt=&quot;preview&quot;&gt;&lt;/p&gt;
-&lt;p&gt;Hi, it’s a long ti</summary>
+    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2020/09/12/how-I-hacked-Facebook-again-unauthenticated-RCE-on-MobileIron-MDM/&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a href=&quot;h</summary>
       
     
     
@@ -337,7 +336,7 @@
     <link href="https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/"/>
     <id>https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/</id>
     <published>2019-02-18T16:00:00.000Z</published>
-    <updated>2024-08-21T06:18:49.801Z</updated>
+    <updated>2024-08-29T13:03:39.722Z</updated>
     
     
       
