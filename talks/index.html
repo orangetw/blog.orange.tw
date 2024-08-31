@@ -16,7 +16,7 @@
 <meta property="og:description" content="h2 {         font-size: 1rem !important;     }      h2:before {         content: &quot;&quot; !important;     }      strong &gt; a {         text-decoration: underline !important;         text-decoration-colo">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-08-12T20:58:42.000Z">
-<meta property="article:modified_time" content="2024-08-31T18:56:44.348Z">
+<meta property="article:modified_time" content="2024-08-31T19:04:33.901Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
@@ -128,14 +128,15 @@
     strong > a {
         text-decoration: underline !important;
         text-decoration-color: #44D62C  !important;
-        text-decoration-thickness: 2px  !important;
+        text-decoration-thickness: 1%  !important;
         color: orangered !important;
         font-weight: 500;
         text-underline-offset: 2px !important;
     }
     strong>a:hover {
         text-decoration-color: #44d62c !important;
-        text-decoration-thickness: 3px !important;
+        text-decoration-thickness: 2px !important;
+        background-iamge: none !important;
         text-underline-offset: 2px !important;
         font-weight: bold;
     }
@@ -157,20 +158,20 @@
 
 
     @media (min-width: 850px) {
-        .content > li {
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        ul > li {
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
         }
     }
 
     @media (max-width: 450px) {
-        .content > ul > li {
+        ul > li {
             list-style-type: none;
             margin-left: -24px;
             overflow-wrap: break-word;
         }
 
-        .content > ul > li > ul > li {
+        ul > li > ul > li {
             list-style-type: disc;
             margin-left: 0px;
         }
