@@ -1310,6 +1310,9 @@ article .content .caption {
 #archive .post-list {
   padding: 0;
 }
+#archive .post-list h2 {
+  font-size: 1.5rem;
+}
 #archive .post-list .post-item {
   margin-bottom: 1rem;
   margin-left: 0;
