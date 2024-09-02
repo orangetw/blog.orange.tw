@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2024-08-21T14:36:57.212Z</updated>
+  <updated>2024-08-21T15:20:05.003Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
+    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T14:36:57.212Z</updated>
+    <updated>2024-08-21T15:20:05.003Z</updated>
     
     
       
@@ -35,11 +35,11 @@
   </entry>
   
   <entry>
-    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
+    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2024-08-21T15:20:05.003Z</updated>
+    <updated>2024-08-21T14:36:57.212Z</updated>
     
     
       
@@ -1848,27 +1848,6 @@
   </entry>
   
   <entry>
-    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
-    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
-    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
-    <published>2009-12-24T16:00:00.000Z</published>
-    <updated>2024-08-21T08:42:57.390Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
-&lt;p&gt;行前準備:&lt;/p&gt;
-&lt;ul&gt;
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>搬家</title>
     <link href="https://blog.orange.tw/posts/2009-12-blog-post_3757/"/>
     <id>https://blog.orange.tw/posts/2009-12-blog-post_3757/</id>
@@ -1882,6 +1861,27 @@
 &lt;p&gt;照慣例吧&lt;/p&gt;
 &lt;p&gt;Hello World!!&lt;/p&gt;
 &lt;p&gt;繼續去讀書…..&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
+    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
+    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
+    <published>2009-12-24T16:00:00.000Z</published>
+    <updated>2024-08-21T08:42:57.390Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
+&lt;p&gt;行前準備:&lt;/p&gt;
+&lt;ul&gt;
 </summary>
       
     
