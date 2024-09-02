@@ -1087,7 +1087,7 @@ body {
   text-decoration-color: #44d62c;
   background-image: none;
   text-underline-offset: 2px;
-  text-shadow: 0px 0px 1px rgba(0,0,0,0.15);
+  text-shadow: 0px 0px 1px rgba(0,0,0,0.2);
 }
 @media (min-width: 480px) {
   .post-list .post-item {
