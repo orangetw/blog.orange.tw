@@ -590,8 +590,11 @@ body {
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
-  .post-list a {
+  .meta {
     font-weight: bold;
+  }
+  .post-list a {
+    font-weight: 500;
     text-decoration-thickness: 2px !important;
   }
 }
@@ -698,7 +701,7 @@ body {
   }
   #header #nav ul li.icon {
     position: absolute;
-    top: 77px;
+    top: 58px;
     right: 1rem;
     display: inline-block;
     text-align: center;
