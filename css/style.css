@@ -682,7 +682,7 @@ body {
 #header #nav ul li:last-child a {
   margin-right: 0;
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 380px) {
   #header #title {
     display: table;
     margin-right: 5rem;

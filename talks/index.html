@@ -16,7 +16,7 @@
 <meta property="og:description" content="h2 {         font-size: 1rem !important;     }      h2:before {         content: &quot;&quot; !important;     }      strong &gt; a {         text-decoration: underline !important;         text-decoration-colo">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-08-12T20:58:42.000Z">
-<meta property="article:modified_time" content="2024-09-02T07:19:24.028Z">
+<meta property="article:modified_time" content="2024-09-02T07:24:02.955Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
@@ -149,7 +149,9 @@
     }
 
     span {
-      display: inline-block;
+/*      display: inline-block;*/
+      display: none;
+
       position: absolute; /* 絕對定位 span */
       white-space: nowrap; /* 防止 span 內容換行 */
       padding-left: 8px;
