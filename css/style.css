@@ -1304,6 +1304,11 @@ article .content .caption {
     content: "|";
   }
 }
+@media (max-width: 450px) {
+  blockquote {
+    margin-inline-start: 20px;
+  }
+}
 #archive .post-year {
   list-style-type: none;
 }
