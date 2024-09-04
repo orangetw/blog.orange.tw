@@ -1126,8 +1126,8 @@ article .content .twitter-tweet {
 }
 article .content .speakerdeck-iframe {
   margin-top: 24px !important;
-  width: 800px !important;
-  height: 600px !important;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
 }
 article .content code {
   background-color: #eee;
@@ -1135,6 +1135,7 @@ article .content code {
 article .content iframe {
   margin: 0 auto;
   display: block;
+  width: -webkit-fill-available;
 }
 article .content h1 {
   font-size: 2em;
