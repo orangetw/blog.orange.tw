@@ -1308,6 +1308,7 @@ article .content .caption {
 @media (max-width: 450px) {
   blockquote {
     margin-inline-start: 20px;
+    margin-inline-end: 20px;
   }
 }
 #archive .post-year {
