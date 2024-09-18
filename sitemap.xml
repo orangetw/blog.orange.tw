@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://blog.orange.tw/talks/index.html</loc>
+    <loc>https://blog.orange.tw/about/index.html</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -11,9 +11,9 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/about/index.html</loc>
+    <loc>https://blog.orange.tw/talks/index.html</loc>
     
-    <lastmod>2024-09-09</lastmod>
+    <lastmod>2024-09-18</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
