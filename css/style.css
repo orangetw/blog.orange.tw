@@ -514,7 +514,7 @@ body {
   -webkit-hyphens: auto;
 }
 .content p a:hover {
-  background-image: linear-gradient(transparent, transparent 4px, #44d62c 4px, #44d62c);
+  background-image: linear-gradient(transparent, transparent 5px, #44d62c 5px, #44d62c);
 }
 .content code {
   hyphens: manual;
