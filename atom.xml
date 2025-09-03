@@ -127,12 +127,12 @@
     <link href="https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/"/>
     <id>https://blog.orange.tw/posts/2024-06-cve-2024-4577-yet-another-php-rce/</id>
     <published>2024-06-06T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:22.164Z</updated>
+    <updated>2025-09-03T07:34:28.177Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2024/06/06/security-alert-cve-2024-4577-php-cgi-argument-injection-vulnerability/&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a hre</summary>
+    <summary type="html">&lt;p&gt;📌 [ &lt;a href=&quot;https://devco.re/blog/2024/06/06/security-alert-cve-2024-4577-php-cgi-argument-injection-vulnerability/&quot;&gt;繁體中文&lt;/a&gt;  |  &lt;a hr</summary>
       
     
     
@@ -276,12 +276,12 @@
     <link href="https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/"/>
     <id>https://blog.orange.tw/posts/2020-09-how-i-hacked-facebook-again-mobileiron-mdm-rce/</id>
     <published>2020-09-11T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:21.064Z</updated>
+    <updated>2025-09-03T07:34:57.692Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2020/09/12/how-I-hacked-Facebook-again-unauthenticated-RCE-on-MobileIron-MDM/&quot;&gt;繁體中文版本&lt;/a&gt;  |  &lt;a href=&quot;h</summary>
+    <summary type="html">&lt;p&gt;📌 [ &lt;a href=&quot;https://devco.re/blog/2020/09/12/how-I-hacked-Facebook-again-unauthenticated-RCE-on-MobileIron-MDM/&quot;&gt;繁體中文&lt;/a&gt;  |  &lt;a href=&quot;</summary>
       
     
     
@@ -406,12 +406,12 @@
     <link href="https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/"/>
     <id>https://blog.orange.tw/posts/2019-02-abusing-meta-programming-for-unauthenticated-rce/</id>
     <published>2019-02-18T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:20.144Z</updated>
+    <updated>2025-09-03T07:34:00.401Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2019/02/19/hacking-Jenkins-part2-abusing-meta-programming-for-unauthenticated-RCE/&quot;&gt;繁體中文版本&lt;/a&gt; | &lt;a href</summary>
+    <summary type="html">&lt;p&gt;📌 [ &lt;a href=&quot;https://devco.re/blog/2019/02/19/hacking-Jenkins-part2-abusing-meta-programming-for-unauthenticated-RCE/&quot;&gt;繁體中文&lt;/a&gt; | &lt;a hre</summary>
       
     
     
@@ -424,12 +424,12 @@
     <link href="https://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/"/>
     <id>https://blog.orange.tw/posts/2019-01-hacking-jenkins-part-1-play-with-dynamic-routing/</id>
     <published>2019-01-15T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:19.985Z</updated>
+    <updated>2025-09-03T07:34:45.306Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;[ &lt;a href=&quot;https://devco.re/blog/2019/01/16/hacking-Jenkins-part1-play-with-dynamic-routing/&quot;&gt;繁體中文版本&lt;/a&gt; | &lt;a href=&quot;#&quot;&gt;English Version&lt;/a</summary>
+    <summary type="html">&lt;p&gt;📌 [ &lt;a href=&quot;https://devco.re/blog/2019/01/16/hacking-Jenkins-part1-play-with-dynamic-routing/&quot;&gt;繁體中文&lt;/a&gt; | &lt;a href=&quot;#&quot;&gt;English&lt;/a&gt; ]&lt;/p&gt;</summary>
       
     
     
@@ -1918,27 +1918,6 @@
   </entry>
   
   <entry>
-    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
-    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
-    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
-    <published>2009-12-24T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:15.838Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
-&lt;p&gt;行前準備:&lt;/p&gt;
-&lt;ul&gt;
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>搬家</title>
     <link href="https://blog.orange.tw/posts/2009-12-blog-post_3757/"/>
     <id>https://blog.orange.tw/posts/2009-12-blog-post_3757/</id>
@@ -1952,6 +1931,27 @@
 &lt;p&gt;照慣例吧&lt;/p&gt;
 &lt;p&gt;Hello World!!&lt;/p&gt;
 &lt;p&gt;繼續去讀書…..&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
+    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
+    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
+    <published>2009-12-24T16:00:00.000Z</published>
+    <updated>2025-09-03T06:29:15.838Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
+&lt;p&gt;行前準備:&lt;/p&gt;
+&lt;ul&gt;
 </summary>
       
     
