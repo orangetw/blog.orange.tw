@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2025-09-03T17:39:09.743Z</updated>
+  <updated>2025-09-03T17:42:54.221Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/"/>
     <id>https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/</id>
     <published>2025-08-27T03:00:00.000Z</published>
-    <updated>2025-09-03T17:39:09.743Z</updated>
+    <updated>2025-09-03T17:42:54.221Z</updated>
     
     
     <summary type="html">這是一篇為了《PHRACK》所撰寫的文章！雖然來不及趕上它最輝煌的年代，但也深知其對「駭客文化」不可抹滅的重要性 —— 從計算機第一個揭開 Stack Buffer Overflow 神秘面紗的啟蒙經典，到現今所有 SQL Injection 攻擊的奠基之作，再到 Nmap 第一份原始碼的發布，以及出現在無數影視作品、控訴著「若我有罪，也是好奇心讓我犯罪」的《駭客宣言》…… 時至今日，四十年過去了，不知多少經典由此而生、藉其傳遞著知識，並啟發了一代又一代的駭客！</summary>
@@ -1147,6 +1147,24 @@
   </entry>
   
   <entry>
+    <title>HITCON 2013 Wargame - Pwn3d 500 詳解</title>
+    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/"/>
+    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/</id>
+    <published>2013-07-20T16:00:00.000Z</published>
+    <updated>2025-09-03T06:29:17.004Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前在 tw.PyCon.org 2013 上有分享到 Django 在 &lt;code&gt;SECRE_KEY&lt;/code&gt; 洩漏的情況有機會造成 Remote Code Execution，這個 Pwn3d 500 就是那次演講的實例 (&lt;a href=&quot;http://oran</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>HITCON 2013 Wargame - Web 500 詳解</title>
     <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/"/>
     <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/</id>
@@ -1159,24 +1177,6 @@
     <summary type="html">&lt;p&gt;Web 500 是一題 PHP source code review 找 vuln 的題目&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png&quot;&gt;&lt;/p&gt;
 &lt;</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>HITCON 2013 Wargame - Pwn3d 500 詳解</title>
-    <link href="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/"/>
-    <id>https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-pwn3d-500/</id>
-    <published>2013-07-20T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:17.004Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;之前在 tw.PyCon.org 2013 上有分享到 Django 在 &lt;code&gt;SECRE_KEY&lt;/code&gt; 洩漏的情況有機會造成 Remote Code Execution，這個 Pwn3d 500 就是那次演講的實例 (&lt;a href=&quot;http://oran</summary>
       
     
     
