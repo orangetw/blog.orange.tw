@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2025-09-03T07:11:41.426Z</updated>
+  <updated>2025-09-03T08:08:28.543Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/"/>
     <id>https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/</id>
     <published>2025-08-27T03:00:00.000Z</published>
-    <updated>2025-09-03T07:11:41.426Z</updated>
+    <updated>2025-09-03T08:08:28.543Z</updated>
     
     
     <summary type="html">這是一篇為了《PHRACK》所撰寫的文章！雖然來不及趕上它最輝煌的年代，但也深知其對「駭客文化」不可抹滅的重要性 —— 從計算機第一個揭開 Stack Buffer Overflow 神秘面紗的啟蒙經典，到現今所有 SQL Injection 攻擊的奠基之作，再到 Nmap 第一份原始碼的發布，以及出現在無數影視作品、控訴著「若我有罪，也是好奇心讓我犯罪」的《駭客宣言》…… 時至今日，四十年過去了，不知多少經典由此而生、藉其傳遞著知識，並啟發了一代又一代的駭客！</summary>

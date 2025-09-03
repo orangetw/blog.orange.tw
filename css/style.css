@@ -604,7 +604,7 @@ body {
     text-decoration-thickness: 2px !important;
   }
   article .content h2 {
-    margin-left: 0.5rem;
+    margin-left: 0.4rem;
   }
 }
 @media (min-width: 480px) {
