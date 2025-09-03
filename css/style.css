@@ -605,7 +605,6 @@ body {
   }
   article .content h2:before {
     left: -0.85rem !important;
-    top: -2px !important;
   }
 }
 @media (min-width: 480px) {
@@ -1198,12 +1197,11 @@ article header .postdate {
 }
 article .content h2:before {
   position: absolute;
-  top: -4px;
   left: -1rem;
   color: #c61;
   content: "#";
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.1rem;
 }
 article .content img,
 article .content video {
