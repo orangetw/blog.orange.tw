@@ -1768,3 +1768,10 @@ code {
   background-size: 100% 6px;
   background-repeat: repeat-x;
 }
+blockquote {
+  font-style: italic;
+  font-weight: 500 !important;
+}
+blockquote a {
+  font-weight: 900 !important;
+}

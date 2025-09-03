@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.orange.tw/posts/2025-08-the-art-of-php-en/</loc>
+    
+    <lastmod>2025-09-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/</loc>
     
     <lastmod>2025-09-03</lastmod>
@@ -21,15 +30,6 @@
   
   <url>
     <loc>https://blog.orange.tw/about/index.html</loc>
-    
-    <lastmod>2025-09-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.orange.tw/posts/2025-08-the-art-of-php-en/</loc>
     
     <lastmod>2025-09-03</lastmod>
     
@@ -704,7 +704,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2011-05-project-web-security-toolkit/</loc>
+    <loc>https://blog.orange.tw/posts/2011-04-downloadexec-shellcode-fix-for-windows/</loc>
     
     <lastmod>2025-09-03</lastmod>
     
@@ -713,7 +713,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2011-04-downloadexec-shellcode-fix-for-windows/</loc>
+    <loc>https://blog.orange.tw/posts/2011-05-project-web-security-toolkit/</loc>
     
     <lastmod>2025-09-03</lastmod>
     
