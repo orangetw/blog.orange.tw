@@ -525,7 +525,7 @@ body {
 .content a {
   color: #c61;
   text-decoration: none;
-  background-image: linear-gradient(transparent, transparent 5px, #22272a 5px, #22272a);
+  background-image: linear-gradient(transparent, transparent 5px, #44d62c 5px, #44d62c);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
