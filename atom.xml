@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2025-09-03T08:08:28.543Z</updated>
+  <updated>2025-09-03T09:27:14.595Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/"/>
     <id>https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/</id>
     <published>2025-08-27T03:00:00.000Z</published>
-    <updated>2025-09-03T08:08:28.543Z</updated>
+    <updated>2025-09-03T09:27:14.595Z</updated>
     
     
     <summary type="html">這是一篇為了《PHRACK》所撰寫的文章！雖然來不及趕上它最輝煌的年代，但也深知其對「駭客文化」不可抹滅的重要性 —— 從計算機第一個揭開 Stack Buffer Overflow 神秘面紗的啟蒙經典，到現今所有 SQL Injection 攻擊的奠基之作，再到 Nmap 第一份原始碼的發布，以及出現在無數影視作品、控訴著「若我有罪，也是好奇心讓我犯罪」的《駭客宣言》…… 時至今日，四十年過去了，不知多少經典由此而生、藉其傳遞著知識，並啟發了一代又一代的駭客！</summary>
@@ -1918,6 +1918,27 @@
   </entry>
   
   <entry>
+    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
+    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
+    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
+    <published>2009-12-24T16:00:00.000Z</published>
+    <updated>2025-09-03T06:29:15.838Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
+&lt;p&gt;行前準備:&lt;/p&gt;
+&lt;ul&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>搬家</title>
     <link href="https://blog.orange.tw/posts/2009-12-blog-post_3757/"/>
     <id>https://blog.orange.tw/posts/2009-12-blog-post_3757/</id>
@@ -1931,27 +1952,6 @@
 &lt;p&gt;照慣例吧&lt;/p&gt;
 &lt;p&gt;Hello World!!&lt;/p&gt;
 &lt;p&gt;繼續去讀書…..&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Hacks in Taiwan Conference 2009 WarGame心得</title>
-    <link href="https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/"/>
-    <id>https://blog.orange.tw/posts/2009-12-hacks-in-taiwan-conference-2009-wargame/</id>
-    <published>2009-12-24T16:00:00.000Z</published>
-    <updated>2025-09-03T06:29:15.838Z</updated>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;此次是我第一次參加HIT09，可以得到第一名真的出乎我的意料之外，各位大大放水放太大了，以下是我在解題時的一些心得，本人其實不是很喜歡寫文章(怕被裱+文筆爛XD)，技術也不是很行，如果有錯誤的地方請各位大大多多包含與見諒^__^&lt;/p&gt;
-&lt;p&gt;行前準備:&lt;/p&gt;
-&lt;ul&gt;
 </summary>
       
     
