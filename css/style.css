@@ -529,7 +529,7 @@ body {
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
-  background-image: none;
+  background-image: linear-gradient(transparent, transparent 5px, #44d62c 6px, #44d62c);
 }
 .content a.icon {
   background: none;
@@ -1773,4 +1773,5 @@ blockquote {
 }
 blockquote a {
   font-weight: 900 !important;
+  background-image: linear-gradient(transparent, transparent 4px, #44d62c 6px, #44d62c) !important;
 }
