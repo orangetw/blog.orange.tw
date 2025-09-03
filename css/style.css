@@ -603,8 +603,9 @@ body {
     font-weight: 500;
     text-decoration-thickness: 2px !important;
   }
-  article .content h2 {
-    margin-left: 0.4rem;
+  article .content h2:before {
+    left: -0.85rem !important;
+    top: -3px !important;
   }
 }
 @media (min-width: 480px) {
