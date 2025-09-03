@@ -605,7 +605,7 @@ body {
   }
   article .content h2:before {
     left: -0.85rem !important;
-    top: -3px !important;
+    top: -2px !important;
   }
 }
 @media (min-width: 480px) {
