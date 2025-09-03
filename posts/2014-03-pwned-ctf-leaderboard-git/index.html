@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="（前情提要） 某月某日晚上，人在外面有約正巧無法參與在週末所舉辦的 CTF，這次的這個 CTF 競賽似乎是某個國家某個實驗室第一次舉辦的對外 CTF 競賽，在 Ctftime.org 也有獨立頁面，結束回到家時競賽正好剩下最後幾個小時，在朋友的 Wargame 討論頻道內看到了一個鏈結 這次的競賽很特別的一點是，有所謂 hidden flag 的設計，會有額外的分數藏在計分板網站的各個角落，在對網">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pw3ed CTF LeaderBoard - Git Misconfiguration &amp; SQL Injection">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="（前情提要） 某月某日晚上，人在外面有約正巧無法參與在週末所舉辦的 CTF，這次的這個 CTF 競賽似乎是某個國家某個實驗室第一次舉辦的對外 CTF 競賽，在 Ctftime.org 也有獨立頁面，結束回到家時競賽正好剩下最後幾個小時，在朋友的 Wargame 討論頻道內看到了一個鏈結 這次的競賽很特別的一點是，有所謂 hidden flag 的設計，會有額外的分數藏在計分板網站的各個角落，在對網">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/1eb8eb7afc01f64d-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/0fd8cebaae3ca4d6-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/69fb09e8df48e1a2-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/8748b0e3fcc2d1af-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/3e2862d871f22a7d-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/d4341906384db031-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/1410131cd1e3e1f4-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/1efc33b093331bfa-08.png">
+<meta property="article:published_time" content="2014-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:17.834Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-03-pwned-ctf-leaderboard-git/1eb8eb7afc01f64d-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Pw3ed CTF LeaderBoard - Git Misconfiguration &amp; SQL Injection | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Pw3ed CTF LeaderBoard - Git Misconfiguration &amp; SQL Injection
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-03-30T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-03-31</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>（前情提要）</p>
+<p>某月某日晚上，人在外面有約正巧無法參與在週末所舉辦的 CTF，這次的這個 CTF 競賽似乎是某個國家某個實驗室第一次舉辦的對外 CTF 競賽，在 <a target="_blank" rel="noopener" href="http://ctftime.org/">Ctftime.org</a> 也有獨立頁面，結束回到家時競賽正好剩下最後幾個小時，在朋友的 Wargame 討論頻道內看到了一個鏈結</p>
+<p>這次的競賽很特別的一點是，有所謂 hidden flag 的設計，會有額外的分數藏在計分板網站的各個角落，在對網站搜索的過程中，會不會找著找著就不小心找進去計分板裡面呢？ 這篇就是再說這樣的一個故事</p>
+<p>（目前網站漏洞已修復）</p>
+<p>一開始看到的是這個鏈結</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;error_log</p>
+</blockquote>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/1eb8eb7afc01f64d-01.png"></p>
+<p>看起來是網站開發時的 Error Log 以及 Apache 的設置沒設置好，看到這樣子的內容暴露在網路上，可以想像整個網站的防護應該不是很完整的，因此我們繼續來深入看看</p>
+<p>整個網站是用 PHP, Apache, MySQL, Ubuntu 所架設，PHP 的部分使用了 MVC 的架構，整個網站逛了一下發現安全設定似乎沒有很嚴謹，表面上看起來很 ok 不過在一些小細節的處理上滿容易噴出錯誤訊息的</p>
+<p>如把 ?team&#x3D;foo 置換成 ?team[]&#x3D;foo 很容易噴出如</p>
+<blockquote>
+<p>Warning: substr() expects parameter 1 to be string, array given in &#x2F;home&#x2F;deploy&#x2F;vulnerability-leader-board&#x2F;handlers&#x2F;team_handler.php on line 146</p>
+</blockquote>
+<p>等錯誤訊息。</p>
+<p>再翻翻發現了</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;phpmyadmin&#x2F;<br>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;.git&#x2F;</p>
+</blockquote>
+<p>的目錄。 許多開發者會將 Git, SVN 或者 CVS clone(checkout) 到正式上線的網站上，這時如果未將權限設置好，攻擊者可以透過這些版本控管軟體所留下的資訊，取得敏感資訊。</p>
+<p>（某些狀況甚至可以獲取原始碼）</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;.git&#x2F;config<br>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;.git&#x2F;index</p>
+</blockquote>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/0fd8cebaae3ca4d6-02.png"> </p>
+<p>從 config 可以看到，使用了 <a target="_blank" rel="noopener" href="http://github.com/">github.com</a> 的平台，以及哪個 Repository 以及 Github 帳號資訊等（不過在那個時候無法從 Github 存取到，似乎那個 repo 是 private 的或者已經移除）</p>
+<p>從 index 可以取得網站目錄結構，懶人可以直接 <code>curl http://vulnerability-leader-board/.git/index | strings</code> 快速爬出</p>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/69fb09e8df48e1a2-03.png"></p>
+<p>從目錄結構已經可以發現些有趣的東西了，已經可以看到一些題目的 FLAG 了，因為某些題目的 FLAG 是以檔案形式放在網站上，也可以發現一些 Hidden Flags。 接著再依照剛剛的目錄結構對現有檔案做一次觀察，發現了開發者留下的測試頁面</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;nemoscript.php</p>
+</blockquote>
+<p>點進去會發現</p>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/8748b0e3fcc2d1af-04.png"></p>
+<blockquote>
+<p>「 pass a team 」</p>
+</blockquote>
+<p>恩，好，你要隊伍名稱我就給你嘛 ʅ（´◔౪◔）ʃ  我的隊伍名稱叫做 「 a’ 」</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;nemoscript.php?team&#x3D;a’</p>
+</blockquote>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/3e2862d871f22a7d-05.png"></p>
+<p>看來是 SQL Injection，而且還是個 Error Based 的 SQL Injection … 再來看看一下權限高不高，</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;vulnerability-leader-board&#x2F;nemoscript.php?team&#x3D;a’ and exists (select * from mysql.user)%23</p>
+</blockquote>
+<p>恩… 可以存取 mysql.user 以及又跑在 localhost 以及又存在 phpmyadmin，這麼完美的組合好久沒遇到了</p>
+<p>接著就是丟到 <a href="http://blog.orange.tw/2011/05/project-web-security-toolkit.html">owst</a> … 可以讀取檔案（&#x2F;etc&#x2F;passwd）</p>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/d4341906384db031-06.png"></p>
+<p>所有的註冊隊伍使用者（<a target="_blank" rel="noopener" href="http://plainpass.com/">#plainpass</a>）</p>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/1410131cd1e3e1f4-07.png"></p>
+<p>接下來就是最 High 的，所有題目的 Flags</p>
+<p><img src="/posts/2014-03-pwned-ctf-leaderboard-git/1efc33b093331bfa-08.png"></p>
+<p>到這裡囉，舉辦一次 CTF 競賽也是很辛苦的！</p>
+<p>總而言之這是一次很有趣的體驗 :P</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

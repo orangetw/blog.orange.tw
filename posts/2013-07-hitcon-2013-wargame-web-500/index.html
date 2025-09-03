@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="Web 500 是一題 PHP source code review 找 vuln 的題目  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556&lt;?php&#x2F;* * *     Written by Orange@chroot.org *">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITCON 2013 Wargame - Web 500 詳解">
+<meta property="og:url" content="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Web 500 是一題 PHP source code review 找 vuln 的題目  1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556&lt;?php&#x2F;* * *     Written by Orange@chroot.org *">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png">
+<meta property="article:published_time" content="2013-07-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:17.008Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>HITCON 2013 Wargame - Web 500 詳解 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HITCON 2013 Wargame - Web 500 詳解
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2013-07-20T16:00:00.000Z" class="dt-published" itemprop="datePublished">2013-07-21</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Web 500 是一題 PHP source code review 找 vuln 的題目</p>
+<p><img src="/posts/2013-07-hitcon-2013-wargame-web-500/a8020f5c156d8aa1-01.png"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     Written by Orange<span class="doctag">@chroot</span>.org</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="variable">$cookie_key</span>  =  <span class="string">&quot;◢▆▅▄▃崩╰(〒皿〒)╯潰▃▄▅▇◣&quot;</span>;</span><br><span class="line"> <span class="variable">$iv</span>          =  <span class="string">&quot;00000000&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">safe</span>(<span class="params"> <span class="variable">$s</span> </span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( <span class="title function_ invoke__">is_string</span>( <span class="variable">$s</span> ) &amp;&amp; <span class="title function_ invoke__">strpos</span>( <span class="variable">$s</span>, <span class="string">&quot;\0&quot;</span> ) === <span class="literal">false</span> ) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( <span class="title function_ invoke__">strpos</span>( <span class="variable">$s</span>, <span class="string">&#x27;O:&#x27;</span> ) === <span class="literal">false</span> ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> ( ! <span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/(^|;|&#125;)s:[+\-0-9]+:&quot;/&#x27;</span>, <span class="variable">$s</span> ) ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">qoo</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$key_var</span> = <span class="string">&quot;FakeKey&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$keyfile</span> = <span class="variable language_">$this</span>-&gt;key_var . <span class="string">&quot;.php&quot;</span>;</span><br><span class="line">        <span class="variable">$keyfile</span> = <span class="title function_ invoke__">basename</span>( <span class="variable">$keyfile</span> );</span><br><span class="line"></span><br><span class="line">        <span class="keyword">include</span>( <span class="variable">$keyfile</span> );</span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="variable">$key</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$checksum</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;checksum&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span> ( @<span class="title function_ invoke__">md5</span>(<span class="variable">$checksum</span>) == <span class="string">&#x27;&#x27;</span> ) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$auth_str</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;auth_str&#x27;</span>];</span><br><span class="line">    <span class="variable">$auth_str</span> = <span class="title function_ invoke__">base64_decode</span>( <span class="variable">$auth_str</span> );</span><br><span class="line">    <span class="variable">$auth_str</span> = <span class="title function_ invoke__">mcrypt_decrypt</span>( MCRYPT_BLOWFISH,</span><br><span class="line">                                <span class="variable">$cookie_key</span>,</span><br><span class="line">                                <span class="variable">$auth_str</span>,</span><br><span class="line">                                MCRYPT_MODE_ECB,</span><br><span class="line">                                <span class="variable">$iv</span> );</span><br><span class="line">    <span class="variable">$auth_str</span> = <span class="title function_ invoke__">trim</span>( <span class="variable">$auth_str</span> );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( <span class="title function_ invoke__">safe</span>(<span class="variable">$auth_str</span>) )</span><br><span class="line">        <span class="title function_ invoke__">unserialize</span>( <span class="variable">$auth_str</span> );</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">die</span>( <span class="string">&#x27;Auth string is not safe&#x27;</span> );</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title function_ invoke__">qoo</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>其實考的滿簡單的，如果對 PHP Sec 有概念的話直覺會想到 unserialize 的 object inj</p>
+<ol>
+<li>利用 object inj 覆蓋 magic method(<code>__destruct</code>) 的 <code>key_var</code> 變量</li>
+<li>繞過 <code>md5() == &#39;&#39;</code> 可以用 <code>checksum[]=bla</code></li>
+<li>繞過 safe 函數的話我不小心少寫一個 byte 所以可以用 s 大小寫置換來繞過，</li>
+</ol>
+<p>不過我既然題目都已經出來了就算了XD 給你們簡單解吧!</p>
+<p>原本繞過的方式是利用 PHP 對於 unserialize 實作的不一致來繞過</p>
+<blockquote>
+<p>O:3:”qoo”:1:{s:7:”key_var”ts:3:”Key”;}</p>
+</blockquote>
+<p>注意的 <code>ts:3</code> 這樣的形式 PHP unserialize 是可以接受的，有多少人是這樣解的給我說說看XDDD</p>
+<p>這個問題有在 2012 年 12 月底的時候 ipb 漏洞出來被人探討過。</p>
+<p>Invision Power Board 是一款滿流行的 PHP 討論版，由於在程式碼實作上會用到 unserialize，所以 ipb 寫了一個 check function 去檢查 unserialize 是否為惡意的，但由於 PHP 對 unserialize  上的實作缺陷，讓 check function 可被繞過(這點 PHP 後來有做 bug fix掉了(待確認中))</p>
+<p>詳細細節可參考 80vul 寫的文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.80vul.com/pch/pch-010.txt">http://www.80vul.com/pch/pch-010.txt</a></p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

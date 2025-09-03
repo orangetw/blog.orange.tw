@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳key的題目了XD   題目下載點 from rsghost ，小時候的回憶，特訓99 XD   用UPX加殼過後有改過OEP，For fun，讓檢測殼軟體(Ex: Peid)混淆XD    很簡單的殼，脫殼可以靠ESP定律，或者看得出是UPX直接bp popad可以找到最原始的OEP   這個遊戲其實有DEBUG MO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法">
+<meta property="og:url" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳key的題目了XD   題目下載點 from rsghost ，小時候的回憶，特訓99 XD   用UPX加殼過後有改過OEP，For fun，讓檢測殼軟體(Ex: Peid)混淆XD    很簡單的殼，脫殼可以靠ESP定律，或者看得出是UPX直接bp popad可以找到最原始的OEP   這個遊戲其實有DEBUG MO">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/21e48af603ea762d-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/0e6925d82667a78d-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/9167086ec9e8c92c-04.png">
+<meta property="article:published_time" content="2011-07-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:16.344Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        台灣駭客年會 HITCON2011，Wargame Binary 3出題心得 &amp; 解法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2011-07-23T16:00:00.000Z" class="dt-published" itemprop="datePublished">2011-07-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2011-07-hitcon2011wargame-binary-3/fa2b1941dfa36b22-01.png" alt="preview"></p>
+<p>心得：很久以前就想出一題類似要輸入↑ ↑ ↓ ↓ ← → ← → B A會跳key的題目了XD  </p>
+<p>題目<a target="_blank" rel="noopener" href="http://rsghost.web.fc2.com/HIT201_wargame/10.0.15.1/files/BINARY/Orange.EXE">下載點</a> from <a target="_blank" rel="noopener" href="http://rsghost.web.fc2.com/HIT201_wargame/10.0.15.1/">rsghost</a> ，小時候的回憶，特訓99 XD  </p>
+<p>用UPX加殼過後有改過OEP，For fun，讓檢測殼軟體(Ex: Peid)混淆XD  </p>
+<p><img src="/posts/2011-07-hitcon2011wargame-binary-3/21e48af603ea762d-02.png"></p>
+<p>很簡單的殼，脫殼可以靠ESP定律，或者看得出是UPX直接bp popad可以找到最原始的OEP  </p>
+<p>這個遊戲其實有DEBUG MODE的，開啟原始遊戲後可以用Winhex或者Dump memory觀察到  </p>
+<p><img src="/posts/2011-07-hitcon2011wargame-binary-3/0e6925d82667a78d-03.png"></p>
+<ul>
+<li>reset  </li>
+<li>another  </li>
+<li>omitback  </li>
+<li>simpleback  </li>
+<li>fullback  </li>
+<li>chicken  </li>
+<li>quit  </li>
+<li>butterfly  </li>
+<li>maniac  </li>
+<li>paranoia  </li>
+<li>booston  </li>
+<li>off  </li>
+<li>paranoiamax  </li>
+<li>hequil  </li>
+<li>basia  </li>
+<li>quti  </li>
+<li>version  </li>
+<li>test  </li>
+<li>slow  </li>
+<li>love  </li>
+<li>desu?</li>
+</ul>
+<p>有這些指令可以使用，這題透過修改其中一個的字串以前對應的函數來出題  </p>
+<p>只要在遊戲開始輸入  </p>
+<blockquote>
+<p>c (倒退鍵) a (倒退鍵) (倒退鍵) b (倒退鍵) (倒退鍵) (倒退鍵)  </p>
+</blockquote>
+<p>就可以取得Key  </p>
+<p><img src="/posts/2011-07-hitcon2011wargame-binary-3/9167086ec9e8c92c-04.png"></p>
+<p>開啟遊戲時會將DEBUG String xor解碼，所以未執行直接觀察原始檔會找不到有甚麼有意義的字串 ，位置在 0x00401242，xor的key是0xff  </p>
+<p>這題的解法當初是設想需要Condition BreakPoint Message Queue的 KeyDown Event來進行Trace  ，追的過程中會發現修改了0x0040394A改成了一個長jmp  </p>
+<p>這題還滿多人解出來的XD 不過應該都不是用靠輸入key的方式 :P  </p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

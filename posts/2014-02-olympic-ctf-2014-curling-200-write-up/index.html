@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="最近剛好玩了一下 Olympic CTF ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 CURLing 400) 首先是 CURLing 200 分～ 打開是一個新聞系統的頁面  其中選取新聞的參數似乎是去讀取檔案，並且存在 Directory Traversal 漏洞，可以透過 ..&#x2F; 來偽造路徑（還記得 遠通 嗎 XDD）  http">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Olympic CTF 2014 CURLing 200 write up">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="最近剛好玩了一下 Olympic CTF ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 CURLing 400) 首先是 CURLing 200 分～ 打開是一個新聞系統的頁面  其中選取新聞的參數似乎是去讀取檔案，並且存在 Directory Traversal 漏洞，可以透過 ..&#x2F; 來偽造路徑（還記得 遠通 嗎 XDD）  http">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/f50c8dafab993186-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/3ecadecdabd389b4-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/ae3be1151b2fc81b-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/fdab67997ac8008e-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/a4df2d1a194e7e3f-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/43e2195650c13a1c-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/411f175d506706c9-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/8309c59403b8da8e-09.png">
+<meta property="article:published_time" content="2014-02-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:17.464Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Olympic CTF 2014 CURLing 200 write up | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Olympic CTF 2014 CURLing 200 write up
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-02-09T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-02-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近剛好玩了一下 <a target="_blank" rel="noopener" href="https://olympic-ctf.ru/">Olympic CTF</a> ，解了一些題目，其中有幾題讓自己印象深刻，還滿有趣的所以來記錄一下 XD (400 分的可以參考另外一篇 <a href="http://blog.orange.tw/2014/02/olympic-ctf-2014-curling-400-write-up.html">CURLing 400</a>)</p>
+<p>首先是 CURLing 200 分～ 打開是一個新聞系統的頁面</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/d23a84b96eec3b30-01.png"></p>
+<p>其中選取新聞的參數似乎是去讀取檔案，並且存在 <a target="_blank" rel="noopener" href="https://www.owasp.org/index.php/Path_Traversal">Directory Traversal</a> 漏洞，可以透過 <code>../</code> 來偽造路徑<br>（還記得 <a target="_blank" rel="noopener" href="http://pastebin.com/mGk2bpXx">遠通</a> 嗎 XDD）</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;news&#x2F;?f&#x3D;.&#x2F;31-12-2013</p>
+</blockquote>
+<p>漏洞判斷方式是把原本的參數加上 .&#x2F; 會顯示與原本的頁面一樣，所以可以利用 ..&#x2F; 去讀取伺服器上的檔案（知道路徑以及權限足夠），如</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;news&#x2F;?f&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/f50c8dafab993186-02.png"></p>
+<p>也可以讀取 <code>/proc/self/cmdline</code> 來得知當前運行什麼程序</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;news&#x2F;?f&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;proc&#x2F;self&#x2F;cmdline</p>
+</blockquote>
+<p>可以知道這個新聞系統是用 Pyhton + Django + Gunicorn 所架設的</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/3ecadecdabd389b4-03.png"></p>
+<p>翻了一下似乎都找不到什麼有用的資訊，所以來看看 Nginx 還有藏什麼網頁服務在？ 猜一下 <code>Nginx.conf</code> 的預設位置</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;news&#x2F;?f&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;nginx&#x2F;nginx.conf</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/ae3be1151b2fc81b-04.png"></p>
+<p>看不到什麼有用的資訊，不過沒關係我們在繼續猜</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;news&#x2F;?f&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;nginx&#x2F;sites-enabled&#x2F;default</p>
+</blockquote>
+<p>Got it. 看到了 <code>/secret/flag</code> 的 URL pattern 似乎可以得到目標 flag</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/fdab67997ac8008e-05.png"></p>
+<p>但是直接 Access 會出現 404 Not Found T______T</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/a4df2d1a194e7e3f-06.png"></p>
+<p>仔細再看一下 &#x2F;etc&#x2F;nginx&#x2F;sites-enabled&#x2F;default 檔案，會發現有 internal 以及 root 的字樣，查一下 <a target="_blank" rel="noopener" href="http://wiki.nginx.org/X-accel">官方 manual</a> 會發現這是 Nginx 的功能之一可以用來保護檔案。 </p>
+<p>至於存取的方法是 Nginx 判斷 server 是否有送出 X-Accel-Redirect 的 header，如果有才允許使用者存取檔案，但是這個 header 是 server 端控制，所以使用者無法偽造。</p>
+<p>在這邊卡了一下子，不過再仔細觀察整個新聞系統發現網頁其實存在另外一個漏洞，在瀏覽新聞的時候下方回首頁的連結是透過一個參數 retpath 控制的</p>
+<p>伺服器端實現的原理是把 retpath 的值放進 Location header 裡隨著 server 一起送回來，如送出</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;?retpath&#x3D;foooo</p>
+</blockquote>
+<p>則 server 吐回的則是 <code>Location: foooo</code></p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/43e2195650c13a1c-07.png"></p>
+<p>所以在這個情況下，存在 <a target="_blank" rel="noopener" href="https://www.owasp.org/index.php/HTTP_Response_Splitting">HTTP Response Splitting</a> 弱點，不過我們可以不用偽造整個 request 只要偽造一個 header 就好了例如</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;?retpath&#x3D;foo%0d%0afake_header:fake_value</p>
+</blockquote>
+<p>則可以成功偽造一個 fake_header 的 header</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/411f175d506706c9-08.png"></p>
+<p>所以如果沒有搭配上面的 <code>../</code> 找出 Nginx 設定檔案，可能只會把這個當成一個沒有大危害的弱點 （只能針對 Client Side 攻擊），不過當配合上面 Nginx internal 的設定以及這個漏洞，組合技的效果就出來了，這也是我覺得這次題目出得不錯的原因之一XD</p>
+<p>送出</p>
+<blockquote>
+<p>http<span>:&#x2F;&#x2F;109.233.61.11:27280&#x2F;?retpath&#x3D;foo%0d%0aX-Accel-Redirect:&#x2F;secret&#x2F;flag</p>
+</blockquote>
+<p>就可以得到 flag 惹！</p>
+<blockquote>
+<p>CTF{6e75d02b8e8329bb4b45c7dabd2e1da2}</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-200-write-up/8309c59403b8da8e-09.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

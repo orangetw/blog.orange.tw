@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="照慣例今年還是有個經典遊戲題，皮卡丘打排球相信是許多人童年的回憶XD 這次的題目是 - Hack Ｐikachu. (Pikachu is a hacker’s name.)  檔案可以在 http:&#x2F;&#x2F;rsghost.org&#x2F;backup&#x2F;wargame.hitcon.org&#x2F; 下載 (感謝 RSGhost 備份)，主要考的觀念是 Poison Ivy 的 stack overflow 問題">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hacks in Taiwan 2012 Potent Pwnables 3 出題詳解">
+<meta property="og:url" content="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="照慣例今年還是有個經典遊戲題，皮卡丘打排球相信是許多人童年的回憶XD 這次的題目是 - Hack Ｐikachu. (Pikachu is a hacker’s name.)  檔案可以在 http:&#x2F;&#x2F;rsghost.org&#x2F;backup&#x2F;wargame.hitcon.org&#x2F; 下載 (感謝 RSGhost 備份)，主要考的觀念是 Poison Ivy 的 stack overflow 問題">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3be3e2765196a836-01.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3bf0d8e3ae3d5499-02.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/f436aeb31a2ccba2-03.jpg">
+<meta property="article:published_time" content="2012-07-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:16.734Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3be3e2765196a836-01.jpg">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Hacks in Taiwan 2012 Potent Pwnables 3 出題詳解 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hacks in Taiwan 2012 Potent Pwnables 3 出題詳解
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2012-07-23T16:00:00.000Z" class="dt-published" itemprop="datePublished">2012-07-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3be3e2765196a836-01.jpg" alt="preview"></p>
+<p>照慣例今年還是有個經典遊戲題，皮卡丘打排球相信是許多人童年的回憶XD</p>
+<p>這次的題目是 - Hack Ｐikachu. (Pikachu is a hacker’s name.) </p>
+<p>檔案可以在 <a target="_blank" rel="noopener" href="http://rsghost.org/backup/wargame.hitcon.org/">http://rsghost.org/backup/wargame.hitcon.org/</a> 下載 (感謝 RSGhost 備份)，主要考的觀念是 Poison Ivy 的 stack overflow 問題</p>
+<p>Poison ivy 是一套滿有名的木馬程式，其中最大的特性是木馬的 server 端可以變成 shellcode 的形式，使得木馬要加密、變形、免殺變得異常方便！ 所以在很多地方都可以看到它的蹤跡…XD</p>
+<p>又由於 Poison ivy 目前版本( 2.3.2 ) 已不再更新，要更新的請花錢買付費版XD 並要要執行必須在關閉 DEP 的環境下，所以 Exploit 環境較單純利用起來相對容易，有興趣研究的人可以到 <a target="_blank" rel="noopener" href="http://www.poisonivy-rat.com/">http://www.poisonivy-rat.com/</a>  下載</p>
+<p>主程式被 binary patch 改了一些 call function 以及加上了兩個 sections，一個是 Poison Ivy 的 shellcode，另一個是 Anti VMware, SEH 的一些 little and easy tricks，又因為主程式是 Single Thread 又自己加上 CreateThread 等</p>
+<p>心血來潮丟到 Virustotal 上測試沒想到只有4家可以偵測到orz 都還沒出大絕招就只剩下四家這… XDD</p>
+<p><img src="/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/3bf0d8e3ae3d5499-02.jpg"></p>
+<p>舊版 2.3.2 的 Poison Ivy 在 Windows 7 上跑不起來，原因是因為 Windows 7 在取得 ImageBase 上的方式不同，詳細原因可以參考我以前寫過的文章 <a target="_blank" rel="noopener" href="http://orange-tw.blogspot.tw/2011/04/downloadexec-shellcode-fix-for-windows.html">Download Exec shellcode fix &amp; for Windows 7</a></p>
+<p>Patch 方法除了自己改外網路上有人已經有寫好的小程式可以直接用</p>
+<p><a target="_blank" rel="noopener" href="http://existence.vacau.com/PI/pi.html">http://existence.vacau.com/PI/pi.html</a> </p>
+<p>將產生的 shellcode 直接貼上去就可以進行 patch ! 所以在 Windows XP or Windows 7 無論 32bits 或是 64bits 皆可以執行。</p>
+<p>由於主程式是 Windows98&#x2F;me 時代撰寫的( 1997 (C)SACHI SOFT )，跑在 Windows 7 64bits 上有點怪怪的小 BUG (會 crash)，猜測是 Heap Allocation 的問題(未證實)，解決方法是將相容性改成 Windows 98&#x2F;me 就可以正常執行了!</p>
+<p>至於如何判斷是 Poison Ivy ，除了行為外，還可以從</p>
+<ul>
+<li>Poison Ivy 預設的 port 是 3460</li>
+<li>Poison Ivy 預設的 mutex 是 )!VoqA.I4 等看出</li>
+</ul>
+<p>接著就可以直接用 Metasploit  進行攻擊</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.metasploit.com/modules/exploit/windows/misc/poisonivy_bof">http://www.metasploit.com/modules/exploit/windows/misc/poisonivy_bof</a></p>
+</blockquote>
+<p><img src="/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/f436aeb31a2ccba2-03.jpg"></p>
+<p>&lt;(￣︶￣)&gt; 得到 key</p>
+<p>額外補充:</p>
+<p>駭客年會兩天約有200~300個連線(累計紀錄)連過來，忘記把盛況拍下來了 &#x2F;&#x2F;flee</p>
+<blockquote>
+<p>How to hack a hacker, this is a good question. XD</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

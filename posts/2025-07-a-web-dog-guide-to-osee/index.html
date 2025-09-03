@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="✅：『課程結束後一年內要考到 OSEE 證照喔』🍊：「安啦，有一整年能準備哪不行」 （⏳⋯⋯） ✅：『公司下個月開始宣傳課程，到時候要有心得文唷』🍊：「好（默默打開 OffSec 網站排了死線前一天考試）」 （⏳⋯⋯） 🍊：「下禮拜就要考試了，怎麼會這樣 ヽ(ﾟДﾟ≡ﾟДﾟ)ﾉ 」✅：『你到底在幹嘛？？？』  這篇文算是自己準備 OSEE 考試的一點小心得，關於課程內容大家可以參考上一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="從 Web 狗的視角看 OSEE — 從 0.1 開始的 Advanced Windows Exploitation 考試">
+<meta property="og:url" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="✅：『課程結束後一年內要考到 OSEE 證照喔』🍊：「安啦，有一整年能準備哪不行」 （⏳⋯⋯） ✅：『公司下個月開始宣傳課程，到時候要有心得文唷』🍊：「好（默默打開 OffSec 網站排了死線前一天考試）」 （⏳⋯⋯） 🍊：「下禮拜就要考試了，怎麼會這樣 ヽ(ﾟДﾟ≡ﾟДﾟ)ﾉ 」✅：『你到底在幹嘛？？？』  這篇文算是自己準備 OSEE 考試的一點小心得，關於課程內容大家可以參考上一">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/a024d53a66fd4b9566474f114622cfa3.jpeg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/f9464b7a270903509c9c72dfad45de1d.jpeg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/8de62a77c3ea1cfb7137088cb8372a58.jpeg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/c19a76bdfc7a47e02b2bd978aa89683f.png">
+<meta property="article:published_time" content="2025-07-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:23.927Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2025-07-a-web-dog-guide-to-osee/a024d53a66fd4b9566474f114622cfa3.jpeg">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>從 Web 狗的視角看 OSEE — 從 0.1 開始的 Advanced Windows Exploitation 考試 | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        從 Web 狗的視角看 OSEE — 從 0.1 開始的 Advanced Windows Exploitation 考試
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-07-01T16:00:00.000Z" class="dt-published" itemprop="datePublished">2025-07-02</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2025-07-a-web-dog-guide-to-osee/a024d53a66fd4b9566474f114622cfa3.jpeg" alt="preview"></p>
+<br>
+
+<p>✅：『課程結束後一年內要考到 OSEE 證照喔』<br>🍊：「安啦，有一整年能準備哪不行」</p>
+<p>（⏳⋯⋯）</p>
+<p>✅：『公司下個月開始<a target="_blank" rel="noopener" href="https://training.devco.re/2025">宣傳課程</a>，到時候要有心得文唷』<br>🍊：「好（默默打開 OffSec 網站排了死線前一天考試）」</p>
+<p>（⏳⋯⋯）</p>
+<p>🍊：「下禮拜就要考試了，怎麼會這樣 ヽ(ﾟДﾟ≡ﾟДﾟ)ﾉ 」<br>✅：『你到底在幹嘛？？？』</p>
+<hr>
+<p>這篇文算是自己準備 OSEE 考試的一點小心得，關於課程內容大家可以參考上一篇由 NiNi 撰寫的《<a target="_blank" rel="noopener" href="https://devco.re/blog/2025/05/22/exp-401-osee-five-days-to-master-a-decade-of-knowledge/">EXP-401 (OSEE)：用五天課程訓練通透十年的知識體系</a>》，也可以期待下禮拜 Angelboy 要出的「<a target="_blank" rel="noopener" href="https://devco.re/blog/2025/07/12/finally-stepping-into-the-world-of-osee-after-five-years/">我獨自速通 OSEE 🐈‍⬛</a>」！</p>
+<p>不過說實話，準備這個考試真的壓力很大；相較前幾個人，他們根本就是用母語考 N1 超級不公平！但如果整個研究組又只有我沒過，一定會被他們笑半天（可能不只 🤷‍♂️）；為了不丟公司首席（還有自己）的臉，只好小小跳脫舒適圈、認真準備 OSEE 考試。因此這篇文章將從個人的角度出發、評估自己所擁有的技能、衡量是否符合 OSEE 考試所需的最低要求，並加以準備。如果你看完後覺得「就這樣？」，那相信你一定也能輕鬆通過號稱 OffSec 系列最難的 EXP-401 考試！  (๑•̀ㅂ•́)و✧</p>
+<h1 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h1><p>基本上，課程內容早就忘光光。而這半年為了一些酷東西（敬請期待✨），也好幾個月沒開過 IDA Pro 了，我直到考前一個禮拜才意識到大事不妙 😨；更何況當初為了壓死線，還把考試排在一個超爛的時間點（周日早上五點）。扣掉手上在弄的酷東西、公司庶務（好歹我也是主管職 🥲），零零總總加起來總共只有「三天」能讀書！</p>
+<p>（什麼，周休三日？研究員是沒有休假的！）</p>
+<p><img src="/posts/2025-07-a-web-dog-guide-to-osee/f9464b7a270903509c9c72dfad45de1d.jpeg"></p>
+<p>從前一篇 NiNi 的文中相信大家已經知道，整份 OSEE 教材約有 600 頁。鑒於上次讀原文書已經是高中（<a target="_blank" rel="noopener" href="https://www.amazon.com/Gray-Hat-Python-Programming-Engineers/dp/1593271921">Gray Hat Python</a> —— 嘿對，我大學沒讀過原文書XD），我決定第一天先把精力花在情蒐：找找有沒有考古題，或能從別人的心得萃取一些資訊；盡可能大膽地猜題，並想像考試時可能會遇到的坎。過程中發現 OSEE 的題目很固定，只有兩題：</p>
+<ul>
+<li>Windows Kernel 的本地提權</li>
+<li>UserMode App 的遠端程式碼執行</li>
+</ul>
+<p>而網路上的普遍評價都是：前者簡單到爆，後者才是整個考試的重點，跳脫 Sandbox 的部分也在這！在對考試內容大致有個輪廓後，便開始認命讀書 —— 大概是一天要讀個 200 頁才能趕得上的進度之類的。整個 OSEE 課程主要分成五個部分：</p>
+<ol>
+<li><strong>Shellcode</strong> - Windows Shellcode</li>
+<li><strong>VM-Escape Exploit</strong> - VMware Workstation Guest-To-Host Escape</li>
+<li><strong>Browser Exploit</strong> - Microsoft Edge Type Confusion</li>
+<li><strong>Kernel Exploit Part 1</strong> - Driver Callback Overwrite</li>
+<li><strong>Kernel Exploit Part 2</strong> - Unsanitized User-mode Callback</li>
+</ol>
+<p>上面的內容並非完全沒有經驗，但也不能說有經驗。你可能想說「這個人在供三小」？且聽我娓娓道來！</p>
+<br>
+
+
+<h1 id="準備過程"><a href="#準備過程" class="headerlink" title="準備過程"></a>準備過程</h1><h2 id="1-Windows-Shellcode"><a href="#1-Windows-Shellcode" class="headerlink" title="1.  Windows Shellcode"></a>1.  Windows Shellcode</h2><p>第一個章節主要涵蓋 Windows 基礎知識以及 Shell Coding 上的各種慣例。Windows 的 Shellcode 不像 Unix-Like 系統上那麼方便，短短<a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/files/shellcode-909.html">十幾個 Bytes 就能跳個 Shell</a>；必須使用組合語言在各種不同的 Windows 結構中跳轉，並動態取出相對應的 Symbol 地址。因此一組 Shellcode 動輒兩、三百 Bytes 起跳，甚至利用 <a target="_blank" rel="noopener" href="https://www.exploit-db.com/docs/english/18482-egg-hunter---a-twist-in-buffer-overflow.pdf">Egg Hunting</a> 也是家常便飯。</p>
+<p>對我來說，可以快速跳過這個章節的原因主要歸功於早期在玩<a href="https://blog.orange.tw/posts/2012-07-hacks-in-taiwan-2012-potent-pwnables-3/">皮卡丘打排球</a>時的訓練。在當時（還是 Perl 時代）的 Metasploit 還不像現在那麼穩定，因此自己寫一套 Shellcode 框架就變成一件很炫的事。而很多<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/13529">古早的產生器</a>都會寫死一些值，導致其無法橫跨多個 Windows 版本；因此為了讓一份 Shellcode 可以跨平台，必須確實了解每行指令，並嘗試修復它們！</p>
+<p>因此簡單來說，這就是個用來暖身的環節 —— 考驗著學生對組合語言的熟悉程度，以及是否具備對本堂課程最最最最最基本的知識，這應該也是個順便給老師評估學生程度（？）的環節。如果上面的內容聽起來有點陌生，那你可以考慮先跳過這張證照，或認真讀讀《<a target="_blank" rel="noopener" href="https://www.tenlong.com.tw/products/9787121336928">加密與解密</a>》！（台北天瓏還有賣，沒想到出到第四版了XD）</p>
+<h2 id="2-VM-Escape-Exploit"><a href="#2-VM-Escape-Exploit" class="headerlink" title="2. VM-Escape Exploit"></a>2. VM-Escape Exploit</h2><p>從這個章節起，整個 OSEE 才算真正開始見真章！正如其名，這一章專注在「如何從虛擬機跳出來」。對我來說，這也算另一個能用經驗輾壓的章節，我約在數年前有小研究過 VMware 的攻擊面，因此無論是 VMware 的 Backdoor 機制或是基於其之上的 Drag &amp; Drop 漏洞都能駕輕就熟，印象那時還很認真逆向了 <code>vmware-vmx</code>，並找出一些漏洞（被廠商摸頭又是另個故事了 ¯\_(ツ)_&#x2F;¯ ）。因此如果有認真讀過下面這幾篇，那我想這個章節應該就差不多了：</p>
+<ul>
+<li>2017 - <a target="_blank" rel="noopener" href="https://github.com/acama/acez.re/blob/main/The%20Weak%20Bug%20-%20Exploiting%20a%20Heap%20Overflow%20in%20VMware.md">The Weak Bug - Exploiting a Heap Overflow in VMware</a></li>
+<li>2017 - <a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/eu-17/materials/eu-17-Mandal-The-Great-Escapes-Of-Vmware-A-Retrospective-Case-Study-Of-Vmware-G2H-Escape-Vulnerabilities.pdf">The Great Escapes of VMware: A Retrospective Case Study of …</a></li>
+<li>2018 - <a target="_blank" rel="noopener" href="https://keenlab.tencent.com/en/2018/04/23/A-bunch-of-Red-Pills-VMware-Escapes/">A bunch of Red Pills: VMware Escapes</a></li>
+<li>2018 - <a target="_blank" rel="noopener" href="https://www.offensivecon.org/speakers/2018/zdi-team.html">L’art de l’évasion: Modern VMWare Exploitation Techniques</a></li>
+</ul>
+<p>不過，雖然我快速跳過了這章的前半，但由於當初是從「找漏洞」的視角下去學習，並沒有花太多時間著墨在「如何利用漏洞」上，因此我反而花了滿多額外的時間在複習後半段的漏洞利用，例如 LFH 機制，或是如何繞過額外的 WDEG 及 EAF 保護等。</p>
+<h2 id="3-Browser-Exploit"><a href="#3-Browser-Exploit" class="headerlink" title="3. Browser Exploit"></a>3. Browser Exploit</h2><p>這應該是整個課程聽起來最高大上的部分，從這開始難度也逐漸母湯。雖然十五年前我也玩過所謂的「<a href="https://blog.orange.tw/posts/2013-07-0-day-0-day-easy-talk-happy-fuzzing/">瀏覽器漏洞</a>」。不過在當時主流還是 x86 架構，只要一個 vtable call 跳到 0x0C0C0C0C 就能輕鬆 Heap Spray 的年代（還有<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E6%96%87%E4%BA%82%E7%A2%BC#%E2%80%9C%E7%83%AB%E7%83%AB%E7%83%AB%E2%80%9D%E4%B8%8E%E2%80%9C%E5%B1%AF%E5%B1%AF%E5%B1%AF%E2%80%9D">燙燙燙跟屯屯屯</a>XD） —— 此時彼時的難度絕對無法同日而語。</p>
+<p>回顧這幾年，我對瀏覽器漏洞的認識也還停留在基礎的 <code>addressOf</code>、<code>fakeObj</code>，或是用 String Length 去造任意讀寫。雖然這些招數在好幾年前也過時了，不過好在這些概念在底層還能通用。此外，更歸功於以前 CTF 的訓練（被 <a target="_blank" rel="noopener" href="https://4ngelboy.blogspot.com/2016/03/advanced-heap-exploitation.html">Advanced Heap Exploitation</a> 摧殘後這些都是小兒科 🤷‍♂️），即使在不熟悉的平台上，漏洞該如何利用、或成因等，那些熟悉度都還在。因此反倒我更專注在複習這章的「防禦繞過」（例如 CFG、ACG）、「漏洞的武器化」（使用 Data-Only Attack 穿梭在 Assembly 跟 JavaScript 中），以及後續地繞過 Sandbox 本身。</p>
+<br>
+
+<p>—— 回顧時，發現小時候自己居然還宣稱過「專精於 Windows 漏洞利用」，應該也算一種<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E9%84%A7%E5%AF%A7-%E5%85%8B%E9%AD%AF%E6%A0%BC%E6%95%88%E6%87%89">愚昧之巔</a> 😖。</p>
+<h2 id="4-Kernel-Exploit-Part-1"><a href="#4-Kernel-Exploit-Part-1" class="headerlink" title="4. Kernel Exploit - Part 1"></a>4. Kernel Exploit - Part 1</h2><p>由於長期偏科在那些「遠端利用」的漏洞，老實說這個章節對我來說真的完全空白。自己對於 Windows Kernel 的認識也還停留在早期的 <a target="_blank" rel="noopener" href="https://dl.packetstormsecurity.net/papers/presentations/TokenKidnapping.pdf">Token Kidnapping</a>；或者<a target="_blank" rel="noopener" href="https://devco.re/en/blog/author/angelboy/">強者我同事</a>每次分享時，偷學個一兩招。不過仔細想想，他每個禮拜都在報新洞（羨慕），算下來好像也學了不少招 😆。只是，直到去年 OSEE 課程前，我連一次 Kernel Exploit 都還沒完成過，因此就算前面應用層還能靠老本硬嗑，從這開始就真的完全陌生了，也是本次考試我最最最最最擔心的部分 😨。</p>
+<p>我大概花了一整天讓自己沉浸在 Windows Kernel 的世界，重新熟悉 IRQL&#x2F;IOCTL、PML4&#x2F;PTE、SMEP&#x2F;SMAP 的概念，以及東逛逛西逛逛 KPROCESS&#x2F;KTHREAD 等重要的結構。</p>
+<h2 id="5-Kernel-Exploit-Part-2"><a href="#5-Kernel-Exploit-Part-2" class="headerlink" title="5. Kernel Exploit - Part 2"></a>5. Kernel Exploit - Part 2</h2><p>來不及啦。怎麼可能在三天複習完 OSEE，這章整個跳過XD </p>
+<p>—— 不過雖然來不及，但 Win32k 常見的漏洞模式我大概還是知道，只能祈禱自己的老本還夠用（？）</p>
+<br>
+
+<p>此外，這章所提到的虛擬化安全，例如 VBS、HVCI、EPT、kCFG 等。雖然我猜不會考（想想就很難出XD），但我反倒看得很開心。好好讀一讀感覺對未來也很有幫助，而最後一天就在這種 —— 輕輕鬆鬆、隨隨便便、東看看西看看的快樂氣氛下渡過！✨ 😌 🌱</p>
+<h1 id="考試"><a href="#考試" class="headerlink" title="考試"></a>考試</h1><p>由於挑了一個爛時間，前一天我特地十二點不到就上床睡覺，結果就是 —— 完 ～ 全 ～ 睡 ～ 不 ～ 著 😵‍💫 🛌 ❌。約莫早上四點提著兩罐紅牛到辦公室應試。 </p>
+<p><img src="/posts/2025-07-a-web-dog-guide-to-osee/8de62a77c3ea1cfb7137088cb8372a58.jpeg"></p>
+<p>時間一到便是 OffSec 一系列的 —— 開攝影機、How are you、I am fine thank you，還有秀護照的流程。考試開始時完全不想面對未知事物，反倒先挑了更難的 UserMode App 開局，過程中不知腦袋卡到啥還挑了一個爛方法，妄想著一步登天。寫完要戳遠端時才發現連最開始的 Leak 都失敗大崩潰，好在最後還是靠著毅力硬輾過去。解完第一題發現天亮了，為了不打擾同事星期一上班趕緊轉換地點。快 48 小時沒睡下樓梯時還小暈了一下，又重新認識到睡覺很重要XD</p>
+<p>回到家洗洗睡起來趕快看下一題。相較前一題，Kernel 提權的洞真的簡單到不可思議。但小丑如我，連一開始的確認環境都花了好多時間。本地提權部分好像就較沒啥好說的，比較值得一提的是<del>鑑於有同事<a target="_blank" rel="noopener" href="https://devco.re/blog/2025/07/11/exp-401-course-and-second-exam-thoughts/">因為報告寫太水</a>沒過</del>，我花了八個小時寫報告（據說還算快的），最終在考試結束前一小時提早交卷結束整個考試流程！🎉</p>
+<h1 id="後續"><a href="#後續" class="headerlink" title="後續"></a>後續</h1><p>都考過了，應該可以結束這篇了吧 —— 附上人權！</p>
+<p><img src="/posts/2025-07-a-web-dog-guide-to-osee/c19a76bdfc7a47e02b2bd978aa89683f.png"></p>
+<br>
+
+<p>說實話，OSEE 難度整體難度不高。不過自己還在卡在很多不應該的地方，著實該打屁股。除了沒睡飽、沒<del>洗澡能好好</del>思考，還有不是母語這些顯而易見的藉口外，事後還是覆盤了下自己還有哪些「可以做得更好」的地方？</p>
+<p>其實整個流程看下來我也知道，最欠缺的就是「實作」—— 這導致雖然能搞定所有的關鍵流程，反而我都卡在一些莫名其妙的小細節上。尤其 CTF 的背景又容易在一些不切實際的地方上鑽牛角尖，因此這裡給考生的一點小建議是：</p>
+<ol>
+<li>絕對要把課堂上的 Extra Miles 做過一遍，有好好做完一定會過！</li>
+<li>OSEE 著重在最基礎的「你懂不懂」，因此不用擔心沒有實際的漏洞挖掘經驗會無法應試。</li>
+<li>CTF 上那些炫招不會出現，當你開始思考用 Partial Overwrite 搞事時你已經走火入魔了。</li>
+</ol>
+<p>給自己的一個小反思是 —— 這些年好像太把技能特化在「找漏洞」這件事上，對於「記憶體上的利用」反倒沒有太多著墨，說起來著實有些慚愧；不過想想自己只是隻 Web 狗，又覺得好像還好（汪）。相信如果有 WEB-401 的話我也能速通！ 💪</p>
+<br>
+ 
+
+<p>—— 坐等 OffSec 出 WEB-401 😜</p>
+<h1 id="推薦嗎？"><a href="#推薦嗎？" class="headerlink" title="推薦嗎？"></a>推薦嗎？</h1><p>平心而論，這是一次很棒的體驗！不僅課程內容充實、跳脫了舒適圈，甚至還能跟好朋友一起讀書！然而最令我驚訝的是「課程講師的專業度」（聽說 OSEE 全球只有四位講師），他們不僅對課程的掌握度極高、對每個細節滾瓜爛熟，甚至能解答你對於 Windows 所有天馬行空的怪問題。我相信既使是已經能速通的 Angelboy，也從課堂上學到不少新東西（吧）（跑XD</p>
+<p>不過，無論是想系統性地了解 Windows 的漏洞利用體系，或是 CTF 仔想要驗證一下自己的能力到哪，我想 EXP-401 （OSEE）絕對是你的最佳選擇！ 👍</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

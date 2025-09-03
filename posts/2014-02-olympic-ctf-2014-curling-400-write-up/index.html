@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="Olympic CTF CURLing 400 的 write up，前言可以參考 Olympic CTF 2014 CURLing 200 write up 這題也是個人覺得出的非常不錯的題目之一，要解開必須很熟悉 PHP 的特性以及攻擊手法才能解開這道題目，網址打開是一個白畫面，有個 PHP 的錯誤訊息  Notice: Undefined index: rpc_json_call in &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Olympic CTF 2014 CURLing 400 write up">
+<meta property="og:url" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="Olympic CTF CURLing 400 的 write up，前言可以參考 Olympic CTF 2014 CURLing 200 write up 這題也是個人覺得出的非常不錯的題目之一，要解開必須很熟悉 PHP 的特性以及攻擊手法才能解開這道題目，網址打開是一個白畫面，有個 PHP 的錯誤訊息  Notice: Undefined index: rpc_json_call in &amp;#">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/bf9dd46ffd4a2516-02.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/9c334d5ef660c42f-03.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e69539db2827ede9-04.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/038d4cfe7851d0fb-05.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/88652366ab818572-06.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e3b0a31103f5ae03-07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b67f0de80c3376d5-08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/ee915cfcc7ed1ea4-09.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/109bf4007fc40d72-10.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b134bdcbe7073444-11.png">
+<meta property="article:published_time" content="2014-02-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:17.659Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Olympic CTF 2014 CURLing 400 write up | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Olympic CTF 2014 CURLing 400 write up
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2014-02-09T16:00:00.000Z" class="dt-published" itemprop="datePublished">2014-02-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a target="_blank" rel="noopener" href="https://olympic-ctf.ru/">Olympic CTF</a> CURLing 400 的 write up，前言可以參考 <a href="http://blog.orange.tw/2014/02/olympic-ctf-2014-curling-200-write-up.html">Olympic CTF 2014 CURLing 200 write up</a></p>
+<p>這題也是個人覺得出的非常不錯的題目之一，要解開必須很熟悉 PHP 的特性以及攻擊手法才能解開這道題目，網址打開是一個白畫面，有個 PHP 的錯誤訊息</p>
+<blockquote>
+<p>Notice: Undefined index: rpc_json_call in &#x2F;var&#x2F;www&#x2F;index.php on line 27</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/aa07e4c85c65730a-01.png"></p>
+<p>有再寫 PHP 的同學應該馬上可以知道這個 Notice 這是少了一個 GPC 參數的警告，所以我們可以自己補上 POST</p>
+<blockquote>
+<p>rpc_json_call&#x3D;blablalba</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/bf9dd46ffd4a2516-02.png"></p>
+<p>哦，會發現錯誤訊息變了，Google 搜尋一下 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/JSON-RPC">JSON RPC</a> 的標準，照著標準送出</p>
+<blockquote>
+<p>rpc_json_call&#x3D;{“jsonrpc”: “2.0”, “method”: “subtract”, “params”: [42, 23], “id”: 1}</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/9c334d5ef660c42f-03.png"></p>
+<p>會發現錯誤訊息又變了。 哦？不正確的 method 名稱？ 這時候可以猜測 method 名稱，不過笨蛋才會亂猜 :p 有範圍的猜測會比盲目的亂猜好太多，如果對 PHP 夠了解，會知道 PHP class 上都會有一些 <a target="_blank" rel="noopener" href="http://www.php.net/manual/en/language.oop5.magic.php">Magic Method</a> 存在，經過測試會發現 <code>__construct</code> 以及 <code>__wakeup</code> 是可以使用的！</p>
+<p>送出:</p>
+<blockquote>
+<p>rpc_json_call&#x3D;{“jsonrpc”: “2.0”, “method”: “__construct”, “params”:[1,2], “id”: 1}</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e69539db2827ede9-04.png"></p>
+<p>錯誤訊息又變了！ 不過從這次的錯誤訊息中可以得到資訊，知道了 <code>__construct</code> 的參數有三個，<code>log_dir</code>, <code>debug</code>, 以及 <code>state</code>，一樣偽造這三個參數的值後送出</p>
+<blockquote>
+<p>rpc_json_call&#x3D;{“jsonrpc”: “2.0”, “method”: “__construct”, “params”:{“log_dir”:”aa”, “debug”:true, “state”: “foo”}, “id”: 1}</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/038d4cfe7851d0fb-05.png"></p>
+<p>發現是白畫面Ｔ＿＿＿＿Ｔ</p>
+<p>到這邊卡住了一下，也許 <code>__construct</code> 只是去設定了 <code>log_dir</code>, <code>debug</code> 以及 <code>state</code> 這三個參數並沒有其他動作，所以是不是能在一個 reuqest 內執行兩次 JSON RPC CALL 呢（？</p>
+<p>沒有翻得很勤勞不過猜測在一個 array 內送兩個 json hash 竟然可以XDDD</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpc\_json\_call=<span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;__construct&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;log_dir&quot;</span><span class="punctuation">:</span><span class="string">&quot;aa&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span> <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;foo&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;__wakeup&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/88652366ab818572-06.png"></p>
+<p>哦，loged ？ 啊是 log 三小XDDDD 把 <code>log_dir</code> 參數改一下改成 <code>/var/www</code> 看看</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/e3b0a31103f5ae03-07.png"></p>
+<p>竟然說 permission denied XD 那嘗試 <code>/tmp/</code> 呢？</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b67f0de80c3376d5-08.png"></p>
+<p>看來是真的可以寫檔，那它寫了什麼呢？ 可以用 out-of-bound 的方法利用 PHP 支援的 <a target="_blank" rel="noopener" href="http://www.php.net/manual/en/wrappers.php">wrapper</a> 把內容給寫出來（PHP 支援的話甚至可以用 <code>except://ls</code> 執行指令）。 利用 <code>php://output</code> 可以把內容寫到網頁上:</p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/ee915cfcc7ed1ea4-09.png"></p>
+<p>原來寫了一個 serialize 過後的 PHP Object 進去，難怪會用到 <code>__wakeup</code> 的 magic method，所以我們可以嘗試把 webshell 寫到 &#x2F;var&#x2F;www&#x2F; 內</p>
+<p>不過因為 server 的設定，似乎每隔一秒會定時把 <code>/var/www</code> 的檔案清掉，所以如果手速不夠快會一直以為自己沒有寫成功 （哭哭Ｔ＿＿＿Ｔ）</p>
+<p>所以寫個 script 搞定！</p>
+<script src="//pastebin.com/embed_js.php?i=UNxuFkL6"></script>
+
+
+
+<p>執行 <code>ls -alh</code></p>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/109bf4007fc40d72-10.png"></p>
+<p>執行 <code>cat /FLAG</code></p>
+<blockquote>
+<p>CTF{b15ffee30a117f418d1cede6faa57778}</p>
+</blockquote>
+<p><img src="/posts/2014-02-olympic-ctf-2014-curling-400-write-up/b134bdcbe7073444-11.png"></p>
+<p>&lt;(￣︶￣)&gt;</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

