@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/IMG_7339.jpg">
 <meta property="og:image" content="https://blog.orange.tw/posts/2025-08-the-art-of-php-ch/IMG_7350.jpg">
 <meta property="article:published_time" content="2025-08-27T03:00:00.000Z">
-<meta property="article:modified_time" content="2025-09-03T18:18:58.293Z">
+<meta property="article:modified_time" content="2025-10-15T17:57:40.511Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
@@ -223,7 +223,7 @@
 </ul>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我們一生中都在扮演著不同角色，我很慶幸很早便找到自己的興趣、並能以此為生。在成為一位全職駭客前，我也曾是別人眼中胡作非為的腳本小子、尋求更大刺激的年輕人，甚至為了高額獎金到處奔走的漏洞獵人；到如今能自豪地稱自己是個 “駭客”。過去的經歷無論好壞，都塑造了今天的我，而這篇文章想分享的，正是其中一段 —— 我全職參加駭客比賽的日子！</p>
 <h2 id="我是誰？"><a href="#我是誰？" class="headerlink" title="我是誰？"></a>我是誰？</h2><p>嗨，我是 Orange Tsai 🍊！相信不少人是透過我的漏洞研究認識我的，你可能也曾在各種 Pwn2Own 冠軍、Pwnies Awards 得主名單上聽過我的名字；甚至從 CISA 的 KEV 列表（Known Exploited Vulnerabilities）上認識到我的漏洞，像是 <a href="https://blog.orange.tw/posts/2021-08-proxylogon-a-new-attack-surface-on-ms-exchange-part-1/">Microsoft Exchange Server</a>、<a href="https://blog.orange.tw/posts/2019-09-attacking-ssl-vpn-part-3-golden-pulse-secure-rce-chain/">SSL VPN</a>，或最近的 <a href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/">Apache HTTP Server</a>。雖然不知是否該為此感到驕傲，但在 <a target="_blank" rel="noopener" href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-117a">2021 駭客最愛用的漏洞排行榜前十五名</a>中，有六成是由我發現並回報的。 ¯\_(ツ)_&#x2F;¯</p>
-<h2 id="駭客競賽"><a href="#駭客競賽" class="headerlink" title="駭客競賽"></a>駭客競賽</h2><p>從第一次接觸所謂的「駭客競賽」到今天，也差不多 18 年了。早期的駭客競賽（或者說 Wargame）還不像如今的 CTF 那麼充滿競爭，反而更強調知識的傳承，以及所謂的 “<strong>好玩</strong>“。因此各種冷門知識，無論電腦科學、物理數學、資安技術、甚至駭客文化，只要是對一個技術宅來說有趣的事，全都能變成一道關卡、出現在挑戰中！</p>
+<h2 id="駭客競賽"><a href="#駭客競賽" class="headerlink" title="駭客競賽"></a>駭客競賽</h2><p>從第一次接觸所謂的「駭客競賽」到今天，也差不多 18 年了。早期的駭客競賽（或者說 Wargame）還不像如今的 CTF 那麼充滿競爭，反而更強調知識的傳承，以及所謂的 “好玩”。因此各種冷門知識，無論電腦科學、物理數學、資安技術、甚至駭客文化，只要是對一個技術宅來說有趣的事，全都能變成一道關卡、出現在挑戰中！</p>
 <p>因此即使過去那麼多年，我仍清楚地記得那段無憂無慮、能單純探索新事物的日子 —— 每天期待能從新的題目中學到什麼，無論它是否有用；為了一個簡單的問題去深入一門學問，享受解開題目的成就感；對自己的每個小進步雀躍、重複這個過程，並樂此不疲。</p>
 <p>還記得那段日子就像沉迷線上遊戲般，沒日沒夜地在排行榜上刷積分；也還記得那時的我，為了解出上面的題目、什麼都肯做 —— 包括但不限於，厚著臉皮把題目印出來拿去問數學老師。你知道，這對一個非傳統意義上的好學生來說，並不是件容易的事。總之，我嘗試過所有我能想得到的方法、卻仍舊毫無頭緒，我的排名也因此停滯了好長一段時間…… 也是直到某天，我發現題目所要求的解答精確度似乎沒那麼高，這代表我能大膽地忽略一道數學多項式中最複雜的部份，並最終求出正解！🎉</p>
 <p>記憶中，這是我第一次感受到取巧所帶來的快樂；也是第一次發現到「只要稍微多注意一點細節」，連我也能解決專業人士眼中不可能的難題。這種跳出框框、用聰明的方法解決問題的經驗，對我日後影響巨大。</p>
@@ -240,10 +240,10 @@
 
 <p>LegitBS 直到比賽前一天才發布除錯工具、模擬器，還有一本厚厚的精裝手冊。你永遠無法想像我們當下有多震驚；他們花了整整兩年設計一套全新的架構，卻要求隊伍們在短短三天內掌握、並在上面寫 Shellcode。但即便到今天，我仍認為這是項壯舉 —— <strong>因為他們成功將比賽的重心，重新拉回到隊伍間「真正的技能」，而非那些事先準備好的工具。</strong>只是，這也讓整場決賽硬生生變成一場長達四天的黑客松。</p>
 <p>而除了社群文化外，隊伍在解題過程中也誕生出不少令人拍案叫絕的創意，例如 <a target="_blank" rel="noopener" href="https://j00ru.vexillium.org/slides/2015/insomnihack.pdf#page=34">One-Gadget RCE</a> 本身就是一項充滿 CTF 風格的技巧，其它如 <a target="_blank" rel="noopener" href="https://dustri.org/b/paper-notes-return-to-csu-a-new-method-to-bypass-64-bit-linux-aslr.html">Return-to-CSU</a> 或是 <a target="_blank" rel="noopener" href="https://4ngelboy.blogspot.com/2016/10/hitcon-ctf-qual-2016-house-of-orange.html">House of Orange</a> 也是玩家間津津樂道的技術。此外，就連<a target="_blank" rel="noopener" href="https://zh.moegirl.org.cn/zh-tw/Metagame">遊戲外的遊戲（Metagame）</a>也是讓整個 CTF 變得更加有趣的一部分 —— 像我就聽過有隊伍用社交工程偷接上對手的網路線、或用 Wireshark 漏洞在別人分析流量時跳個小算盤，甚至用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/DEF_CON#cite_ref-48">FreeBSD 0day</a> 開啟上帝視角；就連我的隊友也曾利用 <a target="_blank" rel="noopener" href="https://gist.github.com/pzread/2ae0bb3aa5fe0dc69fcf3257c41db944">ELF 解析器中的缺陷</a>去<a target="_blank" rel="noopener" href="https://hitcon.org/2018/CMT/slide-files/d2_s1_r1.pdf">騙過所有逆向工具</a>。這些都是透過攻防才得以孕育出的創意！</p>
-<p>我很喜歡這種一群人不計較利益、純粹 “<strong>Hack for Fun</strong>“ 的氛圍！所以儘管 CTF 本質上只是一種比賽，但它某種程度也代表了駭客世界的一個縮影。而這些由參賽者還有主辦團隊所碰撞出的火花，我認為不該隨著時間的流逝而被遺忘，因此趁著這次機會也想把那些故事記錄下來！</p>
+<p>我很喜歡這種一群人不計較利益、純粹 “Hack for Fun” 的氛圍！所以儘管 CTF 本質上只是一種比賽，但它某種程度也代表了駭客世界的一個縮影。而這些由參賽者還有主辦團隊所碰撞出的火花，我認為不該隨著時間的流逝而被遺忘，因此趁著這次機會也想把那些故事記錄下來！</p>
 <h2 id="那-PHP-Security-呢？"><a href="#那-PHP-Security-呢？" class="headerlink" title="那 PHP Security 呢？"></a>那 PHP Security 呢？</h2><p>“<strong>我很喜歡 PHP！</strong>“ —— 尤其在早期那個、只要稍微懂點皮毛就能在虛擬世界遨遊的年代，它的不完美反倒讓它美麗無比。儘管我也知道，早期在玩這些所謂的「網站入侵」總會被當成腳本小子、貼上技術力不足的標籤，但這絲毫不妨礙我想寫些跟它有關的內容，尤其是從它的底層結構還有語言實作出發。</p>
 <p>我約莫從 2010 年開始深入 PHP Security，記得在當時，由 Stefan Esser 所發起的《<a target="_blank" rel="noopener" href="https://web.archive.org/web/20101222182010/https://www.php-security.org/"><strong>The Month of PHP Security</strong></a>》對我來說是宛如聖經般的存在（沒有之一）；此外由 80vul 出版的《<a target="_blank" rel="noopener" href="https://github.com/80vul/phpcodz"><strong>PHP Codz Hacking</strong></a>》也是每當有更新我總是反覆閱讀。雖然那時尚無法瞭解它們背後的精妙之處，但這都是某種養分、豐富了年輕時的那個我！</p>
-<p>而隨著 CTF 在 2010 年代中期開始蓬勃發展，CTF 社群也逐漸成為 PHP Security 背後的重要推手。無論是主辦方為了挑戰全世界高手所精心設計的題目，或是參賽者超出作者想像的非預期解，這些都確確實實地在慢慢堆高整個 PHP Security 的邊界，<strong>所以即使 CTF 只是某種縮影，它有時也會反過來影響真實世界！</strong></p>
+<p>隨著 CTF 在 2010 年代中期開始蓬勃發展，CTF 社群也逐漸成為 PHP Security 背後的重要推手。無論是主辦方為了挑戰全世界高手所精心設計的題目，或是參賽者超出作者想像的非預期解，這些都確確實實地在慢慢堆高整個 PHP Security 的邊界，<strong>所以即使 CTF 只是某種縮影，它有時也會反過來影響真實世界！</strong></p>
 <p>而這幾年更歸功於 CTF，讓我有幸見證、並參與了幾個全新攻擊的誕生，為此也重訪了 PHP 原始碼不下數十次。也許總會有人比我更適合這個主題，但就請讓我先藉著《<a target="_blank" rel="noopener" href="https://phrack.org/"><strong>PHRACK 四十周年</strong></a>》這個難得的機會，完成一個自己長久以來的夢想吧！</p>
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>接下來，我想嘗試捕捉 CTF 與 PHP 所碰撞出的火花，無論是那些啟發了一代又一代出題者的經典，又或是 CTF 社群是如何用其獨特的方式，去推動整個資安技術的發展，我想試著記錄下那些傳奇！</p>
 <p>當然，沒人能知道所有故事，所以如果有任何遺漏、或引用到不正確的來源也請見諒，也歡迎讓我聽到更多故事。畢竟，只有當我們討論越多，那些經典才更容易被沉澱下來、並傳誦出去：）</p>
@@ -450,7 +450,7 @@
 <p>隨著 “沒有輸出” 的高牆坍塌，整個社群也開始群起響應。首先 Remsio 同樣基於自己的理解<a target="_blank" rel="noopener" href="https://www.synacktiv.com/publications/php-filter-chains-file-read-from-error-based-oracle">釋出工具</a>；此外，Charles “cfreal” Fol 除了幫這項技巧加上<a target="_blank" rel="noopener" href="https://blog.lexfo.fr/wrapwrap-php-filters-suffix.html">客製化的後綴</a>外，更是施展了數個令人驚豔的<a target="_blank" rel="noopener" href="https://blog.lexfo.fr/lightyear-file-dump.html">黑魔法</a>、把這個攻擊打磨到極致。自此，駭客們也能正式宣布：「成功攻克在 PHP 上的盲讀」！ 🎉</p>
 <BR>
 
-<h4 id="Level-Max-Filter-Chain-After-Story"><a href="#Level-Max-Filter-Chain-After-Story" class="headerlink" title="Level Max - Filter Chain ~After Story~"></a>Level Max - Filter Chain ~After Story~</h4><p>而除了攻克兩道難題外，駭客們在反覆嘗試過濾器的過程中也出現不少有趣的插曲，像是 cfreal 在排列這些編碼時不小心 “<strong>又</strong>“ 發現一個在 GNU C 函式庫上的漏洞，他隨後也發布<a target="_blank" rel="noopener" href="https://blog.lexfo.fr/iconv-cve-2024-2961-p1.html">一系列精彩的文章</a>，解釋了如何利用一個受限的 OOBW 完成 RCE。除此之外，整個攻擊的發展也促使 PHP 開始思考<a target="_blank" rel="noopener" href="https://github.com/php/php-src/issues/10453">是否該限縮可串接的過濾器數量</a>，來為整個 Filter Chains 畫下一個句點。</p>
+<h4 id="Level-Max-Filter-Chain-After-Story"><a href="#Level-Max-Filter-Chain-After-Story" class="headerlink" title="Level Max - Filter Chain ~After Story~"></a>Level Max - Filter Chain ~After Story~</h4><p>而除了攻克兩道難題外，駭客們在反覆嘗試過濾器的過程中也出現不少有趣的插曲，像是 cfreal 在排列這些編碼時不小心 “又” 發現一個在 GNU C 函式庫上的漏洞，他隨後也發布<a target="_blank" rel="noopener" href="https://blog.lexfo.fr/iconv-cve-2024-2961-p1.html">一系列精彩的文章</a>，解釋了如何利用一個受限的 OOBW 完成 RCE。除此之外，整個攻擊的發展也促使 PHP 開始思考<a target="_blank" rel="noopener" href="https://github.com/php/php-src/issues/10453">是否該限縮可串接的過濾器數量</a>，來為整個 Filter Chains 畫下一個句點。</p>
 <p>回顧「從 LFI 到 RCE」這二十年來的發展，無論從最開始資安社群致力在探索更直接的內容控制方式、到 CTF 轉而尋找更優雅的遺留機制，再到 loknop 和 hashkitten 將目光拉回過濾器本身，這一路所累積的點點滴滴，我想絕對稱得上是一段 —— 由 CTF、PHP 還有 Infosec 所共同打造的偉大歷史！</p>
 <BR>
 
@@ -544,7 +544,7 @@
 <li>以及更多……</li>
 </ul>
 <h2 id="向-CTF-社群致敬"><a href="#向-CTF-社群致敬" class="headerlink" title="向 CTF 社群致敬"></a>向 CTF 社群致敬</h2><p>從最初作為一種次文化，到如今有著數以千計的活動，甚至是<a target="_blank" rel="noopener" href="https://livectf.com/">一對一的線上直播賽</a>；CTF 儼然已經成為許多年輕駭客眼中的酷玩意兒。當然，CTF 也確實存在著一些令人詬病的問題，因此即使完全不碰、也不妨礙你成為一位優秀的駭客。只是，事情本來就不是非黑即白：無論像是 Binary Golfer 們在<a target="_blank" rel="noopener" href="https://binary.golf/">追求更極致的程式碼</a>、遊戲玩家們<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=vAHXK2wut_I">使用 ACE（Arbitrary Code Execution）速通到大結局</a>，甚至在<a target="_blank" rel="noopener" href="https://xcellerator.github.io/posts/tetsuji/">一台 25 年前的 Game Boy Color 上實現 RCE</a> —— 正是因為這些挑戰本身「足夠有趣」，才能吸引到更多的人一同參與，並將技術打磨到極致！</p>
-<p>我相信每個時代總會有屬於它們的傳奇故事：無論是將主辦方的 “<strong>加密後門</strong>“ 據為己有、爛到笑出來的 Patch、找不到兇手的 Fork Bomb，或各種出包經驗及八卦；因為 CTF 所誕生的各種奇特技術：像是<a target="_blank" rel="noopener" href="https://www.slideshare.net/slideshow/grep-8132856/8132856#8">目 “grep” 入門</a> 👀、數十種 “House Of” 的發展史，或前端的瘋狂內捲；甚至各式各樣的鄉野軼聞：像是 DDTEK 對綿羊的偏執、近距離觀察 tomcr00se，又或是 “<strong>不小心</strong>“ 駭進其他人的電腦…… 就像 Jordan Wiens 在<a target="_blank" rel="noopener" href="https://psifertex.github.io/a-brief-history-of-ctf/">他的分享中</a>所提到的，一定還有很多精彩的故事是我們所不知道的。期待看到更多人站出來、分享屬於他們自己的 CTF 故事：）</p>
+<p>我相信每個時代總會有屬於它們的傳奇故事：無論是將主辦方的 “加密後門” 據為己有、爛到笑出來的 Patch、找不到兇手的 Fork Bomb，或各種出包經驗及八卦；因為 CTF 所誕生的各種奇特技術：像是<a target="_blank" rel="noopener" href="https://www.slideshare.net/slideshow/grep-8132856/8132856#8">目 “grep” 入門</a> 👀、數十種 “House Of” 的發展史，或前端的瘋狂內捲；甚至各式各樣的鄉野軼聞：像是 DDTEK 對綿羊的偏執、近距離觀察 tomcr00se，又或是 “不小心” 駭進其他人的電腦…… 就像 Jordan Wiens 在<a target="_blank" rel="noopener" href="https://psifertex.github.io/a-brief-history-of-ctf/">他的分享中</a>所提到的，一定還有很多精彩的故事是我們所不知道的。期待看到更多人站出來、分享屬於他們自己的 CTF 故事：）</p>
 <p>最後，謹獻給那些陪我走過 CTF 生涯、一同開心並痛苦過的夥伴們 —— 「敬 HITCON CTF 及 217！」</p>
 <blockquote>
 <p>jeffxx, atdog, dm4, lucas, winesap, shik, peter50216, jery, cebrusfs,<br>ddaa, lays, angelboy, david942j, meh, lyc, hh 以及 Big Alan！</p>
