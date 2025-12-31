@@ -578,7 +578,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2013-02-cve-2013-0305-django-credit-get/</loc>
+    <loc>https://blog.orange.tw/posts/2013-01-webconf-2013best-practices-upload/</loc>
     
     <lastmod>2025-09-03</lastmod>
     
@@ -587,7 +587,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2013-01-webconf-2013best-practices-upload/</loc>
+    <loc>https://blog.orange.tw/posts/2013-02-cve-2013-0305-django-credit-get/</loc>
     
     <lastmod>2025-09-03</lastmod>
     
@@ -895,7 +895,7 @@
 
   <url>
     <loc>https://blog.orange.tw/</loc>
-    <lastmod>2025-10-15</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
