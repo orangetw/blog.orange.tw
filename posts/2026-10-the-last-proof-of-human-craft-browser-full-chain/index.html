@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/2026-10-28_153010.png">
 <meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/a_slide1_smooth.svg">
 <meta property="article:published_time" content="2026-10-26T04:58:51.000Z">
-<meta property="article:modified_time" content="2026-10-28T09:18:29.671Z">
+<meta property="article:modified_time" content="2026-10-28T09:19:24.683Z">
 <meta property="article:author" content="Orange Tsai">
 <meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
 <meta name="twitter:card" content="summary">
@@ -253,7 +253,7 @@
 
 <p>While playing with it, we observed that Microsoft Edge would first create a temporary folder and write <code>AAAAAAAA</code> to the file <code>ORANGE.json</code>. It would then pack the whole folder into <code>LOL.ZIP</code>, upload it to a Microsoft server, and clean everything up afterward. Of course, you’d want to try <code>../</code>… Yes, it does let you escape the temporary folder. But that <code>.json</code> extension is still a bit annoying. Maybe you’re also wondering if a NULL Byte could get rid of it… Of course it can! So now we have an arbitrary file write that can control both the filename and the content, and we can overwrite any file anywhere we want! </p>
 <p>Thank you again and again, Microsoft!</p>
-<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/a_slide1_smooth.svg" alt="a_slide1_smooth" title="w80"></p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/a_slide1_smooth.svg" alt="a_slide1_smooth"></p>
 <br>
 
 
