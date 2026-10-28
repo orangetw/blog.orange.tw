@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/</loc>
+    
+    <lastmod>2026-10-28</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.orange.tw/talks/index.html</loc>
     
     <lastmod>2026-10-26</lastmod>
@@ -895,7 +904,7 @@
 
   <url>
     <loc>https://blog.orange.tw/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

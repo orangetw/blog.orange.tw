@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2026-10-26T07:52:58.769Z</updated>
+  <updated>2026-10-28T09:16:25.831Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -15,6 +15,21 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>The Last Proof of Human Craft: Forging a Microsoft Edge Full Chain with Logic Bugs Only!</title>
+    <link href="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/"/>
+    <id>https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/</id>
+    <published>2026-10-26T04:58:51.000Z</published>
+    <updated>2026-10-28T09:16:25.831Z</updated>
+    
+    
+    <summary type="html">This is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥</summary>
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>(繁中) The Art of PHP — My CTF Journey and Untold Stories!</title>

