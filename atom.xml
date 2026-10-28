@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2026-10-28T09:20:25.568Z</updated>
+  <updated>2026-10-28T09:23:00.732Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/"/>
     <id>https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/</id>
     <published>2026-10-26T04:58:51.000Z</published>
-    <updated>2026-10-28T09:20:25.568Z</updated>
+    <updated>2026-10-28T09:23:00.732Z</updated>
     
     
     <summary type="html">This is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥</summary>
