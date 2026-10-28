@@ -6,7 +6,7 @@
   <link href="https://blog.orange.tw/atom.xml" rel="self"/>
   
   <link href="https://blog.orange.tw/"/>
-  <updated>2026-10-28T09:16:25.831Z</updated>
+  <updated>2026-10-28T09:18:29.671Z</updated>
   <id>https://blog.orange.tw/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/"/>
     <id>https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain/</id>
     <published>2026-10-26T04:58:51.000Z</published>
-    <updated>2026-10-28T09:16:25.831Z</updated>
+    <updated>2026-10-28T09:18:29.671Z</updated>
     
     
     <summary type="html">This is what I built for Pwn2Own Berlin 2026 — a completely handmade, logic-only Microsoft Edge Full Chain, with no memory corruption, and no AI at all! 🔥</summary>
@@ -102,11 +102,11 @@
   </entry>
   
   <entry>
-    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
+    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2026-10-26T07:52:58.689Z</updated>
+    <updated>2026-10-26T07:52:58.705Z</updated>
     
     
       
@@ -120,11 +120,11 @@
   </entry>
   
   <entry>
-    <title>Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
-    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-en/"/>
-    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-en/</id>
+    <title>(繁中) Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!</title>
+    <link href="https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/"/>
+    <id>https://blog.orange.tw/posts/2024-08-confusion-attacks-ch/</id>
     <published>2024-08-08T16:00:00.000Z</published>
-    <updated>2026-10-26T07:52:58.705Z</updated>
+    <updated>2026-10-26T07:52:58.689Z</updated>
     
     
       
