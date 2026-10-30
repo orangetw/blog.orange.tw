@@ -605,7 +605,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2013-07-0-day-0-day-easy-talk-happy-fuzzing/</loc>
+    <loc>https://blog.orange.tw/posts/2013-05-pycon2013-slide-django/</loc>
     
     <lastmod>2026-10-26</lastmod>
     
@@ -614,7 +614,7 @@
   </url>
   
   <url>
-    <loc>https://blog.orange.tw/posts/2013-05-pycon2013-slide-django/</loc>
+    <loc>https://blog.orange.tw/posts/2013-07-0-day-0-day-easy-talk-happy-fuzzing/</loc>
     
     <lastmod>2026-10-26</lastmod>
     
@@ -904,7 +904,7 @@
 
   <url>
     <loc>https://blog.orange.tw/</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
